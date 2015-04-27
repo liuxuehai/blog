@@ -23,6 +23,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<spring.version>4.0.4.RELEASE</spring.version>
 		<aspectj.version>1.6.10</aspectj.version>
+		<parent.version>1.0.0</parent.version>
 	</properties>
 
 	<dependencyManagement>
@@ -84,5 +85,9 @@
 	</dependencies>
 	<modules>
 		<module>blog-common</module>
+		<module>blog-skeloten</module>
+		<module>blog-dao</module>
+		<module>blog-server</module>
+		<module>blog-web</module>
 	</modules>
 </project>
