@@ -12,7 +12,6 @@
 		<dependency>
 			<groupId>com.caucho</groupId>
 			<artifactId>hessian</artifactId>
-			<version>4.0.38</version>
 		</dependency>
 		<dependency>
 			<groupId>com.blog</groupId>
@@ -29,7 +28,7 @@
 			<artifactId>standard</artifactId>
 			<version>1.1.2</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>opensymphony</groupId>
 			<artifactId>sitemesh</artifactId>
