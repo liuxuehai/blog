@@ -49,7 +49,7 @@ public class test2 {
 		 data: { 'vote_id': "58", 'user_id':"44871"
 		
 		}, 
-		dataType: "json",
+		dataType: "json",  
 		 success: function (data) 
 		 { if(data.success==2)
 		 	{ num += 1; $(".wtp_zc").html(num); 
