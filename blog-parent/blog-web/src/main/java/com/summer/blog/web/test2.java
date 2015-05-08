@@ -43,5 +43,23 @@ public class test2 {
 		System.out.println(get.getResponseBodyAsString());
 		get.releaseConnection();
 	}
+	
+	$.ajax({ type: "post", 
+		url: "/Wap/Seniorvote/support",
+		 data: { 'vote_id': "58", 'user_id':"44871"
+		
+		}, 
+		dataType: "json",
+		 success: function (data) 
+		 { if(data.success==2)
+		 	{ num += 1; $(".wtp_zc").html(num); 
+		 	$(".zc_listnum").html(data.list_num);
+		 	 $(".man_num").html(data.man_num); 
+		 	} alert(data.msg); 
+		 }, 
+		 error:function(){
+		  alert('ajax请求失败'); return false; 
+		} 
+	})
 
 }
