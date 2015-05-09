@@ -142,7 +142,7 @@
 	</dependencies>
 	<modules>
 		<module>blog-common</module>
-		<module>blog-skeloten</module>
+		<module>blog-skeleton</module>
 		<module>blog-dao</module>
 		<module>blog-server</module>
 		<module>blog-web</module>

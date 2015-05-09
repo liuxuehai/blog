@@ -5,7 +5,7 @@
     <artifactId>blog-parent</artifactId>
     <version>1.0.0</version>
   </parent>
-  <artifactId>blog-skeloten</artifactId>
+  <artifactId>blog-skeleton</artifactId>
   
   <dependencies>
 		<dependency>

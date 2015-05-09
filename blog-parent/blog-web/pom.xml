@@ -15,7 +15,7 @@
 		</dependency>
 		<dependency>
 			<groupId>com.blog</groupId>
-			<artifactId>blog-skeloten</artifactId>
+			<artifactId>blog-skeleton</artifactId>
 			<version>${parent.version}</version>
 		</dependency>
 		<dependency>
