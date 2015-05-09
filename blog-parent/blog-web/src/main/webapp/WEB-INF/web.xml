@@ -5,7 +5,7 @@
 		<param-name>logbackConfigLocation</param-name>
 		<param-value>classpath:logback.xml</param-value>
 	</context-param>
-	
+
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:applicationContext.xml</param-value>
@@ -33,7 +33,7 @@
 		<filter-name>sitemesh</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-	
+
 	<!-- ch.qos.logback.ext.spring.web.LogbackConfigListener -->
 	<listener>
 		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
@@ -59,20 +59,8 @@
 	</session-config>
 
 	<error-page>
-		<error-code>403</error-code>
-		<location>/WEB-INF/view/errors/403.jsp</location>
-	</error-page>
-	<error-page>
 		<error-code>404</error-code>
 		<location>/WEB-INF/view/errors/404.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>405</error-code>
-		<location>/WEB-INF/view/errors/405.jsp</location>
-	</error-page>
-	<error-page>
-		<error-code>500</error-code>
-		<location>/WEB-INF/view/errors/500.jsp</location>
 	</error-page>
 
 </web-app>  
