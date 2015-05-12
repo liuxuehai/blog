@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
      http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
 
-	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+	<bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
 		<property name="basenames">
 			<list>
 				<value>classpath:i18n/error</value>
@@ -14,14 +16,17 @@
 		<property name="useCodeAsDefaultMessage" value="true"></property>
 	</bean>
 
+	<import resource="classpath:beans/beans-*.xml" />
 	<context:property-placeholder location="classpath:properties/*.properties" />
 
-	<bean id="taskExecutor" name="taskExecutor" class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
+	<bean id="taskExecutor" name="taskExecutor"
+		class="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor">
 		<!-- 核心线程数，默认为1 -->
 		<property name="corePoolSize" value="10" />
 		<!-- 最大线程数，默认为Integer.MAX_VALUE -->
 		<property name="maxPoolSize" value="50" />
-		<!-- 队列最大长度，一般需要设置值>=notifyScheduledMainExecutor.maxNum；默认为Integer.MAX_VALUE <property name="queueCapacity" value="1000" /> -->
+		<!-- 队列最大长度，一般需要设置值>=notifyScheduledMainExecutor.maxNum；默认为Integer.MAX_VALUE 
+			<property name="queueCapacity" value="1000" /> -->
 		<!-- 线程池维护线程所允许的空闲时间，默认为60s -->
 		<property name="keepAliveSeconds" value="300" />
 		<!-- 线程池对拒绝任务（无线程可用）的处理策略，目前只支持AbortPolicy、CallerRunsPolicy；默认为后者 -->
@@ -38,7 +43,8 @@
 
 
 	<context:component-scan base-package="com.summer.blog">
-		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"></context:exclude-filter>
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Controller"></context:exclude-filter>
 	</context:component-scan>
 
 </beans>

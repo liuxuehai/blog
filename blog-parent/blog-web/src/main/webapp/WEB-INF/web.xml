@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1"
+<web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	version="3.1"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee     http://java.sun.com/xml/ns/javaee/web-app_3_1.xsd">
 	<context-param>
 		<param-name>logbackConfigLocation</param-name>
@@ -12,38 +13,55 @@
 	</context-param>
 	<filter>
 		<filter-name>encodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter
+		</filter-class>
 		<init-param>
 			<param-name>encoding</param-name>
 			<param-value>UTF-8</param-value>
 		</init-param>
 	</filter>
+
+	<filter>
+		<filter-name>shiroFilter</filter-name>
+		<filter-class>
+			org.springframework.web.filter.DelegatingFilterProxy
+		</filter-class>
+	</filter>
+
+	<filter>
+		<filter-name>sitemesh</filter-name>
+		<filter-class>com.opensymphony.module.sitemesh.filter.PageFilter
+		</filter-class>
+	</filter>
 	<filter-mapping>
 		<filter-name>encodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
-	<filter>
-		<filter-name>sitemesh</filter-name>
-		<filter-class>com.opensymphony.module.sitemesh.filter.PageFilter</filter-class>
-	</filter>
-
-
+	<filter-mapping>
+		<filter-name>shiroFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 	<filter-mapping>
 		<filter-name>sitemesh</filter-name>
 		<url-pattern>/*</url-pattern>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>REQUEST</dispatcher>
 	</filter-mapping>
 
 	<!-- ch.qos.logback.ext.spring.web.LogbackConfigListener -->
 	<listener>
-		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener</listener-class>
+		<listener-class>ch.qos.logback.ext.spring.web.LogbackConfigListener
+		</listener-class>
 	</listener>
 	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+		<listener-class>org.springframework.web.context.ContextLoaderListener
+		</listener-class>
 	</listener>
 	<servlet>
 		<servlet-name>blog</servlet-name>
-		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet
+		</servlet-class>
 		<init-param>
 			<param-name>contextConfigLocation</param-name>
 			<param-value>classpath:spring-servlet.xml</param-value>
@@ -59,8 +77,24 @@
 	</session-config>
 
 	<error-page>
+		<error-code>403</error-code>
+		<location>/WEB-INF/view/500.jsp</location>
+	</error-page>
+	<error-page>
 		<error-code>404</error-code>
-		<location>/WEB-INF/view/errors/404.jsp</location>
+		<location>/WEB-INF/view/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>405</error-code>
+		<location>/WEB-INF/view/404.jsp</location>
+	</error-page>
+	<error-page>
+		<error-code>500</error-code>
+		<location>/WEB-INF/view/500.jsp</location>
+	</error-page>
+	<error-page>
+		<exception-type>java.lang.Exception</exception-type>
+		<location>/WEB-INF/view/500.jsp</location>
 	</error-page>
 
 </web-app>  
