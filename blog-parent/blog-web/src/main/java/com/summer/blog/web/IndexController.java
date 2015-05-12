@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Scope("prototype")
 public class IndexController {
 
-	@RequestMapping(value = { "/index.html","/index"}, method = RequestMethod.GET)
+	@RequestMapping(value = { "/index.html","/index",""}, method = RequestMethod.GET)
 	public String index(Model model) {
 		return "index";
 	}

@@ -34,76 +34,7 @@
 		</property>
 	</bean>
 
-	<!-- <bean id="shopService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/shopService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.ShopService</value>
-		</property>
-	</bean>
-	<bean id="itemService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/itemService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.ItemService</value>
-		</property>
-	</bean>
 
-	<bean id="sellerService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/sellerService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.SellerService</value>
-		</property>
-	</bean>
-
-	<bean id="spiderService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/spiderService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.SpiderService</value>
-		</property>
-	</bean>
-
-	<bean id="itemAttributeService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/itemAttributeService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.ItemAttributeService</value>
-		</property>
-	</bean>
-
-	<bean id="itemTradeService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/itemTradeService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.ItemTradeService</value>
-		</property>
-	</bean>
-
-	<bean id="itemRateService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/itemRateService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.ItemRateService</value>
-		</property>
-	</bean>
-
-	<bean id="spiderLogService" class="org.springframework.remoting.caucho.HessianProxyFactoryBean">
-		<property name="serviceUrl">
-			<value>${server_url}/spiderLogService</value>
-		</property>
-		<property name="serviceInterface">
-			<value>com.summer.taobao.service.SpiderLogService</value>
-		</property>
-	</bean> -->
 
 
 	<context:component-scan base-package="com.summer.blog">
