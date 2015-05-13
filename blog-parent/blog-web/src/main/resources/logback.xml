@@ -83,4 +83,14 @@
         <appender-ref ref="file.warn" />
     </root>
     
+    <logger name="com.summer.blog" additivity="false"> 
+ 		<appender-ref ref="stdout" /> 
+       	<level value="INFO" />
+	</logger>
+	
+	 <logger name="org.springframework.web" additivity="false"> 
+ 		<appender-ref ref="stdout" /> 
+       	<level value="INFO" />
+	</logger>
+    
 </configuration>

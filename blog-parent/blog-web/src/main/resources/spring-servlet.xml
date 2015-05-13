@@ -57,4 +57,12 @@
 
 
 	<aop:aspectj-autoproxy />
+	
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.html"/>
+			<bean class="com.summer.blog.common.UrlAccessInterceptor" name="urlAccessInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
 </beans>   

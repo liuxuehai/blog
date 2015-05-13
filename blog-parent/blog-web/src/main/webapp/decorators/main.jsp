@@ -1,11 +1,10 @@
-<%@ page language="java" contentType="text/html; charset=utf-8"
-	pageEncoding="utf-8"%>
+<%@ page language="java" contentType="text/html; charset=utf-8" pageEncoding="utf-8"%>
 <%@ page isELIgnored="false"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jstl/core_rt"%>
-<%@ taglib uri="http://java.sun.com/jstl/fmt_rt" prefix="fmt"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn"%>
-<%@ taglib uri="http://www.opensymphony.com/sitemesh/decorator"
-	prefix="decorator"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt_rt" %>
+<%@ taglib prefix="html" uri="http://www.liuxuehai.com/tags/html"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+<%@ taglib prefix="decorator" uri="http://www.opensymphony.com/sitemesh/decorator"%>
 
 <!DOCTYPE html >
 <html lang="zh-CN">
@@ -13,12 +12,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title><decorator:title default="Summer" /></title>
+<META HTTP-EQUIV="Pragma" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Cache-Control" CONTENT="no-cache"> 
+<META HTTP-EQUIV="Expires" CONTENT="0"> 
+<html:link rel="shortcut icon" href="static/images/favicon.ico"/>
+<html:link href="static/foundation/5.4.0/css/foundation.min.css" />
+
 <decorator:head />
-
-<link rel="stylesheet"
-	href="<%=request.getContextPath()%>/static/foundation/5.4.0/css/foundation.min.css">
 </head>
-
 <body>
 	<div class="off-canvas-wrap" data-offcanvas>
 		<div class="inner-wrap">
@@ -97,16 +98,14 @@
 			<%@ include file="footer.jsp"%>
 		</div>
 	</div>
+<html:script src="static/jquery/1.11.1/jquery.min.js"/>
+<html:script src="static/foundation/5.4.0/js/foundation.min.js"/>
+<html:script src="static/common/js/pagination.js"/>
 
-	<script
-		src="<%=request.getContextPath()%>/static/jquery/1.11.1/jquery.min.js"></script>
-	<script
-		src="<%=request.getContextPath()%>/static/foundation/5.4.0/js/foundation.min.js"></script>
-	<script
-		src="<%=request.getContextPath()%>/static/common/js/pagination.js"></script>
-	<script>
-		$(document).foundation();
-	</script>
+<script>
+  $(document).foundation();
+</script>
 
+<decorator:getProperty property="page.js" />
 </body>
 </html>

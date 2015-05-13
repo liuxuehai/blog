@@ -11,8 +11,8 @@
 				<plugin>
 					<artifactId>maven-compiler-plugin</artifactId>
 					<configuration>
-						<source>1.8</source>
-						<target>1.8</target>
+						<source>1.7</source>
+						<target>1.7</target>
 					</configuration>
 				</plugin>
 			</plugins>
@@ -120,27 +120,17 @@
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>1.7.5</version>
-			<type>jar</type>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-core</artifactId>
-			<version>1.0.13</version>
-			<type>jar</type>
+			<version>1.7.6</version>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<version>1.0.13</version>
-			<type>jar</type>
 		</dependency>
 		<dependency>
-			<groupId>org.logback-extensions</groupId>
-			<artifactId>logback-ext-spring</artifactId>
-			<version>0.1.2</version>
-			<scope>runtime</scope>
+			<groupId>ch.qos.logback</groupId>
+			<artifactId>logback-core</artifactId>
+			<version>1.0.13</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-logging</groupId>
