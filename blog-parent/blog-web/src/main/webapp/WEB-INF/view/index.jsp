@@ -127,7 +127,8 @@ position: relative;}
 	</div>
 
 
-	<content tag="js"> <script type="text/javascript">
+	<content tag="js">
+	 <script type="text/javascript">
 		$(document).ready(function() {
 
 			console.log("eeee");
