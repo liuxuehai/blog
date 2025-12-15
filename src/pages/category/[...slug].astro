@@ -1,0 +1,180 @@
+---
+import { type CollectionEntry, getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import { SITE_TITLE, SITE_DESCRIPTION, CATEGORIES } from "../../consts";
+import FormattedDate from "../../components/FormattedDate.astro";
+import { Image } from "astro:assets";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog");
+    const paths = new Set();
+    const categories = Object.keys(CATEGORIES);
+
+    // Add main categories
+    categories.forEach((cat) => {
+        paths.add(cat);
+        // Add subcategories
+        const subcats = Object.keys(
+            CATEGORIES[cat as keyof typeof CATEGORIES].subcategories,
+        );
+        subcats.forEach((sub) => {
+            paths.add(`${cat}/${sub}`);
+        });
+    });
+
+    return Array.from(paths).map((path) => ({
+        params: { slug: path as string },
+        props: {
+            category: (path as string).split("/")[0],
+            subcategory: (path as string).split("/")[1],
+        },
+    }));
+}
+
+const { slug } = Astro.params;
+const { category, subcategory } = Astro.props;
+const displayCategory = CATEGORIES[category as keyof typeof CATEGORIES];
+const displaySubLabel = subcategory
+    ? displayCategory.subcategories[
+          subcategory as keyof typeof displayCategory.subcategories
+      ]
+    : null;
+
+const pageTitle = subcategory
+    ? `${displaySubLabel} - ${displayCategory.label} | ${SITE_TITLE}`
+    : `${displayCategory.label} | ${SITE_TITLE}`;
+
+const posts = (await getCollection("blog"))
+    .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+    .filter((post) => {
+        // Filter logic
+        const parts = post.id.split("/");
+        if (parts.length < 2) return category === "others"; // items in root are others? or handle previously
+
+        // post.id is like "ai/pytorch/doc.md" or "ai/doc.md" (if that existed)
+        // our previous grouping logic:
+        // parts[0] is top category.
+        // parts[1...n-1] is subcategory path.
+
+        const postCat = parts[0];
+        if (postCat !== category) return false;
+
+        if (subcategory) {
+            // Check if post belongs to this subcategory
+            // Example: id "ai/pytorch/doc.md", subcategory "pytorch" -> match
+            // Example: id "frontend/react/hooks/doc.md", subcategory "react" -> match?
+            // Let's reuse the simple logic: subcategory is parts[1]
+            if (parts.length < 2) return false;
+            return parts[1] === subcategory;
+        }
+
+        return true;
+    });
+---
+
+<!doctype html>
+<html lang="en">
+    <head>
+        <BaseHead title={pageTitle} description={SITE_DESCRIPTION} />
+        <style>
+            main {
+                width: 960px;
+            }
+            ul {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 2rem;
+                list-style-type: none;
+                margin: 0;
+                padding: 0;
+            }
+            ul li {
+                width: calc(50% - 1rem);
+            }
+            ul li * {
+                text-decoration: none;
+                transition: 0.2s ease;
+            }
+            ul li img {
+                margin-bottom: 0.5rem;
+                border-radius: 12px;
+                width: 100%;
+            }
+            ul li a {
+                display: block;
+            }
+            .title {
+                margin: 0;
+                color: rgb(var(--black));
+                line-height: 1;
+                font-size: 1.5rem;
+            }
+            .date {
+                margin: 0;
+                color: rgb(var(--gray));
+            }
+            ul li a:hover h4,
+            ul li a:hover .date {
+                color: rgb(var(--accent));
+            }
+            ul a:hover img {
+                box-shadow: var(--box-shadow);
+            }
+            @media (max-width: 720px) {
+                ul {
+                    gap: 0.5em;
+                }
+                ul li {
+                    width: 100%;
+                    text-align: center;
+                }
+            }
+            .category-header {
+                margin-bottom: 2rem;
+                border-bottom: 1px solid #eee;
+                padding-bottom: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <Header />
+        <main>
+            <section>
+                <div class="category-header">
+                    <h2>
+                        {displayCategory.label}
+                        {subcategory && `/ ${displaySubLabel}`}
+                    </h2>
+                </div>
+                <ul>
+                    {
+                        posts.map((post) => (
+                            <li>
+                                <a href={`/blog/${post.id}/`}>
+                                    {post.data.heroImage && (
+                                        <Image
+                                            width={720}
+                                            height={360}
+                                            src={post.data.heroImage}
+                                            alt=""
+                                        />
+                                    )}
+                                    <h4 class="title">{post.data.title}</h4>
+                                    <p class="date">
+                                        <FormattedDate
+                                            date={post.data.pubDate}
+                                        />
+                                    </p>
+                                </a>
+                            </li>
+                        ))
+                    }
+                </ul>
+                {posts.length === 0 && <p>No posts found in this category.</p>}
+            </section>
+        </main>
+        <Footer />
+    </body>
+</html>

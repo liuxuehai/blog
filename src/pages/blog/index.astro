@@ -1,15 +1,63 @@
 ---
-import { Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
-import BaseHead from '../../components/BaseHead.astro';
-import Footer from '../../components/Footer.astro';
-import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { Image } from "astro:assets";
+import { getCollection } from "astro:content";
+import BaseHead from "../../components/BaseHead.astro";
+import Footer from "../../components/Footer.astro";
+import FormattedDate from "../../components/FormattedDate.astro";
+import Header from "../../components/Header.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
 
-const posts = (await getCollection('blog')).sort(
+const posts = (await getCollection("blog")).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
+
+// Helper to get category from ID
+function getCategoryInfo(id: string) {
+	const parts = id.split("/");
+	if (parts.length < 2) return { top: "others", sub: "" };
+	return {
+		top: parts[0],
+		sub: parts.slice(1, -1).join("/"),
+	};
+}
+
+const categoryMap: Record<string, string> = {
+	ai: "AI",
+	frontend: "前端",
+	backend: "后端",
+	database: "数据库",
+	server: "服务器",
+	others: "其他",
+};
+
+const subCategoryMap: Record<string, string> = {
+	pytorch: "Pytorch",
+	react: "React",
+	shadcn: "Shadcn",
+	java: "Java",
+	go: "Go",
+	rust: "Rust",
+	mysql: "MySQL",
+	redis: "Redis",
+	postgres: "Postgres",
+	k8s: "K8s",
+};
+
+// Group posts
+const groupedPosts = posts.reduce(
+	(acc, post) => {
+		const { top } = getCategoryInfo(post.id);
+		const displayName = categoryMap[top] || top.toUpperCase();
+		if (!acc[displayName]) {
+			acc[displayName] = [];
+		}
+		acc[displayName].push(post);
+		return acc;
+	},
+	{} as Record<string, typeof posts>,
+);
+
+const sortedCategories = ["AI", "前端", "后端", "数据库", "服务器", "其他"];
 ---
 
 <!doctype html>
@@ -19,6 +67,16 @@ const posts = (await getCollection('blog')).sort(
 		<style>
 			main {
 				width: 960px;
+			}
+			.category-section {
+				margin-bottom: 4rem;
+			}
+			.category-title {
+				font-size: 2rem;
+				margin-bottom: 2rem;
+				border-bottom: 2px solid rgb(var(--accent));
+				padding-bottom: 0.5rem;
+				display: inline-block;
 			}
 			ul {
 				display: flex;
@@ -35,20 +93,10 @@ const posts = (await getCollection('blog')).sort(
 				text-decoration: none;
 				transition: 0.2s ease;
 			}
-			ul li:first-child {
-				width: 100%;
-				margin-bottom: 1rem;
-				text-align: center;
-			}
-			ul li:first-child img {
-				width: 100%;
-			}
-			ul li:first-child .title {
-				font-size: 2.369rem;
-			}
 			ul li img {
 				margin-bottom: 0.5rem;
 				border-radius: 12px;
+				width: 100%;
 			}
 			ul li a {
 				display: block;
@@ -57,10 +105,18 @@ const posts = (await getCollection('blog')).sort(
 				margin: 0;
 				color: rgb(var(--black));
 				line-height: 1;
+				font-size: 1.5rem;
 			}
 			.date {
 				margin: 0;
 				color: rgb(var(--gray));
+			}
+			.subcategory {
+				color: rgb(var(--accent));
+				font-size: 0.9rem;
+				margin-bottom: 0.25rem;
+				text-transform: uppercase;
+				font-weight: bold;
 			}
 			ul li a:hover h4,
 			ul li a:hover .date {
@@ -77,37 +133,107 @@ const posts = (await getCollection('blog')).sort(
 					width: 100%;
 					text-align: center;
 				}
-				ul li:first-child {
-					margin-bottom: 0;
-				}
-				ul li:first-child .title {
-					font-size: 1.563em;
-				}
 			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<section>
-				<ul>
-					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
-						))
-					}
-				</ul>
-			</section>
+			{
+				sortedCategories.map((category) => {
+					const categoryPosts = groupedPosts[category];
+					if (!categoryPosts || categoryPosts.length === 0)
+						return null;
+					return (
+						<section class="category-section">
+							<h2 class="category-title">{category}</h2>
+							<ul>
+								{categoryPosts.map((post) => {
+									const { sub } = getCategoryInfo(post.id);
+									const subDisplay = sub
+										.split("/")
+										.map((s) => subCategoryMap[s] || s)
+										.join(" / ");
+									return (
+										<li>
+											<a href={`/blog/${post.id}/`}>
+												{post.data.heroImage && (
+													<Image
+														width={720}
+														height={360}
+														src={
+															post.data.heroImage
+														}
+														alt=""
+													/>
+												)}
+												<div class="subcategory">
+													{subDisplay}
+												</div>
+												<h4 class="title">
+													{post.data.title}
+												</h4>
+												<p class="date">
+													<FormattedDate
+														date={post.data.pubDate}
+													/>
+												</p>
+											</a>
+										</li>
+									);
+								})}
+							</ul>
+						</section>
+					);
+				})
+			}
+
+			{/* Render any categories not in the sorted list (fallback) */}
+			{
+				Object.keys(groupedPosts)
+					.filter((cat) => !sortedCategories.includes(cat))
+					.map((category) => (
+						<section class="category-section">
+							<h2 class="category-title">{category}</h2>
+							<ul>
+								{groupedPosts[category].map((post) => {
+									const { sub } = getCategoryInfo(post.id);
+									const subDisplay = sub
+										.split("/")
+										.map((s) => subCategoryMap[s] || s)
+										.join(" / ");
+									return (
+										<li>
+											<a href={`/blog/${post.id}/`}>
+												{post.data.heroImage && (
+													<Image
+														width={720}
+														height={360}
+														src={
+															post.data.heroImage
+														}
+														alt=""
+													/>
+												)}
+												<div class="subcategory">
+													{subDisplay}
+												</div>
+												<h4 class="title">
+													{post.data.title}
+												</h4>
+												<p class="date">
+													<FormattedDate
+														date={post.data.pubDate}
+													/>
+												</p>
+											</a>
+										</li>
+									);
+								})}
+							</ul>
+						</section>
+					))
+			}
 		</main>
 		<Footer />
 	</body>
