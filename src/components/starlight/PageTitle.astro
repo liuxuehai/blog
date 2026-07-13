@@ -1,0 +1,123 @@
+---
+type NoteDifficulty = "beginner" | "intermediate" | "advanced";
+type NoteStatus = "learning" | "stable";
+
+interface NoteMetadata {
+	title: string;
+	difficulty?: NoteDifficulty;
+	status?: NoteStatus;
+	lastReviewed?: Date;
+}
+
+const data = Astro.locals.starlightRoute.entry.data as NoteMetadata;
+
+const difficultyLabels: Record<NoteDifficulty, string> = {
+	beginner: "Beginner",
+	intermediate: "Intermediate",
+	advanced: "Advanced",
+};
+
+const statusLabels: Record<NoteStatus, string> = {
+	learning: "Learning",
+	stable: "Stable",
+};
+
+const reviewed = data.lastReviewed
+	? new Intl.DateTimeFormat("zh-CN", {
+			year: "numeric",
+			month: "2-digit",
+		}).format(data.lastReviewed)
+	: undefined;
+
+const hasMetadata = data.difficulty || data.status || reviewed;
+---
+
+<h1 id="_top">{data.title}</h1>
+
+{
+	hasMetadata && (
+		<dl class="note-metadata" aria-label="Note metadata">
+			{data.difficulty && (
+				<div>
+					<dt>Difficulty</dt>
+					<dd>{difficultyLabels[data.difficulty]}</dd>
+				</div>
+			)}
+			{data.status && (
+				<div>
+					<dt>Status</dt>
+					<dd>
+						<span class:list={["status-dot", data.status]} aria-hidden="true" />
+						{statusLabels[data.status]}
+					</dd>
+				</div>
+			)}
+			{reviewed && (
+				<div>
+					<dt>Last reviewed</dt>
+					<dd>{reviewed}</dd>
+				</div>
+			)}
+		</dl>
+	)
+}
+
+<style>
+	h1 {
+		margin-top: 1rem;
+		color: var(--sl-color-white);
+		font-size: var(--sl-text-h1);
+		font-weight: 700;
+		line-height: var(--sl-line-height-headings);
+		letter-spacing: 0;
+	}
+
+	.note-metadata {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.5rem;
+		margin: 1.25rem 0 0;
+		padding-top: 1rem;
+		border-top: 1px solid var(--sl-color-hairline);
+	}
+
+	.note-metadata div {
+		display: grid;
+		gap: 0.2rem;
+	}
+
+	dt {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-2xs);
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	dd {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+		margin: 0;
+		color: var(--sl-color-gray-1);
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+	}
+
+	.status-dot {
+		width: 0.4rem;
+		height: 0.4rem;
+		border-radius: 50%;
+		background: var(--sl-color-gray-3);
+	}
+
+	.status-dot.stable {
+		background: var(--sl-color-accent);
+	}
+
+	@media (max-width: 30rem) {
+		.note-metadata {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+</style>

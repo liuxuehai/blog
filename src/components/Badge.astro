@@ -1,0 +1,25 @@
+---
+type Props = {
+	label: string;
+};
+
+const { label } = Astro.props;
+---
+
+<span class="badge">{label}</span>
+
+<style>
+	.badge {
+		display: inline-flex;
+		align-items: center;
+		min-height: 1.85rem;
+		padding: 0.3rem 0.55rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 4px;
+		background: transparent;
+		color: rgba(var(--color-text-base), 0.72);
+		font-size: 0.78rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+</style>

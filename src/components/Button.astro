@@ -1,0 +1,84 @@
+---
+import { ArrowRight, ArrowUpRight } from "lucide-astro";
+
+type Props = {
+	href: string;
+	variant?: "primary" | "secondary";
+	external?: boolean;
+	showIcon?: boolean;
+};
+
+const {
+	href,
+	variant = "primary",
+	external = false,
+	showIcon = true,
+} = Astro.props;
+
+const Icon = external ? ArrowUpRight : ArrowRight;
+---
+
+<a
+	class:list={["button", `button--${variant}`]}
+	href={href}
+	target={external ? "_blank" : undefined}
+	rel={external ? "noreferrer" : undefined}
+>
+	<slot />
+	{showIcon && <Icon size={16} strokeWidth={2} aria-hidden="true" />}
+</a>
+
+<style>
+	.button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		gap: 0.55rem;
+		min-height: 2.75rem;
+		padding: 0.7rem 1.05rem;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		font-size: 0.95rem;
+		font-weight: 750;
+		line-height: 1;
+		text-decoration: none;
+		transition:
+			border-color 160ms ease,
+			background-color 160ms ease,
+			color 160ms ease;
+	}
+
+	.button--primary {
+		background: rgb(var(--color-accent));
+		color: rgb(var(--color-accent-contrast));
+	}
+
+	.button--primary:hover,
+	.button--primary:focus-visible {
+		background: rgb(var(--color-accent-strong));
+		color: rgb(var(--color-accent-contrast));
+	}
+
+	.button--secondary {
+		border-color: rgba(var(--color-border), 0.9);
+		background: rgba(var(--color-card), 0.22);
+		color: rgb(var(--color-text-base));
+	}
+
+	.button--secondary:hover,
+	.button--secondary:focus-visible {
+		border-color: rgba(var(--color-text-base), 0.4);
+		background: rgba(var(--color-card), 0.55);
+		color: rgb(var(--color-text-base));
+	}
+
+	.button:hover :global(svg),
+	.button:focus-visible :global(svg) {
+		transform: translateX(2px);
+	}
+
+	.button :global(svg) {
+		flex: 0 0 auto;
+		transition: transform 160ms ease;
+	}
+</style>

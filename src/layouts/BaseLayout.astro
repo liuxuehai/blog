@@ -1,0 +1,70 @@
+---
+import BaseHead from "../components/BaseHead.astro";
+import Footer from "../components/Footer.astro";
+import Header from "../components/Header.astro";
+import type { ImageMetadata } from "astro";
+import { SITE_DESCRIPTION, SITE_LANG, SITE_TITLE } from "../consts";
+
+type Props = {
+	title?: string;
+	description?: string;
+	mainClass?: string;
+	image?: ImageMetadata | string;
+	type?: "website" | "article";
+	pubDate?: Date;
+	updatedDate?: Date;
+	tags?: string[];
+};
+
+const {
+	title = SITE_TITLE,
+	description = SITE_DESCRIPTION,
+	mainClass = "",
+	image,
+	type = "website",
+	pubDate,
+	updatedDate,
+	tags = [],
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang={SITE_LANG}>
+	<head>
+		<BaseHead
+			title={title}
+			description={description}
+			image={image}
+			type={type}
+			pubDate={pubDate}
+			updatedDate={updatedDate}
+			tags={tags}
+		/>
+	</head>
+	<body>
+		<Header />
+		<main class:list={["site-main", mainClass]}>
+			<slot />
+		</main>
+		<Footer />
+	</body>
+</html>
+
+<style>
+	.site-main {
+		width: min(100% - 2rem, 72rem);
+		max-width: none;
+		padding: 3.5rem 0;
+	}
+
+	.site-main:global(.narrow) {
+		width: min(100% - 2rem, 48rem);
+	}
+
+	@media (max-width: 720px) {
+		.site-main {
+			width: min(100% - 1.5rem, 72rem);
+			padding: 2.5rem 0;
+		}
+	}
+</style>

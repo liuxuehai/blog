@@ -1,0 +1,154 @@
+---
+import { Image } from "astro:assets";
+import FormattedDate from "./FormattedDate.astro";
+import {
+	getCategoryLabel,
+	getCategorySlug,
+	getPostUrl,
+	getReadingTime,
+	getTagSlug,
+	type BlogPost,
+} from "../lib/content";
+
+type Props = {
+	post: BlogPost;
+	headingLevel?: "h2" | "h3" | "h4";
+};
+
+const { post, headingLevel = "h3" } = Astro.props;
+const Heading = headingLevel;
+const image = post.data.cover ?? post.data.heroImage;
+const postUrl = getPostUrl(post);
+---
+
+<article class="post-card">
+	{
+		image && (
+			<a class="image-link" href={postUrl} aria-label={post.data.title}>
+				<Image width={720} height={360} src={image} alt="" />
+			</a>
+		)
+	}
+	<div class="content">
+		<div class="meta">
+			<a href={`/category/${getCategorySlug(post.data.category)}/`}>
+				{getCategoryLabel(post.data.category)}
+			</a>
+			<span><FormattedDate date={post.data.pubDate} /></span>
+			<span>{getReadingTime(post)} min read</span>
+		</div>
+		<Heading class="title">
+			<a href={postUrl}>{post.data.title}</a>
+		</Heading>
+		<p>{post.data.description}</p>
+		{
+			post.data.tags.length > 0 && (
+				<div class="tags" aria-label="Tags">
+					{post.data.tags.slice(0, 4).map((tag) => (
+						<a href={`/tags/${getTagSlug(tag)}/`}>{tag}</a>
+					))}
+				</div>
+			)
+		}
+	</div>
+</article>
+
+<style>
+	.post-card {
+		display: grid;
+		grid-template-columns: minmax(13rem, 0.42fr) 1fr;
+		gap: 1.25rem;
+		padding: 1.25rem 0;
+		border-top: 1px solid rgba(var(--color-border), 0.9);
+	}
+
+	.image-link {
+		display: block;
+		align-self: start;
+	}
+
+	.image-link img {
+		display: block;
+		width: 100%;
+		aspect-ratio: 2 / 1;
+		object-fit: cover;
+		border-radius: 8px;
+	}
+
+	.content {
+		min-width: 0;
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem 0.75rem;
+		margin-bottom: 0.55rem;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.86rem;
+		line-height: 1.4;
+	}
+
+	.meta a {
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.title {
+		margin: 0;
+		font-size: 1.35rem;
+		line-height: 1.3;
+		letter-spacing: 0;
+	}
+
+	.title a {
+		color: rgb(var(--color-text-base));
+		text-decoration: none;
+	}
+
+	.title a:hover,
+	.title a:focus-visible {
+		color: rgb(var(--color-accent));
+	}
+
+	p {
+		margin: 0.65rem 0 0;
+		color: rgba(var(--color-text-base), 0.7);
+		font-size: 0.98rem;
+		line-height: 1.65;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-top: 0.85rem;
+	}
+
+	.tags a {
+		display: inline-flex;
+		align-items: center;
+		min-height: 1.8rem;
+		padding: 0.2rem 0.55rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 999px;
+		color: rgba(var(--color-text-base), 0.72);
+		font-size: 0.78rem;
+		font-weight: 700;
+		line-height: 1;
+		text-decoration: none;
+	}
+
+	.tags a:hover,
+	.tags a:focus-visible {
+		border-color: rgba(var(--color-accent), 0.55);
+		color: rgb(var(--color-accent));
+	}
+
+	@media (max-width: 720px) {
+		.post-card {
+			grid-template-columns: 1fr;
+			gap: 0.85rem;
+		}
+	}
+</style>

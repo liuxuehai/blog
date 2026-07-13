@@ -1,0 +1,44 @@
+---
+import PostCard from "../../components/PostCard.astro";
+import SectionTitle from "../../components/SectionTitle.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import {
+	getAllTags,
+	getPostsByTag,
+	getTagFromSlug,
+	getTagSlug,
+} from "../../lib/content";
+
+export async function getStaticPaths() {
+	const tags = await getAllTags();
+	return tags.map((tag) => ({
+		params: { slug: getTagSlug(tag) },
+		props: { tag },
+	}));
+}
+
+const fallbackTag = await getTagFromSlug(Astro.params.slug ?? "");
+const tag = Astro.props.tag ?? fallbackTag;
+const posts = tag ? await getPostsByTag(tag) : [];
+---
+
+<BaseLayout title={`${tag ?? "Tag"} | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+	<section>
+		<SectionTitle
+			eyebrow="Tag"
+			title={tag ?? "Tag"}
+			description={`共 ${posts.length} 篇文章。`}
+		/>
+		<div class="post-list">
+			{posts.map((post) => <PostCard post={post} headingLevel="h2" />)}
+		</div>
+		{posts.length === 0 && <p>No posts found with this tag.</p>}
+	</section>
+</BaseLayout>
+
+<style>
+	.post-list {
+		display: grid;
+	}
+</style>

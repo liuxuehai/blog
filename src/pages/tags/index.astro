@@ -1,0 +1,64 @@
+---
+import SectionTitle from "../../components/SectionTitle.astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../../consts";
+import { getAllTags, getPostsByTag, getTagSlug } from "../../lib/content";
+
+const tags = await getAllTags();
+const tagCounts = await Promise.all(
+	tags.map(async (tag) => ({
+		tag,
+		count: (await getPostsByTag(tag)).length,
+	})),
+);
+---
+
+<BaseLayout title={`Tags | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+	<SectionTitle
+		eyebrow="Tags"
+		title="Browse by Tag"
+		description="按标签快速找到相关主题。"
+	/>
+	<div class="tag-list">
+		{
+			tagCounts.map(({ tag, count }) => (
+				<a href={`/tags/${getTagSlug(tag)}/`}>
+					<span>{tag}</span>
+					<small>{count}</small>
+				</a>
+			))
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	.tag-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+	}
+
+	.tag-list a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		min-height: 2.25rem;
+		padding: 0.35rem 0.75rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 999px;
+		color: rgb(var(--color-text-base));
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.tag-list a:hover,
+	.tag-list a:focus-visible {
+		border-color: rgba(var(--color-accent), 0.55);
+		color: rgb(var(--color-accent));
+	}
+
+	small {
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.78rem;
+	}
+</style>

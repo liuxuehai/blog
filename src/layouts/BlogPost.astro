@@ -1,86 +1,217 @@
 ---
 import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import BaseLayout from './BaseLayout.astro';
+import {
+	getCategoryLabel,
+	getCategorySlug,
+	getPostUrl,
+	getTagSlug,
+	type BlogPost as BlogPostEntry,
+} from '../lib/content';
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = Partial<CollectionEntry<'blog'>['data']> & {
+	title: string;
+	description: string;
+	pubDate: Date;
+	readingTime?: number;
+	relatedPosts?: BlogPostEntry[];
+};
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const {
+	title,
+	description,
+	pubDate,
+	updatedDate,
+	category,
+	tags = [],
+	cover,
+	heroImage,
+	readingTime,
+	relatedPosts = [],
+} = Astro.props;
+
+const image = cover ?? heroImage;
 ---
 
-<html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
-
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
+<BaseLayout
+	title={title}
+	description={description}
+	mainClass="article-main"
+	image={image}
+	type="article"
+	pubDate={pubDate}
+	updatedDate={updatedDate}
+	tags={tags}
+>
+	<article>
+		<div class="hero-image">
+			{image && <Image width={1020} height={510} src={image} alt="" />}
+		</div>
+		<div class="prose">
+			<div class="title">
+				<div class="date">
+					<FormattedDate date={pubDate} />
+					{readingTime && <span>{readingTime} min read</span>}
+					{
+						updatedDate && (
+							<div class="last-updated-on">
+								Last updated on <FormattedDate date={updatedDate} />
+							</div>
+						)
+					}
 				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
+				{
+					(category || tags.length > 0) && (
+						<p class="meta">
 							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
+								category && (
+									<a href={`/category/${getCategorySlug(category)}/`}>
+										{getCategoryLabel(category)}
+									</a>
 								)
 							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
-</html>
+							{tags.map((tag) => <a href={`/tags/${getTagSlug(tag)}/`}>{tag}</a>)}
+						</p>
+					)
+				}
+				<h1>{title}</h1>
+				<hr />
+			</div>
+			<slot />
+			{
+				relatedPosts.length > 0 && (
+					<section class="related-posts" aria-labelledby="related-posts-title">
+						<h2 id="related-posts-title">Related Posts</h2>
+						<ul>
+							{relatedPosts.map((post) => (
+								<li>
+									<a href={getPostUrl(post)}>{post.data.title}</a>
+									<span>{post.data.description}</span>
+								</li>
+							))}
+						</ul>
+					</section>
+				)
+			}
+		</div>
+	</article>
+</BaseLayout>
+
+<style>
+	:global(.article-main) {
+		width: min(100% - 2rem, 72rem);
+		padding-top: 2.5rem;
+	}
+
+	.hero-image {
+		width: 100%;
+	}
+
+	.hero-image img {
+		display: block;
+		margin: 0 auto;
+		border-radius: 12px;
+		box-shadow: var(--box-shadow);
+	}
+
+	.prose {
+		width: 720px;
+		max-width: 100%;
+		margin: auto;
+		padding: 1em 0;
+		color: rgb(var(--gray-dark));
+	}
+
+	.title {
+		margin-bottom: 1em;
+		padding: 1em 0;
+		text-align: center;
+		line-height: 1;
+	}
+
+	.title h1 {
+		margin: 0 0 0.5em 0;
+	}
+
+	.date {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 0.35rem 0.75rem;
+		margin-bottom: 0.5em;
+		color: rgba(var(--color-text-base), 0.62);
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		justify-content: center;
+		margin: 0 0 0.75rem;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.82rem;
+		font-weight: 700;
+	}
+
+	.meta a {
+		padding: 0.2rem 0.45rem;
+		border: 1px solid rgba(var(--color-border), 0.85);
+		border-radius: 999px;
+		color: rgba(var(--color-text-base), 0.7);
+		text-decoration: none;
+	}
+
+	.meta a:hover,
+	.meta a:focus-visible {
+		border-color: rgba(var(--color-accent), 0.55);
+		color: rgb(var(--color-accent));
+	}
+
+	.last-updated-on {
+		font-style: italic;
+	}
+
+	.related-posts {
+		margin-top: 3rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid rgba(var(--color-border), 0.9);
+	}
+
+	.related-posts h2 {
+		margin-bottom: 1rem;
+		font-size: 1.25rem;
+		letter-spacing: 0;
+	}
+
+	.related-posts ul {
+		display: grid;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.related-posts li {
+		display: grid;
+		gap: 0.25rem;
+	}
+
+	.related-posts a {
+		color: rgb(var(--color-text-base));
+		font-weight: 700;
+		text-decoration: none;
+	}
+
+	.related-posts a:hover,
+	.related-posts a:focus-visible {
+		color: rgb(var(--color-accent));
+	}
+
+	.related-posts span {
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.95rem;
+		line-height: 1.55;
+	}
+</style>

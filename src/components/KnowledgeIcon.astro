@@ -1,0 +1,47 @@
+---
+import {
+	Brain,
+	Cloud,
+	Container,
+	Database,
+	Monitor,
+	Rocket,
+	Server,
+	Terminal,
+} from "lucide-astro";
+import type { KnowledgeIcon } from "../data/knowledge";
+
+type Props = {
+	name: KnowledgeIcon;
+};
+
+const { name } = Astro.props;
+
+const icons = {
+	brain: Brain,
+	rocket: Rocket,
+	cloud: Cloud,
+	monitor: Monitor,
+	server: Server,
+	database: Database,
+	container: Container,
+	terminal: Terminal,
+};
+
+const Icon = icons[name];
+---
+
+<span class="icon" aria-hidden="true">
+	<Icon size={22} strokeWidth={1.8} />
+</span>
+
+<style>
+	.icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 1.75rem;
+		height: 1.75rem;
+		color: rgb(var(--color-accent));
+	}
+</style>

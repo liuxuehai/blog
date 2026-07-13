@@ -1,56 +1,98 @@
-# Astro Starter Kit: Blog
+# Max
 
-```sh
-npm create astro@latest -- --template blog
+个人技术网站，基于 Astro、Starlight 和 Content Collections 构建。
+
+## 本地开发
+
+```bash
+pnpm install
+pnpm run dev
 ```
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+## 构建
 
-Features:
+```bash
+pnpm run build
+```
 
-- ✅ Minimal styling (make it your own!)
-- ✅ 100/100 Lighthouse performance
-- ✅ SEO-friendly with canonical URLs and OpenGraph data
-- ✅ Sitemap support
-- ✅ RSS Feed support
-- ✅ Markdown & MDX support
+构建产物输出到 `dist/`。
 
-## 🚀 Project Structure
-
-Inside of your Astro project, you'll see the following folders and files:
+## 内容结构
 
 ```text
-├── public/
-├── src/
-│   ├── components/
-│   ├── content/
-│   ├── layouts/
-│   └── pages/
-├── astro.config.mjs
-├── README.md
-├── package.json
-└── tsconfig.json
+src/content/
+├── blog/       # 博客文章
+├── docs/       # Starlight Knowledge / Notes
+├── changelog/  # 网站和项目更新记录
+└── templates/  # 写作模板，不参与内容构建
 ```
 
-Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
+分类和 slug 统一维护在：
 
-There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
+```text
+src/data/taxonomy.ts
+src/data/knowledge.ts
+src/lib/content.ts
+```
 
-The `src/content/` directory contains "collections" of related Markdown and MDX documents. Use `getCollection()` to retrieve posts from `src/content/blog/`, and type-check your frontmatter using an optional schema. See [Astro's Content Collections docs](https://docs.astro.build/en/guides/content-collections/) to learn more.
+页面层不要直接调用 `getCollection()`，统一通过 `src/lib/content.ts` 获取内容。
 
-Any static assets, like images, can be placed in the `public/` directory.
+## 新增内容
 
-## 🧞 Commands
+博客文章使用：
 
-All commands are run from the root of the project, from a terminal:
+```text
+src/content/templates/blog-post.md
+```
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+Knowledge / Notes 使用：
 
-- ✅ 100/100 Lighthouse
+```text
+src/content/templates/note.md
+```
+
+新增内容时先保持 `draft: true`，确认页面、RSS 和搜索表现正常后再改为 `draft: false`。
+
+## Cloudflare Pages
+
+推荐使用 Cloudflare Pages 部署当前静态站点。
+
+Cloudflare Pages 构建配置：
+
+```text
+Framework preset: Astro
+Build command: pnpm run build
+Build output directory: dist
+Root directory: /
+```
+
+生产环境变量：
+
+```text
+SITE_URL=https://your-domain.com
+```
+
+`SITE_URL` 会用于 Astro 的 `site` 配置，从而影响 canonical URL、RSS、robots.txt 和 sitemap。
+
+## 部署前检查
+
+```bash
+pnpm run build
+```
+
+确认构建完成后检查：
+
+```text
+dist/index.html
+dist/rss.xml
+dist/robots.txt
+dist/sitemap-index.xml
+```
+
+## Cloudflare Headers
+
+`public/_headers` 会在 Cloudflare Pages 构建时复制到 `dist/_headers`，用于：
+
+- 给全站添加基础安全响应头
+- 给 `/_astro/*` 和 `/fonts/*` 设置长期缓存
+- 给 RSS、robots 和 sitemap 设置短缓存

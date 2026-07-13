@@ -1,0 +1,186 @@
+---
+import { ArrowRight } from "lucide-astro";
+import FormattedDate from "./FormattedDate.astro";
+import SectionTitle from "./SectionTitle.astro";
+import {
+	getCategoryLabel,
+	getLatestPosts,
+	getPostUrl,
+	getReadingTime,
+} from "../lib/content";
+
+const posts = await getLatestPosts(4);
+---
+
+<section class="home-section" aria-labelledby="latest-posts-title">
+	<div class="section-header">
+		<SectionTitle
+			titleId="latest-posts-title"
+			eyebrow="Blog"
+			title="Latest Posts"
+			description="最近发布的文章与更新。"
+		/>
+		<a href="/blog">All posts <ArrowRight size={15} aria-hidden="true" /></a>
+	</div>
+
+	<div class="post-list">
+		{
+			posts.map((post, index) => (
+				<a class="post-row" href={getPostUrl(post)}>
+					<span class="post-index">0{index + 1}</span>
+					<div class="post-content">
+						<p class="category">{getCategoryLabel(post.data.category)}</p>
+						<h3>{post.data.title}</h3>
+						<p class="description">{post.data.description}</p>
+					</div>
+					<p class="meta">
+						<span><FormattedDate date={post.data.pubDate} /></span>
+						<span>{getReadingTime(post)} min read</span>
+					</p>
+					<ArrowRight class="row-arrow" size={18} strokeWidth={1.8} aria-hidden="true" />
+				</a>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.home-section {
+		padding: 5.5rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.8);
+	}
+
+	.section-header {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+		justify-content: space-between;
+	}
+
+	.section-header > a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		flex: 0 0 auto;
+		margin-top: 0.35rem;
+		color: rgba(var(--color-text-base), 0.72);
+		font-size: 0.92rem;
+		font-weight: 750;
+		text-decoration: none;
+	}
+
+	.section-header > a:hover,
+	.section-header > a:focus-visible {
+		color: rgb(var(--color-accent));
+	}
+
+	.post-list {
+		display: grid;
+		border-top: 1px solid rgba(var(--color-text-base), 0.72);
+	}
+
+	.post-row {
+		display: grid;
+		grid-template-columns: 2.5rem minmax(0, 1fr) 8.5rem 1.5rem;
+		gap: 1rem;
+		align-items: center;
+		min-height: 9rem;
+		padding: 1.25rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.9);
+		color: rgb(var(--color-text-base));
+		text-decoration: none;
+		transition: background-color 160ms ease;
+	}
+
+	.post-row:hover,
+	.post-row:focus-visible {
+		background: rgba(var(--color-card), 0.28);
+		color: rgb(var(--color-text-base));
+	}
+
+	.post-index {
+		color: rgba(var(--color-text-base), 0.36);
+		font-family: ui-monospace, "Cascadia Mono", monospace;
+		font-size: 0.7rem;
+		font-weight: 700;
+	}
+
+	.category {
+		margin: 0 0 0.45rem;
+		color: rgb(var(--color-warm));
+		font-size: 0.7rem;
+		font-weight: 800;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.meta {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35rem;
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.58);
+		font-size: 0.74rem;
+		font-weight: 700;
+		line-height: 1.4;
+		text-align: right;
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 1.18rem;
+		letter-spacing: 0;
+	}
+
+	.description {
+		margin: 0.45rem 0 0;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.95rem;
+		line-height: 1.6;
+	}
+
+	.row-arrow {
+		color: rgba(var(--color-text-base), 0.42);
+		transition:
+			color 160ms ease,
+			transform 160ms ease;
+	}
+
+	.post-row:hover .row-arrow,
+	.post-row:focus-visible .row-arrow {
+		color: rgb(var(--color-accent));
+		transform: translateX(3px);
+	}
+
+	@media (max-width: 620px) {
+		.home-section {
+			padding: 4rem 0;
+		}
+
+		.section-header {
+			display: block;
+		}
+
+		.section-header > a {
+			margin: -0.75rem 0 1.5rem;
+		}
+
+		.post-row {
+			grid-template-columns: 1.5rem minmax(0, 1fr) 1.25rem;
+			gap: 0.75rem;
+			min-height: 8rem;
+		}
+
+		.meta {
+			grid-column: 2;
+			grid-row: 2;
+			flex-direction: row;
+			text-align: left;
+		}
+
+		.row-arrow {
+			grid-column: 3;
+			grid-row: 1;
+		}
+	}
+</style>

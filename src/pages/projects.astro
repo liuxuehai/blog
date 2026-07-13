@@ -1,0 +1,12 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_TITLE } from "../consts";
+
+const title = `Projects | ${SITE_TITLE}`;
+const description = 'Projects and experiments.';
+---
+
+<BaseLayout title={title} description={description} mainClass="narrow">
+	<h1>Projects</h1>
+	<p>这里可以展示你的项目、实验和开源作品。</p>
+</BaseLayout>

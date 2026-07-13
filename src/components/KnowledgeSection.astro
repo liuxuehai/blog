@@ -1,0 +1,174 @@
+---
+import { ArrowUpRight } from "lucide-astro";
+import { knowledge } from "../data/knowledge";
+import { getNoteCountsByCategory } from "../lib/content";
+import KnowledgeIcon from "./KnowledgeIcon.astro";
+import SectionTitle from "./SectionTitle.astro";
+
+const noteCounts = await getNoteCountsByCategory();
+---
+
+<section class="home-section" aria-labelledby="knowledge-title">
+	<SectionTitle
+		titleId="knowledge-title"
+		eyebrow="Knowledge"
+		title="Knowledge"
+		description="持续整理的技术笔记与实践经验。"
+	/>
+
+	<div class="knowledge-directory">
+		{
+			knowledge.map((item, index) => (
+				<a class="knowledge-entry" href={item.href}>
+					<div class="entry-title">
+						<span class="entry-index">0{index + 1}</span>
+						<KnowledgeIcon name={item.icon} />
+						<h3>{item.title}</h3>
+					</div>
+					<div class="entry-body">
+						<p>{item.description}</p>
+						<ul class="topic-list" aria-label={`${item.title} topics`}>
+							{item.topics.map((topic) => (
+								<li>{topic}</li>
+							))}
+						</ul>
+					</div>
+					<div class="entry-meta">
+						<span>{noteCounts[item.category] ?? 0} Notes</span>
+						<ArrowUpRight size={18} strokeWidth={1.8} aria-hidden="true" />
+					</div>
+				</a>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.home-section {
+		padding: 5.5rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.8);
+	}
+
+	.knowledge-directory {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		border-top: 1px solid rgba(var(--color-text-base), 0.72);
+	}
+
+	.knowledge-entry {
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		gap: 1.35rem;
+		min-height: 14rem;
+		padding: 1.4rem 1.5rem 1.35rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.9);
+		color: rgb(var(--color-text-base));
+		text-decoration: none;
+		transition:
+			background-color 160ms ease,
+			color 160ms ease;
+	}
+
+	.knowledge-entry:nth-child(even) {
+		padding-right: 0;
+		padding-left: 1.5rem;
+		border-left: 1px solid rgba(var(--color-border), 0.9);
+	}
+
+	.knowledge-entry:hover,
+	.knowledge-entry:focus-visible {
+		background: rgba(var(--color-card), 0.32);
+		color: rgb(var(--color-text-base));
+	}
+
+	.entry-title {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+	}
+
+	.entry-index {
+		margin-right: 0.15rem;
+		color: rgba(var(--color-text-base), 0.38);
+		font-family: ui-monospace, "Cascadia Mono", monospace;
+		font-size: 0.68rem;
+		font-weight: 700;
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 1.25rem;
+		font-weight: 750;
+		letter-spacing: 0;
+	}
+
+	p {
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.9rem;
+		line-height: 1.6;
+	}
+
+	.topic-list {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin: 1rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.topic-list li {
+		color: rgba(var(--color-text-base), 0.7);
+		font-size: 0.74rem;
+		font-weight: 700;
+		line-height: 1.2;
+	}
+
+	.topic-list li:not(:last-child)::after {
+		content: "/";
+		margin-left: 0.45rem;
+		color: rgba(var(--color-text-base), 0.28);
+	}
+
+	.entry-meta {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		color: rgba(var(--color-text-base), 0.52);
+		font-size: 0.74rem;
+		font-weight: 750;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.knowledge-entry:hover .entry-meta :global(svg),
+	.knowledge-entry:focus-visible .entry-meta :global(svg) {
+		color: rgb(var(--color-accent));
+		transform: translate(2px, -2px);
+	}
+
+	.entry-meta :global(svg) {
+		transition:
+			color 160ms ease,
+			transform 160ms ease;
+	}
+
+	@media (max-width: 680px) {
+		.home-section {
+			padding: 4rem 0;
+		}
+
+		.knowledge-directory {
+			grid-template-columns: 1fr;
+		}
+
+		.knowledge-entry,
+		.knowledge-entry:nth-child(even) {
+			min-height: 12rem;
+			padding: 1.25rem 0;
+			border-left: 0;
+		}
+	}
+</style>

@@ -1,0 +1,158 @@
+---
+import { CalendarDays } from "lucide-astro";
+import { projects } from "../data/projects";
+import Button from "./Button.astro";
+import SectionTitle from "./SectionTitle.astro";
+---
+
+<section class="home-section" aria-labelledby="projects-title">
+	<SectionTitle
+		titleId="projects-title"
+		eyebrow="Projects"
+		title="Projects"
+		description="一些正在维护或开源的项目。"
+	/>
+
+	<div class="project-grid">
+		{
+			projects.map((project) => (
+				<article class="project-card">
+					<div class="project-topline">
+						<span class="project-status">
+							<span aria-hidden="true" />
+							{project.status}
+						</span>
+						<span class="updated">
+							<CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" />
+							{project.updated}
+						</span>
+					</div>
+					<div class="project-copy">
+						<h3>{project.name}</h3>
+						<p>{project.description}</p>
+					</div>
+					<ul class="project-stack" aria-label={`${project.name} technology stack`}>
+						{project.stack.map((item) => <li>{item}</li>)}
+					</ul>
+					<Button href={project.href} variant="secondary">
+						{project.linkLabel}
+					</Button>
+				</article>
+			))
+		}
+	</div>
+</section>
+
+<style>
+	.home-section {
+		padding: 5.5rem 0 2.5rem;
+	}
+
+	.project-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+	}
+
+	.project-card {
+		display: grid;
+		grid-template-rows: auto 1fr auto auto;
+		gap: 1.75rem;
+		min-height: 22rem;
+		padding: 1.5rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 6px;
+		background: rgba(var(--color-card), 0.16);
+	}
+
+	.project-card:nth-child(2) {
+		background: rgba(var(--color-warm), 0.055);
+	}
+
+	.project-topline {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	h3 {
+		margin: 0;
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: 1.7rem;
+		font-weight: 600;
+		letter-spacing: 0;
+	}
+
+	p {
+		margin: 0.75rem 0 0;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.95rem;
+		line-height: 1.7;
+	}
+
+	.project-status {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.72rem;
+		font-weight: 750;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
+	.project-status > span {
+		width: 0.45rem;
+		height: 0.45rem;
+		border-radius: 50%;
+		background: rgb(var(--color-accent));
+	}
+
+	.updated {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		color: rgba(var(--color-text-base), 0.48);
+		font-size: 0.72rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.project-stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.project-stack li {
+		padding: 0.32rem 0.5rem;
+		border: 1px solid rgba(var(--color-border), 0.85);
+		border-radius: 4px;
+		color: rgba(var(--color-text-base), 0.64);
+		font-size: 0.72rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.project-card :global(.button) {
+		justify-self: start;
+	}
+
+	@media (max-width: 680px) {
+		.home-section {
+			padding: 4rem 0 2rem;
+		}
+
+		.project-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.project-card {
+			min-height: 20rem;
+		}
+	}
+</style>

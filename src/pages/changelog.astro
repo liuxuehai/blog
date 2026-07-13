@@ -1,0 +1,160 @@
+---
+import { render } from "astro:content";
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { SITE_TITLE } from "../consts";
+import { getPublishedChangelog } from "../lib/content";
+
+const entries = await getPublishedChangelog();
+const renderedEntries = await Promise.all(
+	entries.map(async (entry) => ({
+		entry,
+		Content: (await render(entry)).Content,
+	})),
+);
+
+const title = `Changelog | ${SITE_TITLE}`;
+const description = "记录网站、Knowledge 与项目的重要更新。";
+const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
+	year: "numeric",
+	month: "2-digit",
+	day: "2-digit",
+});
+---
+
+<BaseLayout title={title} description={description} mainClass="narrow">
+	<header class="page-header">
+		<p class="eyebrow">Build log</p>
+		<h1>Changelog</h1>
+		<p>记录网站、Knowledge 与项目中已经发布的重要变化。</p>
+	</header>
+
+	<div class="timeline">
+		{
+			renderedEntries.map(({ entry, Content }) => (
+				<article>
+					<div class="entry-meta">
+						<time datetime={entry.data.date.toISOString()}>
+							{dateFormatter.format(entry.data.date)}
+						</time>
+						{entry.data.version && <span>{entry.data.version}</span>}
+					</div>
+					<div class="entry-content">
+						<h2>{entry.data.title}</h2>
+						<p class="description">{entry.data.description}</p>
+						<ul class="tags" aria-label="Update tags">
+							{entry.data.tags.map((tag) => <li>{tag}</li>)}
+						</ul>
+						<div class="body">
+							<Content />
+						</div>
+					</div>
+				</article>
+			))
+		}
+	</div>
+</BaseLayout>
+
+<style>
+	.page-header {
+		padding-bottom: 2.5rem;
+		border-bottom: 1px solid rgb(var(--color-border));
+	}
+
+	.eyebrow {
+		margin-bottom: 0.65rem;
+		color: rgb(var(--color-accent));
+		font-size: 0.75rem;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	h1 {
+		margin-bottom: 0.75rem;
+		font-size: 2.75rem;
+	}
+
+	.page-header > p:last-child {
+		max-width: 36rem;
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.7);
+	}
+
+	.timeline article {
+		display: grid;
+		grid-template-columns: 9rem minmax(0, 1fr);
+		gap: 2rem;
+		padding: 2.5rem 0;
+		border-bottom: 1px solid rgb(var(--color-border));
+	}
+
+	.entry-meta {
+		display: grid;
+		align-content: start;
+		gap: 0.55rem;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.82rem;
+		font-weight: 700;
+	}
+
+	.entry-meta span {
+		width: fit-content;
+		padding: 0.15rem 0.4rem;
+		border: 1px solid rgb(var(--color-border));
+		border-radius: 3px;
+		color: rgb(var(--color-accent));
+	}
+
+	h2 {
+		margin-bottom: 0.5rem;
+		font-size: 1.55rem;
+	}
+
+	.description {
+		margin-bottom: 1rem;
+		color: rgba(var(--color-text-base), 0.72);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: 0 0 1.5rem;
+		padding: 0;
+		list-style: none;
+	}
+
+	.tags li {
+		padding: 0.1rem 0.4rem;
+		border: 1px solid rgb(var(--color-border));
+		border-radius: 3px;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.75rem;
+		font-weight: 700;
+	}
+
+	.body :global(p:last-child),
+	.body :global(ul:last-child) {
+		margin-bottom: 0;
+	}
+
+	.body :global(li) {
+		margin-block: 0.3rem;
+	}
+
+	@media (max-width: 640px) {
+		h1 {
+			font-size: 2.15rem;
+		}
+
+		.timeline article {
+			grid-template-columns: 1fr;
+			gap: 1rem;
+			padding: 2rem 0;
+		}
+
+		.entry-meta {
+			display: flex;
+			align-items: center;
+		}
+	}
+</style>

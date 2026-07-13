@@ -1,0 +1,72 @@
+---
+import { Moon, Sun } from "lucide-astro";
+---
+
+<button
+	class="theme-toggle"
+	type="button"
+	aria-label="切换为深色主题"
+	title="切换主题"
+	data-theme-toggle
+>
+	<Sun class="sun" size={17} strokeWidth={1.9} aria-hidden="true" />
+	<Moon class="moon" size={17} strokeWidth={1.9} aria-hidden="true" />
+</button>
+
+<script>
+	const storageKey = "starlight-theme";
+
+	function updateToggle(button: HTMLButtonElement) {
+		const isDark = document.documentElement.dataset.theme === "dark";
+		button.setAttribute("aria-label", isDark ? "切换为浅色主题" : "切换为深色主题");
+	}
+
+	document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((button) => {
+		updateToggle(button);
+		button.addEventListener("click", () => {
+			const nextTheme =
+				document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+			document.documentElement.dataset.theme = nextTheme;
+			localStorage.setItem(storageKey, nextTheme);
+			updateToggle(button);
+		});
+	});
+</script>
+
+<style>
+	.theme-toggle {
+		display: inline-grid;
+		place-items: center;
+		width: 2.25rem;
+		height: 2.25rem;
+		padding: 0;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 4px;
+		background: transparent;
+		color: rgba(var(--color-text-base), 0.68);
+		cursor: pointer;
+		transition:
+			border-color 160ms ease,
+			background-color 160ms ease,
+			color 160ms ease;
+	}
+
+	.theme-toggle:hover,
+	.theme-toggle:focus-visible {
+		border-color: rgba(var(--color-text-base), 0.4);
+		background: rgba(var(--color-card), 0.5);
+		color: rgb(var(--color-text-base));
+	}
+
+	.moon {
+		display: none;
+	}
+
+	:global(html[data-theme="dark"]) .sun {
+		display: none;
+	}
+
+	:global(html[data-theme="dark"]) .moon {
+		display: block;
+	}
+</style>

@@ -2,6 +2,12 @@
 title: 'Getting Started with PyTorch'
 description: 'A brief introduction to PyTorch for AI development.'
 pubDate: '2025-12-15'
+category: AI
+tags:
+  - AI
+  - PyTorch
+draft: true
+featured: true
 heroImage: '../../../../assets/blog-placeholder-1.jpg'
 ---
 

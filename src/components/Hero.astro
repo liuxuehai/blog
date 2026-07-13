@@ -1,0 +1,230 @@
+---
+import { hero } from "../data/home";
+import Badge from "./Badge.astro";
+import Button from "./Button.astro";
+---
+
+<section class="hero" aria-labelledby="hero-title">
+	<div class="hero-content">
+		<p class="eyebrow"><span aria-hidden="true"></span>{hero.eyebrow}</p>
+		<h1 id="hero-title">{hero.title}</h1>
+		<p class="statement">{hero.statement}</p>
+		<p class="lead">{hero.description}</p>
+
+		<div class="actions">
+			<Button href={hero.primaryAction.href}>{hero.primaryAction.label}</Button>
+			<Button
+				href={hero.secondaryAction.href}
+				variant="secondary"
+				external={hero.secondaryAction.external}
+			>
+				{hero.secondaryAction.label}
+			</Button>
+		</div>
+
+		<div class="stack" aria-label="Technology stack">
+			<span>Working with</span>
+			{hero.techStack.map((item) => <Badge label={item} />)}
+		</div>
+	</div>
+
+	<aside class="focus-board" aria-label={hero.panel.title}>
+		<div class="board-header">
+			<p>{hero.panel.title}</p>
+			<span>2026 / 07</span>
+		</div>
+		<ul>
+			{hero.panel.items.map((item, index) => (
+				<li>
+					<span class="index">0{index + 1}</span>
+					<div>
+						<strong>{item.label}</strong>
+						<span>{item.detail}</span>
+					</div>
+				</li>
+			))}
+		</ul>
+		<p class="board-footer">Open notes. Working software.</p>
+	</aside>
+</section>
+
+<style>
+	.hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1.45fr) minmax(18rem, 0.72fr);
+		gap: 5rem;
+		align-items: end;
+		min-height: min(44rem, calc(100vh - 8rem));
+		padding: 5rem 0 4.5rem;
+		border-bottom: 1px solid rgba(var(--color-border), 0.8);
+	}
+
+	.hero-content {
+		max-width: 47rem;
+	}
+
+	.eyebrow {
+		display: flex;
+		align-items: center;
+		gap: 0.6rem;
+		margin: 0 0 1.35rem;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.76rem;
+		font-weight: 750;
+		letter-spacing: 0;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.eyebrow span {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: rgb(var(--color-accent));
+		box-shadow: 0 0 0 4px rgba(var(--color-accent), 0.12);
+	}
+
+	h1 {
+		margin: 0;
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: 5.25rem;
+		font-weight: 600;
+		line-height: 0.96;
+		letter-spacing: 0;
+	}
+
+	.statement {
+		max-width: 43rem;
+		margin: 1.4rem 0 0;
+		font-size: 2rem;
+		font-weight: 650;
+		line-height: 1.18;
+	}
+
+	.lead {
+		max-width: 39rem;
+		margin: 1.1rem 0 0;
+		color: rgba(var(--color-text-base), 0.66);
+		font-size: 1.06rem;
+		line-height: 1.75;
+	}
+
+	.stack {
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin-top: 2rem;
+	}
+
+	.stack > span {
+		margin-right: 0.35rem;
+		color: rgba(var(--color-text-base), 0.48);
+		font-size: 0.72rem;
+		font-weight: 750;
+		line-height: 1;
+		text-transform: uppercase;
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem;
+		margin-top: 2rem;
+	}
+
+	.focus-board {
+		align-self: center;
+		border-top: 1px solid rgba(var(--color-text-base), 0.75);
+		border-bottom: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	.board-header {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.85rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.9);
+	}
+
+	.board-header p,
+	.board-header span,
+	.board-footer {
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.52);
+		font-size: 0.7rem;
+		font-weight: 750;
+		line-height: 1.3;
+		text-transform: uppercase;
+	}
+
+	.focus-board ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.focus-board li {
+		display: grid;
+		grid-template-columns: 2rem 1fr;
+		gap: 1rem;
+		align-items: start;
+		padding: 1.2rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.8);
+	}
+
+	.index {
+		color: rgb(var(--color-warm));
+		font-family: ui-monospace, "Cascadia Mono", monospace;
+		font-size: 0.72rem;
+		font-weight: 700;
+	}
+
+	.focus-board strong,
+	.focus-board li div > span {
+		display: block;
+	}
+
+	.focus-board strong {
+		font-size: 0.96rem;
+		line-height: 1.3;
+	}
+
+	.focus-board li div > span {
+		margin-top: 0.35rem;
+		color: rgba(var(--color-text-base), 0.56);
+		font-size: 0.8rem;
+		line-height: 1.4;
+	}
+
+	.board-footer {
+		padding: 0.85rem 0;
+	}
+
+	@media (max-width: 900px) {
+		.hero {
+			grid-template-columns: 1fr;
+			gap: 3rem;
+			min-height: auto;
+			padding: 4rem 0;
+		}
+
+		.focus-board {
+			width: 100%;
+		}
+	}
+
+	@media (max-width: 560px) {
+		h1 {
+			font-size: 3.5rem;
+		}
+
+		.statement {
+			font-size: 1.55rem;
+		}
+
+		.hero {
+			padding: 3rem 0;
+		}
+	}
+</style>
