@@ -1,12 +1,257 @@
 ---
+import { ArrowDown, Layers3 } from "lucide-astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { projects } from "../data/projects";
 import { SITE_TITLE } from "../consts";
 
 const title = `Projects | ${SITE_TITLE}`;
-const description = 'Projects and experiments.';
+const description =
+	"Max 的个人项目，涵盖智能体系统、量化交易基础设施、多模型账号管理与全栈管理平台。";
 ---
 
-<BaseLayout title={title} description={description} mainClass="narrow">
-	<h1>Projects</h1>
-	<p>这里可以展示你的项目、实验和开源作品。</p>
+<BaseLayout title={title} description={description}>
+	<header class="page-hero">
+		<p class="eyebrow">Selected Work</p>
+		<h1>Systems built to run,<br />not just to demo.</h1>
+		<p class="lead">
+			这些个人项目来自真实的工程探索：拆解复杂问题，建立清晰边界，再把执行、审计与长期维护纳入系统设计。
+		</p>
+		<a class="jump-link" href="#project-list">
+			Explore projects
+			<ArrowDown size={17} strokeWidth={1.8} aria-hidden="true" />
+		</a>
+	</header>
+
+	<section class="project-list" id="project-list" aria-label="Personal projects">
+		{
+			projects.map((project, index) => (
+				<article class="project" id={project.id}>
+					<div class="project-index" aria-hidden="true">
+						{String(index + 1).padStart(2, "0")}
+					</div>
+					<div class="project-heading">
+						<p class="category">{project.category}</p>
+						<h2>{project.name}</h2>
+						<p class="subtitle">{project.subtitle}</p>
+					</div>
+					<div class="project-detail">
+						<p class="description">{project.description}</p>
+						<ul class="highlights">
+							{project.highlights.map((highlight) => <li>{highlight}</li>)}
+						</ul>
+						<ul class="stack" aria-label={`${project.name} technology stack`}>
+							{project.stack.map((item) => <li>{item}</li>)}
+						</ul>
+					</div>
+				</article>
+			))
+		}
+	</section>
+
+	<footer class="project-note">
+		<Layers3 size={20} strokeWidth={1.7} aria-hidden="true" />
+		<p>
+			这些项目也用于验证 AI 辅助需求拆解、架构设计、代码生成、测试补齐与文档沉淀的完整工程流程。
+		</p>
+	</footer>
 </BaseLayout>
+
+<style>
+	.page-hero {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(18rem, 27rem);
+		gap: 2rem 5rem;
+		align-items: end;
+		padding: 2rem 0 6rem;
+	}
+
+	.eyebrow,
+	.category {
+		margin: 0;
+		color: rgb(var(--color-accent));
+		font-size: 0.78rem;
+		font-weight: 800;
+		line-height: 1.2;
+		text-transform: uppercase;
+	}
+
+	.eyebrow {
+		grid-column: 1 / -1;
+	}
+
+	h1 {
+		margin: 0;
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: clamp(3rem, 7vw, 6.6rem);
+		font-weight: 600;
+		line-height: 0.98;
+		letter-spacing: 0;
+	}
+
+	.lead {
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 1.05rem;
+		line-height: 1.75;
+	}
+
+	.jump-link {
+		display: inline-flex;
+		grid-column: 2;
+		align-items: center;
+		gap: 0.55rem;
+		justify-self: start;
+		color: rgb(var(--color-text-base));
+		font-size: 0.82rem;
+		font-weight: 750;
+		text-decoration: none;
+	}
+
+	.project-list {
+		border-top: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	.project {
+		display: grid;
+		grid-template-columns: 3rem minmax(14rem, 0.72fr) minmax(0, 1.28fr);
+		gap: 2rem;
+		padding: 3.5rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.95);
+		scroll-margin-top: 6rem;
+	}
+
+	.project-index {
+		color: rgba(var(--color-text-base), 0.36);
+		font-size: 0.75rem;
+		font-weight: 800;
+		line-height: 1.5;
+	}
+
+	h2 {
+		margin: 0.5rem 0 0;
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: clamp(2rem, 4vw, 3.6rem);
+		font-weight: 600;
+		letter-spacing: 0;
+	}
+
+	.subtitle {
+		margin: 0.65rem 0 0;
+		color: rgba(var(--color-text-base), 0.5);
+		font-size: 0.8rem;
+		font-weight: 750;
+		line-height: 1.5;
+		text-transform: uppercase;
+	}
+
+	.description {
+		max-width: 43rem;
+		margin: 0;
+		font-size: 1.04rem;
+		line-height: 1.75;
+	}
+
+	.highlights {
+		display: grid;
+		gap: 0.6rem;
+		margin: 1.5rem 0 0;
+		padding: 0;
+		color: rgba(var(--color-text-base), 0.68);
+		list-style: none;
+	}
+
+	.highlights li {
+		position: relative;
+		padding-left: 1.1rem;
+		line-height: 1.65;
+	}
+
+	.highlights li::before {
+		position: absolute;
+		top: 0.72em;
+		left: 0;
+		width: 0.3rem;
+		height: 0.3rem;
+		border-radius: 50%;
+		background: rgb(var(--color-accent));
+		content: "";
+	}
+
+	.stack {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		margin: 1.75rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.stack li {
+		padding: 0.38rem 0.55rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 4px;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.72rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.project-note {
+		display: grid;
+		grid-template-columns: auto minmax(0, 42rem);
+		gap: 1rem;
+		justify-content: end;
+		padding: 3rem 0 1rem;
+		color: rgba(var(--color-text-base), 0.6);
+	}
+
+	.project-note p {
+		margin: 0;
+		line-height: 1.7;
+	}
+
+	@media (max-width: 820px) {
+		.page-hero {
+			grid-template-columns: 1fr;
+			padding: 1rem 0 4rem;
+		}
+
+		.eyebrow,
+		.jump-link {
+			grid-column: 1;
+		}
+
+		.project {
+			grid-template-columns: 2rem 1fr;
+			gap: 1.25rem;
+		}
+
+		.project-detail {
+			grid-column: 2;
+		}
+	}
+
+	@media (max-width: 520px) {
+		h1 {
+			font-size: 3rem;
+		}
+
+		.project {
+			grid-template-columns: 1fr;
+			padding: 2.75rem 0;
+		}
+
+		.project-index,
+		.project-detail {
+			grid-column: 1;
+		}
+
+		.project-index {
+			margin-bottom: -0.5rem;
+		}
+
+		.project-note {
+			justify-content: start;
+		}
+	}
+</style>

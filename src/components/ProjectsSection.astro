@@ -1,8 +1,10 @@
 ---
-import { CalendarDays } from "lucide-astro";
+import { ArrowUpRight } from "lucide-astro";
 import { projects } from "../data/projects";
 import Button from "./Button.astro";
 import SectionTitle from "./SectionTitle.astro";
+
+const featuredProjects = projects.filter((project) => project.featured);
 ---
 
 <section class="home-section" aria-labelledby="projects-title">
@@ -15,20 +17,18 @@ import SectionTitle from "./SectionTitle.astro";
 
 	<div class="project-grid">
 		{
-			projects.map((project) => (
+			featuredProjects.map((project) => (
 				<article class="project-card">
 					<div class="project-topline">
 						<span class="project-status">
 							<span aria-hidden="true" />
-							{project.status}
+							{project.category}
 						</span>
-						<span class="updated">
-							<CalendarDays size={14} strokeWidth={1.8} aria-hidden="true" />
-							{project.updated}
-						</span>
+						<ArrowUpRight size={16} strokeWidth={1.8} aria-hidden="true" />
 					</div>
 					<div class="project-copy">
 						<h3>{project.name}</h3>
+						<p class="subtitle">{project.subtitle}</p>
 						<p>{project.description}</p>
 					</div>
 					<ul class="project-stack" aria-label={`${project.name} technology stack`}>
@@ -76,6 +76,10 @@ import SectionTitle from "./SectionTitle.astro";
 		gap: 1rem;
 	}
 
+	.project-topline > :global(svg) {
+		color: rgba(var(--color-text-base), 0.46);
+	}
+
 	h3 {
 		margin: 0;
 		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
@@ -89,6 +93,14 @@ import SectionTitle from "./SectionTitle.astro";
 		color: rgba(var(--color-text-base), 0.68);
 		font-size: 0.95rem;
 		line-height: 1.7;
+	}
+
+	.subtitle {
+		color: rgba(var(--color-text-base), 0.5);
+		font-size: 0.8rem;
+		font-weight: 750;
+		line-height: 1.4;
+		text-transform: uppercase;
 	}
 
 	.project-status {
@@ -107,16 +119,6 @@ import SectionTitle from "./SectionTitle.astro";
 		height: 0.45rem;
 		border-radius: 50%;
 		background: rgb(var(--color-accent));
-	}
-
-	.updated {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.4rem;
-		color: rgba(var(--color-text-base), 0.48);
-		font-size: 0.72rem;
-		font-weight: 700;
-		line-height: 1;
 	}
 
 	.project-stack {

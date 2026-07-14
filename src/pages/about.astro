@@ -1,66 +1,359 @@
 ---
+import { ArrowUpRight, Check } from "lucide-astro";
 import BaseLayout from "../layouts/BaseLayout.astro";
-import { SITE_AUTHOR, SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { focusAreas, professionalWork, profile } from "../data/profile";
 ---
 
-<BaseLayout title={`About | ${SITE_TITLE}`} description={SITE_DESCRIPTION} mainClass="narrow">
-	<section class="about">
-		<p class="eyebrow">About</p>
-		<h1>{SITE_AUTHOR}</h1>
-		<p class="lead">分享技术、记录思考、构建项目。</p>
+<BaseLayout title={`About | ${SITE_TITLE}`} description={SITE_DESCRIPTION}>
+	<header class="about-hero">
+		<div class="identity">
+			<p class="eyebrow">About</p>
+			<h1>{profile.name}</h1>
+			<p class="role">{profile.role}</p>
+		</div>
+		<div class="intro">
+			<p>{profile.intro}</p>
+			<p>{profile.principle}</p>
+		</div>
+	</header>
 
-		<div class="content">
-			<p>
-				这个网站用于沉淀个人技术笔记、博客文章和项目记录。当前重点关注 Astro、
-				Cloudflare、AI、Frontend、Backend、Database、DevOps 和 Linux。
-			</p>
-			<p>
-				这里的内容会优先保持可维护：Blog 用来记录阶段性的实践和复盘，Knowledge
-				用来整理可以持续更新的技术笔记。
-			</p>
+	<section class="facts" aria-label="Professional summary">
+		<div>
+			<strong>14+</strong>
+			<span>Years in software engineering</span>
+		</div>
+		<div>
+			<strong>Java</strong>
+			<span>Backend and architecture foundation</span>
+		</div>
+		<div>
+			<strong>AI</strong>
+			<span>Applied to real engineering workflows</span>
 		</div>
 	</section>
+
+	<section class="section" aria-labelledby="focus-title">
+		<div class="section-heading">
+			<p class="eyebrow">Capabilities</p>
+			<h2 id="focus-title">What I work on</h2>
+		</div>
+		<div class="focus-list">
+			{
+				focusAreas.map((area) => (
+					<article>
+						<Check size={18} strokeWidth={1.9} aria-hidden="true" />
+						<div>
+							<h3>{area.title}</h3>
+							<p>{area.description}</p>
+						</div>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<section class="section experience" aria-labelledby="experience-title">
+		<div class="section-heading">
+			<p class="eyebrow">Experience</p>
+			<h2 id="experience-title">Selected systems</h2>
+			<p class="section-copy">
+				代表性经历按系统领域整理，仅展示公开所需的技术职责与工程范围。
+			</p>
+		</div>
+		<div class="timeline">
+			{
+				professionalWork.map((work) => (
+					<article>
+						<p class="period">{work.period}</p>
+						<div class="work-heading">
+							<h3>{work.title}</h3>
+							<p>{work.role}</p>
+						</div>
+						<p class="work-description">{work.description}</p>
+						<ul aria-label={`${work.title} technology stack`}>
+							{work.stack.map((item) => <li>{item}</li>)}
+						</ul>
+					</article>
+				))
+			}
+		</div>
+	</section>
+
+	<a class="projects-link" href="/projects">
+		<span>
+			<small>Personal work</small>
+			查看智能体、量化交易与全栈平台项目
+		</span>
+		<ArrowUpRight size={24} strokeWidth={1.7} aria-hidden="true" />
+	</a>
 </BaseLayout>
 
 <style>
-	.about {
-		padding: 1rem 0 3rem;
+	.about-hero {
+		display: grid;
+		grid-template-columns: minmax(15rem, 0.8fr) minmax(20rem, 1.2fr);
+		gap: 4rem;
+		align-items: end;
+		padding: 2rem 0 5.5rem;
 	}
 
 	.eyebrow {
-		margin: 0 0 0.85rem;
+		margin: 0 0 0.8rem;
 		color: rgb(var(--color-accent));
-		font-size: 0.85rem;
+		font-size: 0.78rem;
 		font-weight: 800;
-		letter-spacing: 0.08em;
 		line-height: 1.2;
 		text-transform: uppercase;
 	}
 
 	h1 {
 		margin: 0;
-		font-size: clamp(2.4rem, 8vw, 4rem);
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: clamp(4rem, 10vw, 8rem);
+		font-weight: 600;
+		line-height: 0.9;
 		letter-spacing: 0;
 	}
 
-	.lead {
+	.role {
+		margin: 1.25rem 0 0;
+		color: rgba(var(--color-text-base), 0.56);
+		font-size: 0.82rem;
+		font-weight: 750;
+		line-height: 1.5;
+		text-transform: uppercase;
+	}
+
+	.intro {
+		display: grid;
+		gap: 1rem;
+	}
+
+	.intro p {
+		margin: 0;
+		font-size: 1.08rem;
+		line-height: 1.8;
+	}
+
+	.intro p + p {
+		color: rgba(var(--color-text-base), 0.66);
+	}
+
+	.facts {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		border-top: 1px solid rgba(var(--color-border), 0.95);
+		border-bottom: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	.facts div {
+		display: grid;
+		gap: 0.3rem;
+		padding: 1.8rem 1.5rem;
+	}
+
+	.facts div + div {
+		border-left: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	.facts strong {
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: 2.2rem;
+		font-weight: 600;
+		line-height: 1;
+	}
+
+	.facts span {
+		color: rgba(var(--color-text-base), 0.54);
+		font-size: 0.76rem;
+		font-weight: 700;
+		line-height: 1.5;
+		text-transform: uppercase;
+	}
+
+	.section {
+		display: grid;
+		grid-template-columns: minmax(14rem, 0.65fr) minmax(0, 1.35fr);
+		gap: 4rem;
+		padding: 6rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	h2 {
+		margin: 0;
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: clamp(2.25rem, 5vw, 4rem);
+		font-weight: 600;
+		letter-spacing: 0;
+	}
+
+	.section-copy {
+		max-width: 22rem;
 		margin: 1rem 0 0;
-		color: rgba(var(--color-text-base), 0.72);
-		font-size: 1.2rem;
+		color: rgba(var(--color-text-base), 0.58);
+		line-height: 1.7;
+	}
+
+	.focus-list {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.focus-list article {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.8rem;
+		padding: 0 1.5rem 2.2rem 0;
+	}
+
+	.focus-list :global(svg) {
+		margin-top: 0.2rem;
+		color: rgb(var(--color-accent));
+	}
+
+	h3 {
+		margin: 0;
+		font-size: 1rem;
+		letter-spacing: 0;
+	}
+
+	.focus-list p {
+		margin: 0.45rem 0 0;
+		color: rgba(var(--color-text-base), 0.62);
+		font-size: 0.9rem;
 		line-height: 1.65;
 	}
 
-	.content {
+	.timeline article {
 		display: grid;
-		gap: 1rem;
-		margin-top: 2rem;
-		padding-top: 2rem;
-		border-top: 1px solid rgba(var(--color-border), 0.9);
+		grid-template-columns: 7rem minmax(12rem, 0.8fr) minmax(0, 1.2fr);
+		gap: 1.5rem;
+		padding: 0 0 2.6rem;
 	}
 
-	.content p {
+	.timeline article + article {
+		padding-top: 2.6rem;
+		border-top: 1px solid rgba(var(--color-border), 0.8);
+	}
+
+	.period,
+	.work-heading p {
 		margin: 0;
-		color: rgba(var(--color-text-base), 0.72);
-		line-height: 1.8;
+		color: rgba(var(--color-text-base), 0.48);
+		font-size: 0.74rem;
+		font-weight: 750;
+		line-height: 1.5;
+		text-transform: uppercase;
+	}
+
+	.work-heading p {
+		margin-top: 0.5rem;
+	}
+
+	.work-description {
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.68);
+		font-size: 0.92rem;
+		line-height: 1.7;
+	}
+
+	.timeline ul {
+		display: flex;
+		grid-column: 3;
+		flex-wrap: wrap;
+		gap: 0.4rem;
+		margin: -0.6rem 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.timeline li {
+		color: rgba(var(--color-text-base), 0.5);
+		font-size: 0.7rem;
+		font-weight: 700;
+		line-height: 1;
+	}
+
+	.timeline li + li::before {
+		margin-right: 0.4rem;
+		content: "/";
+	}
+
+	.projects-link {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 2rem;
+		padding: 3rem 0 1rem;
+		color: rgb(var(--color-text-base));
+		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
+		font-size: clamp(1.5rem, 3vw, 2.4rem);
+		font-weight: 600;
+		line-height: 1.3;
+		text-decoration: none;
+	}
+
+	.projects-link small {
+		display: block;
+		margin-bottom: 0.55rem;
+		color: rgb(var(--color-accent));
+		font-family: "Atkinson Hyperlegible", Aptos, "Segoe UI Variable", sans-serif;
+		font-size: 0.72rem;
+		font-weight: 800;
+		text-transform: uppercase;
+	}
+
+	@media (max-width: 880px) {
+		.about-hero,
+		.section {
+			grid-template-columns: 1fr;
+			gap: 2.5rem;
+		}
+
+		.timeline article {
+			grid-template-columns: 6rem minmax(10rem, 0.8fr) minmax(0, 1.2fr);
+		}
+	}
+
+	@media (max-width: 680px) {
+		.about-hero {
+			padding: 1rem 0 4rem;
+		}
+
+		.facts {
+			grid-template-columns: 1fr;
+		}
+
+		.facts div {
+			padding: 1.35rem 0;
+		}
+
+		.facts div + div {
+			border-top: 1px solid rgba(var(--color-border), 0.95);
+			border-left: 0;
+		}
+
+		.section {
+			padding: 4rem 0;
+		}
+
+		.focus-list {
+			grid-template-columns: 1fr;
+		}
+
+		.focus-list article {
+			padding-right: 0;
+		}
+
+		.timeline article {
+			grid-template-columns: 1fr;
+			gap: 0.8rem;
+		}
+
+		.timeline ul {
+			grid-column: 1;
+			margin-top: 0;
+		}
 	}
 </style>
