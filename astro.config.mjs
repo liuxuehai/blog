@@ -3,56 +3,67 @@
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
-const site = process.env.SITE_URL ?? 'https://example.com';
+const site = process.env.SITE_URL ?? 'https://me.983768.xyz';
+const githubUrl = 'https://github.com/liuxuehai/blog';
 
 // https://astro.build/config
 export default defineConfig({
 	site,
 	integrations: [
 		starlight({
-			title: 'Knowledge',
-			defaultLocale: 'zh-CN',
+			title: 'Max / Knowledge',
+			description: 'Max 的技术笔记与工程实践。',
+			defaultLocale: 'root',
+			locales: {
+				root: { label: '简体中文', lang: 'zh-CN' },
+			},
+			pagination: false,
+			disable404Route: true,
+			favicon: '/favicon.svg',
+			social: [{ icon: 'github', label: 'GitHub', href: githubUrl }],
+			editLink: {
+				baseUrl: `${githubUrl}/edit/main/src/content/docs/`,
+			},
+			head: [
+				{
+					tag: 'meta',
+					attrs: {
+						property: 'og:image',
+						content: `${site}/og-default.png`,
+					},
+				},
+				{
+					tag: 'meta',
+					attrs: {
+						name: 'twitter:card',
+						content: 'summary_large_image',
+					},
+				},
+				{
+					tag: 'meta',
+					attrs: {
+						name: 'twitter:image',
+						content: `${site}/og-default.png`,
+					},
+				},
+			],
 			customCss: ['./src/styles/starlight.css'],
 			components: {
 				PageTitle: './src/components/starlight/PageTitle.astro',
 			},
 			sidebar: [
 				{
-					label: 'Knowledge',
+					label: 'Main site',
 					items: [
-						{ label: 'Overview', link: '/notes/' },
-						{ label: 'AI', link: '/notes/ai/' },
-						{
-							label: 'Astro',
-							items: [
-								{ label: 'Overview', link: '/notes/astro/' },
-								{ label: '为什么选择 Astro', link: '/notes/astro/why-astro/' },
-								{
-									label: 'Starlight Knowledge 模块',
-									link: '/notes/astro/starlight-knowledge-module/',
-								},
-							],
-						},
-						{
-							label: 'Cloudflare',
-							items: [
-								{ label: 'Overview', link: '/notes/cloudflare/' },
-								{
-									label: 'Astro 部署到 Pages',
-									link: '/notes/cloudflare/astro-cloudflare-pages/',
-								},
-								{
-									label: '安全响应头与缓存',
-									link: '/notes/cloudflare/pages-headers-cache/',
-								},
-							],
-						},
-						{ label: 'Frontend', link: '/notes/frontend/' },
-						{ label: 'Backend', link: '/notes/backend/' },
-						{ label: 'Database', link: '/notes/database/' },
-						{ label: 'DevOps', link: '/notes/devops/' },
-						{ label: 'Linux', link: '/notes/linux/' },
+						{ label: 'Home', link: '/' },
+						{ label: 'Blog', link: '/blog/' },
+						{ label: 'Projects', link: '/projects/' },
+						{ label: 'About', link: '/about/' },
 					],
+				},
+				{
+					label: 'Knowledge',
+					items: [{ autogenerate: { directory: 'notes', collapsed: true } }],
 				},
 			],
 		}),

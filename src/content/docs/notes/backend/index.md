@@ -10,11 +10,15 @@ sidebar:
 
 这里整理服务端架构、API 设计、运行时和数据流相关笔记，重点是清晰的边界和可维护实现。
 
+## Current Notes
+
+- [Java 微服务架构治理实践](/notes/backend/java-microservice-architecture-governance/)：服务边界、数据所有权、一致性、幂等与发布治理
+
 ## Focus
 
 - API 设计、错误处理和权限模型
 - 服务端模块边界与数据流
-- Node.js、边缘运行时和后台任务
+- Java、Node.js、边缘运行时和后台任务
 - 日志、配置、测试和可观测性
 
 ## Planned Notes

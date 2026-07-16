@@ -118,12 +118,18 @@ export async function getPublishedNotes() {
 	return getCollection("docs", ({ data }) => !data.draft);
 }
 
+function isNoteIndex(note: NoteEntry) {
+	return note.id === "notes/index" || note.id.endsWith("/index");
+}
+
 export async function getNotesByCategory(category: NoteCategory) {
-	return (await getPublishedNotes()).filter((note) => note.data.category === category);
+	return (await getPublishedNotes()).filter(
+		(note) => note.data.category === category && !isNoteIndex(note),
+	);
 }
 
 export async function getNoteCountsByCategory() {
-	const notes = await getPublishedNotes();
+	const notes = (await getPublishedNotes()).filter((note) => !isNoteIndex(note));
 	return notes.reduce(
 		(counts, note) => {
 			if (note.data.category) {

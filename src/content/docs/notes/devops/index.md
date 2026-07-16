@@ -6,6 +6,7 @@ tags:
   - DevOps
 sidebar:
   order: 7
+  hidden: true
 ---
 
 这里整理 Docker、CI/CD、部署流程、监控和运维自动化相关笔记，目标是让项目发布更稳定、更可复现。

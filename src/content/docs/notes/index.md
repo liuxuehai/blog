@@ -12,8 +12,4 @@ sidebar:
 - [AI](/notes/ai/)
 - [Astro](/notes/astro/)
 - [Cloudflare](/notes/cloudflare/)
-- [Frontend](/notes/frontend/)
 - [Backend](/notes/backend/)
-- [Database](/notes/database/)
-- [DevOps](/notes/devops/)
-- [Linux](/notes/linux/)

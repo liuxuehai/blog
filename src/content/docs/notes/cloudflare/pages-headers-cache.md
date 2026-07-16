@@ -75,9 +75,9 @@ RSS、robots 和 Sitemap 会随内容变化，不应使用 immutable：
 部署完成后检查真实响应，而不只是检查仓库文件：
 
 ```bash
-curl -I https://your-domain.com/
-curl -I https://your-domain.com/_astro/example.css
-curl -I https://your-domain.com/rss.xml
+curl -I https://me.983768.xyz/
+curl -I https://me.983768.xyz/_astro/example.css
+curl -I https://me.983768.xyz/rss.xml
 ```
 
 重点确认安全响应头存在，并且带指纹资源与内容索引使用不同缓存策略。

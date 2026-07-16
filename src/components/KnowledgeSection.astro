@@ -6,6 +6,7 @@ import KnowledgeIcon from "./KnowledgeIcon.astro";
 import SectionTitle from "./SectionTitle.astro";
 
 const noteCounts = await getNoteCountsByCategory();
+const publishedKnowledge = knowledge.filter((item) => (noteCounts[item.category] ?? 0) > 0);
 ---
 
 <section class="home-section" aria-labelledby="knowledge-title">
@@ -18,7 +19,7 @@ const noteCounts = await getNoteCountsByCategory();
 
 	<div class="knowledge-directory">
 		{
-			knowledge.map((item, index) => (
+			publishedKnowledge.map((item, index) => (
 				<a class="knowledge-entry" href={item.href}>
 					<div class="entry-title">
 						<span class="entry-index">0{index + 1}</span>

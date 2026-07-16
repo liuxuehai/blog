@@ -4,14 +4,16 @@ type Props = {
 	eyebrow?: string;
 	title: string;
 	description?: string;
+	headingLevel?: "h1" | "h2";
 };
 
-const { titleId, eyebrow, title, description } = Astro.props;
+const { titleId, eyebrow, title, description, headingLevel = "h2" } = Astro.props;
+const Heading = headingLevel;
 ---
 
 <div class="section-title">
 	{eyebrow && <p>{eyebrow}</p>}
-	<h2 id={titleId}>{title}</h2>
+	<Heading id={titleId}>{title}</Heading>
 	{description && <span>{description}</span>}
 </div>
 
@@ -36,6 +38,7 @@ const { titleId, eyebrow, title, description } = Astro.props;
 		text-transform: uppercase;
 	}
 
+	h1,
 	h2 {
 		margin: 0;
 		font-family: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;

@@ -6,6 +6,7 @@ tags:
   - Linux
 sidebar:
   order: 50
+  hidden: true
 ---
 
 这里整理 Linux 命令、Shell 工作流、系统配置和服务器维护相关笔记，偏向日常可查的操作手册。

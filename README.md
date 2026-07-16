@@ -69,7 +69,7 @@ Root directory: /
 生产环境变量：
 
 ```text
-SITE_URL=https://your-domain.com
+SITE_URL=https://me.983768.xyz
 ```
 
 `SITE_URL` 会用于 Astro 的 `site` 配置，从而影响 canonical URL、RSS、robots.txt 和 sitemap。

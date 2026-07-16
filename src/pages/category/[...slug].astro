@@ -33,6 +33,7 @@ const posts = await getPostsByCategory(resolvedCategory);
 			eyebrow="Category"
 			title={getCategoryLabel(resolvedCategory)}
 			description={`共 ${posts.length} 篇文章。`}
+			headingLevel="h1"
 		/>
 		<div class="post-list">
 			{posts.map((post) => <PostCard post={post} headingLevel="h2" />)}

@@ -6,6 +6,7 @@ tags:
   - Database
 sidebar:
   order: 6
+  hidden: true
 ---
 
 这里整理数据库、缓存、查询优化和数据建模相关笔记，关注从业务模型到查询性能的完整路径。

@@ -10,6 +10,10 @@ sidebar:
 
 这里整理 AI 工程、模型应用和工具链相关笔记，重点放在能复用的实践经验，而不是零散新闻。
 
+## Current Notes
+
+- [AI 辅助开发的工程化闭环](/notes/ai/ai-assisted-engineering-workflow/)：从需求拆解到人工审查和知识沉淀的完整流程
+
 ## Focus
 
 - LLM 应用开发与 Agent 工作流

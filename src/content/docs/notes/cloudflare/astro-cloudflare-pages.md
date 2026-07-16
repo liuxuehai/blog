@@ -36,20 +36,20 @@ Root directory: /
 生产环境必须设置：
 
 ```text
-SITE_URL=https://your-domain.com
+SITE_URL=https://me.983768.xyz
 ```
 
 `astro.config.mjs` 使用这个变量设置 Astro 的 `site`：
 
 ```js
-const site = process.env.SITE_URL ?? 'https://example.com';
+const site = process.env.SITE_URL ?? 'https://me.983768.xyz';
 
 export default defineConfig({
   site,
 });
 ```
 
-这个值会影响 canonical URL、RSS、`robots.txt` 和 Sitemap。上线前不能继续使用默认的 `example.com`。
+这个值会影响 canonical URL、RSS、`robots.txt` 和 Sitemap，生产环境应始终使用正式域名。
 
 ## 本地构建检查
 
