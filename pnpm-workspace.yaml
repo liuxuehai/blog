@@ -1,0 +1,14 @@
+overrides:
+  vite: 8.1.5
+  esbuild: 0.28.0
+
+patchedDependencies:
+  astro@7.0.2: patches/astro@7.0.2.patch
+  boolbase@1.0.0: patches/boolbase@1.0.0.patch
+
+minimumReleaseAgeExclude:
+  - vite@8.1.5
+
+allowBuilds:
+  esbuild: true
+  sharp: true
