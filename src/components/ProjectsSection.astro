@@ -24,7 +24,9 @@ const featuredProjects = projects.filter((project) => project.featured);
 							<span aria-hidden="true" />
 							{project.category}
 						</span>
-						<ArrowUpRight size={16} strokeWidth={1.8} aria-hidden="true" />
+						<span class={`status-badge status-${project.status}`}>
+							{project.status === "active" ? "Active" : project.status === "archived" ? "Archived" : "Prototype"}
+						</span>
 					</div>
 					<div class="project-copy">
 						<h3>{project.name}</h3>
@@ -34,9 +36,14 @@ const featuredProjects = projects.filter((project) => project.featured);
 					<ul class="project-stack" aria-label={`${project.name} technology stack`}>
 						{project.stack.map((item) => <li>{item}</li>)}
 					</ul>
-					<Button href={project.href} variant="secondary">
-						{project.linkLabel}
-					</Button>
+					<div class="project-links">
+						{project.links.map((link) => (
+							<Button href={link.href} variant={link.primary ? "primary" : "secondary"}>
+								{link.label}
+								<ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
+							</Button>
+						))}
+					</div>
 				</article>
 			))
 		}
@@ -121,6 +128,29 @@ const featuredProjects = projects.filter((project) => project.featured);
 		background: rgb(var(--color-accent));
 	}
 
+	.status-badge {
+		padding: 0.2rem 0.5rem;
+		border-radius: 3px;
+		font-size: 0.68rem;
+		font-weight: 700;
+		text-transform: uppercase;
+	}
+
+	.status-active {
+		background: rgba(var(--color-accent), 0.12);
+		color: rgb(var(--color-accent));
+	}
+
+	.status-archived {
+		background: rgba(var(--color-text-base), 0.08);
+		color: rgba(var(--color-text-base), 0.5);
+	}
+
+	.status-prototype {
+		background: rgba(var(--color-warm), 0.12);
+		color: rgb(var(--color-warm));
+	}
+
 	.project-stack {
 		display: flex;
 		flex-wrap: wrap;
@@ -140,8 +170,16 @@ const featuredProjects = projects.filter((project) => project.featured);
 		line-height: 1;
 	}
 
-	.project-card :global(.button) {
-		justify-self: start;
+	.project-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.project-links :global(.button) {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
 	}
 
 	@media (max-width: 680px) {

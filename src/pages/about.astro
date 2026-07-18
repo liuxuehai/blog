@@ -80,6 +80,11 @@ import { focusAreas, professionalWork, profile } from "../data/profile";
 		</div>
 	</section>
 
+	<section class="contact" aria-label="Contact">
+		<p class="eyebrow">Contact</p>
+		<p>合作、交流或问题，欢迎邮件联系：<a class="email-link" href="mailto:liuxuehai2023@gmail.com">liuxuehai2023@gmail.com</a></p>
+	</section>
+
 	<a class="projects-link" href="/projects">
 		<span>
 			<small>Personal work</small>
@@ -280,6 +285,45 @@ import { focusAreas, professionalWork, profile } from "../data/profile";
 		content: "/";
 	}
 
+	.contact {
+		display: flex;
+		align-items: center;
+		gap: 0.75rem;
+		padding: 2.5rem 0;
+		border-bottom: 1px solid rgba(var(--color-border), 0.95);
+	}
+
+	.contact .eyebrow {
+		margin: 0;
+		flex-shrink: 0;
+	}
+
+	.contact p {
+		margin: 0;
+		color: rgba(var(--color-text-base), 0.66);
+		font-size: 0.95rem;
+		line-height: 1.6;
+	}
+
+	.email-link {
+		display: inline-flex;
+		align-items: center;
+		padding: 0.65rem 1.25rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 6px;
+		color: rgb(var(--color-text-base));
+		font-size: 1.05rem;
+		font-weight: 600;
+		text-decoration: none;
+		transition: border-color 0.2s, color 0.2s;
+	}
+
+	.email-link:hover,
+	.email-link:focus-visible {
+		border-color: rgba(var(--color-accent), 0.55);
+		color: rgb(var(--color-accent));
+	}
+
 	.projects-link {
 		display: flex;
 		align-items: center;
@@ -306,7 +350,8 @@ import { focusAreas, professionalWork, profile } from "../data/profile";
 
 	@media (max-width: 880px) {
 		.about-hero,
-		.section {
+		.section,
+		.contact {
 			grid-template-columns: 1fr;
 			gap: 2.5rem;
 		}
@@ -335,6 +380,10 @@ import { focusAreas, professionalWork, profile } from "../data/profile";
 		}
 
 		.section {
+			padding: 4rem 0;
+		}
+
+		.contact {
 			padding: 4rem 0;
 		}
 

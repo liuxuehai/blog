@@ -7,6 +7,9 @@
     "dev": "astro dev",
     "build": "astro build",
     "check:links": "node scripts/check-links.mjs",
+    "new:post": "node scripts/new.mjs post",
+    "new:note": "node scripts/new.mjs note",
+    "new:changelog": "node scripts/new-changelog.mjs changelog",
     "generate:og": "node scripts/generate-og.mjs",
     "preview": "astro preview",
     "astro": "astro"
