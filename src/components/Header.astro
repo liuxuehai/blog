@@ -20,8 +20,12 @@ const currentPath = Astro.url.pathname;
 // Simple logic to switch path.
 // If current is /en/..., new is /... (if zh-CN) or stay /en/... (if en)
 // If current is /..., new is /en/... (if en)
+// For special pages like 404, just go to the home page of the other locale
+const isSpecialPage = currentPath.startsWith('/404');
 let switchPath = currentPath;
-if (locale === 'zh-CN') {
+if (isSpecialPage) {
+    switchPath = locale === 'zh-CN' ? '/en/' : '/';
+} else if (locale === 'zh-CN') {
     switchPath = `/en${currentPath}`;
 } else {
     switchPath = currentPath.replace(/^\/en/, '') || '/';
