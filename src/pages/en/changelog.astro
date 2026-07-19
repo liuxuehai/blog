@@ -1,8 +1,8 @@
 ---
 import { render } from "astro:content";
-import BaseLayout from "../../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../../lib/i18n";
-import { getPublishedChangelog } from "../../../lib/content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../lib/i18n";
+import { getPublishedChangelog } from "../../lib/content";
 
 const { t, locale } = useTranslations(Astro);
 const entries = await getPublishedChangelog();
