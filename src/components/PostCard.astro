@@ -1,6 +1,7 @@
 ---
 import { Image } from "astro:assets";
 import FormattedDate from "./FormattedDate.astro";
+import { useTranslations } from "../lib/i18n";
 import {
 	getCategoryLabel,
 	getCategorySlug,
@@ -16,6 +17,7 @@ type Props = {
 };
 
 const { post, headingLevel = "h3" } = Astro.props;
+const { t, getLocaleUrl } = useTranslations(Astro);
 const Heading = headingLevel;
 const image = post.data.cover ?? post.data.heroImage;
 const postUrl = getPostUrl(post);
@@ -31,11 +33,11 @@ const postUrl = getPostUrl(post);
 	}
 	<div class="content">
 		<div class="meta">
-			<a href={`/category/${getCategorySlug(post.data.category)}/`}>
+			<a href={getLocaleUrl(`/category/${getCategorySlug(post.data.category)}/`)}>
 				{getCategoryLabel(post.data.category)}
 			</a>
 			<span><FormattedDate date={post.data.pubDate} /></span>
-			<span>{getReadingTime(post)} min read</span>
+			<span>{getReadingTime(post)} {t('blog.minRead')}</span>
 		</div>
 		<Heading class="title">
 			<a href={postUrl}>{post.data.title}</a>
@@ -45,7 +47,7 @@ const postUrl = getPostUrl(post);
 			post.data.tags.length > 0 && (
 				<div class="tags" aria-label="Tags">
 					{post.data.tags.slice(0, 4).map((tag) => (
-						<a href={`/tags/${getTagSlug(tag)}/`}>{tag}</a>
+						<a href={getLocaleUrl(`/tags/${getTagSlug(tag)}/`)}>{tag}</a>
 					))}
 				</div>
 			)

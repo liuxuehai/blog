@@ -1,16 +1,16 @@
 ---
-import PostCard from "../../components/PostCard.astro";
-import SectionTitle from "../../components/SectionTitle.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../lib/i18n";
+import PostCard from "../../../components/PostCard.astro";
+import SectionTitle from "../../../components/SectionTitle.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../lib/i18n";
 import {
 	getCategoryLabel,
 	getCategorySlug,
 	getGroupedPostsByCategory,
 	getPostsByCategory,
-} from "../../lib/content";
+} from "../../../lib/content";
 
-const { t, locale } = useTranslations(Astro);
+const { t } = useTranslations(Astro);
 
 export async function getStaticPaths() {
 	const groupedPosts = await getGroupedPostsByCategory();
@@ -25,20 +25,16 @@ export async function getStaticPaths() {
 
 const { category } = Astro.props;
 const resolvedCategory = category;
-const pageTitle = `${getCategoryLabel(resolvedCategory)} | ${t('site.title')}`;
+const pageTitle = `${getCategoryLabel(resolvedCategory, 'en')} | ${t('site.title')}`;
 const posts = await getPostsByCategory(resolvedCategory);
-
-const postCountText = locale === 'zh-CN'
-	? `共 ${posts.length} 篇文章。`
-	: `${posts.length} posts found.`;
 ---
 
 <BaseLayout title={pageTitle} description={t('site.description')}>
 	<section>
 		<SectionTitle
 			eyebrow="Category"
-			title={getCategoryLabel(resolvedCategory)}
-			description={postCountText}
+			title={getCategoryLabel(resolvedCategory, 'en')}
+			description={`${posts.length} posts found.`}
 			headingLevel="h1"
 		/>
 		<div class="post-list">

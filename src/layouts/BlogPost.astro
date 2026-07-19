@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from '../components/FormattedDate.astro';
 import BaseLayout from './BaseLayout.astro';
+import { useTranslations } from '../lib/i18n';
 import {
 	getCategoryLabel,
 	getCategorySlug,
@@ -10,6 +11,8 @@ import {
 	getTagSlug,
 	type BlogPost as BlogPostEntry,
 } from '../lib/content';
+
+const { t, getLocaleUrl, locale } = useTranslations(Astro);
 
 type Props = Partial<CollectionEntry<'blog'>['data']> & {
 	title: string;
@@ -53,11 +56,11 @@ const image = cover ?? heroImage;
 			<div class="title">
 				<div class="date">
 					<FormattedDate date={pubDate} />
-					{readingTime && <span>{readingTime} min read</span>}
+					{readingTime && <span>{readingTime} {t('blog.minRead')}</span>}
 					{
 						updatedDate && (
 							<div class="last-updated-on">
-								Last updated on <FormattedDate date={updatedDate} />
+								{locale === 'zh-CN' ? '最后更新于' : 'Last updated on'} <FormattedDate date={updatedDate} />
 							</div>
 						)
 					}
@@ -67,12 +70,12 @@ const image = cover ?? heroImage;
 						<p class="meta">
 							{
 								category && (
-									<a href={`/category/${getCategorySlug(category)}/`}>
+									<a href={getLocaleUrl(`/category/${getCategorySlug(category)}/`)}>
 										{getCategoryLabel(category)}
 									</a>
 								)
 							}
-							{tags.map((tag) => <a href={`/tags/${getTagSlug(tag)}/`}>{tag}</a>)}
+							{tags.map((tag) => <a href={getLocaleUrl(`/tags/${getTagSlug(tag)}/`)}>{tag}</a>)}
 						</p>
 					)
 				}
@@ -83,7 +86,7 @@ const image = cover ?? heroImage;
 			{
 				relatedPosts.length > 0 && (
 					<section class="related-posts" aria-labelledby="related-posts-title">
-						<h2 id="related-posts-title">Related Posts</h2>
+						<h2 id="related-posts-title">{t('blog.relatedPosts')}</h2>
 						<ul>
 							{relatedPosts.map((post) => (
 								<li>

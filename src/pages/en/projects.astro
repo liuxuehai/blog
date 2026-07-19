@@ -1,8 +1,8 @@
 ---
 import { ArrowDown, Layers3 } from "lucide-astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { getProjectsData } from "../data/projects";
-import { useTranslations } from "../lib/i18n";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getProjectsData } from "../../data/projects";
+import { useTranslations } from "../../lib/i18n";
 
 const { t, locale } = useTranslations(Astro);
 const projects = getProjectsData(locale);

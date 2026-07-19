@@ -1,8 +1,8 @@
 ---
-import SectionTitle from "../../components/SectionTitle.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../lib/i18n";
-import { getAllTags, getPostsByTag, getTagSlug } from "../../lib/content";
+import SectionTitle from "../../../components/SectionTitle.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../lib/i18n";
+import { getAllTags, getPostsByTag, getTagSlug } from "../../../lib/content";
 
 const { t, getLocaleUrl } = useTranslations(Astro);
 const tags = await getAllTags();

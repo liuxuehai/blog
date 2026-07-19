@@ -4,6 +4,7 @@ import {
 	CATEGORY_BY_SLUG,
 	CATEGORY_LABELS,
 	CATEGORY_SLUGS,
+	getCategoryLabelLocalized,
 	type BlogCategory,
 	type NoteCategory,
 } from "../data/taxonomy";
@@ -26,8 +27,8 @@ export function getCategorySlug(category: BlogCategory) {
 	return CATEGORY_SLUGS[category];
 }
 
-export function getCategoryLabel(category: BlogCategory) {
-	return CATEGORY_LABELS[category];
+export function getCategoryLabel(category: BlogCategory, locale: string = 'zh-CN') {
+	return getCategoryLabelLocalized(category, locale);
 }
 
 export function getCategoryFromSlug(slug: string) {

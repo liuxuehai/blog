@@ -1,8 +1,8 @@
 ---
 import { render } from "astro:content";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { useTranslations } from "../lib/i18n";
-import { getPublishedChangelog } from "../lib/content";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../lib/i18n";
+import { getPublishedChangelog } from "../../../lib/content";
 
 const { t, locale } = useTranslations(Astro);
 const entries = await getPublishedChangelog();
@@ -15,7 +15,7 @@ const renderedEntries = await Promise.all(
 
 const title = `${t('changelog.title')} | ${t('site.title')}`;
 const description = t('site.description');
-const dateFormatter = new Intl.DateTimeFormat(locale === 'zh-CN' ? 'zh-CN' : 'en-US', {
+const dateFormatter = new Intl.DateTimeFormat('en-US', {
 	year: "numeric",
 	month: "2-digit",
 	day: "2-digit",

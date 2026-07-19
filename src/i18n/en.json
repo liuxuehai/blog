@@ -1,0 +1,85 @@
+{
+  "site": {
+    "title": "Max",
+    "description": "Sharing tech, recording thoughts, building projects."
+  },
+  "nav": {
+    "home": "Home",
+    "knowledge": "Knowledge",
+    "blog": "Blog",
+    "projects": "Projects",
+    "about": "About",
+    "github": "GitHub"
+  },
+  "hero": {
+    "eyebrow": "Independent developer",
+    "statement": "Building with AI, cloud, and the web.",
+    "description": "Notes on practices, decisions, and long-term engineering in AI, Astro, Cloudflare, and modern web development.",
+    "primaryAction": "Explore Notes",
+    "secondaryAction": "GitHub",
+    "workingWith": "Working with",
+    "currentFocus": "Current focus",
+    "boardFooter": "Open notes. Working software."
+  },
+  "about": {
+    "title": "About",
+    "years": "Years in software engineering",
+    "java": "Backend and architecture foundation",
+    "ai": "Applied to real engineering workflows",
+    "capabilities": "Capabilities",
+    "whatIWorkOn": "What I work on",
+    "experience": "Experience",
+    "selectedSystems": "Selected systems",
+    "sectionCopy": "Representative experiences organized by system domain, showing only publicly shareable technical responsibilities and engineering scope.",
+    "contact": "Contact",
+    "contactText": "For collaboration, discussion, or questions, feel free to reach out via email:",
+    "personalWork": "Personal work",
+    "viewProjects": "View agent systems, quantitative trading, and full-stack platform projects"
+  },
+  "projects": {
+    "title": "Projects",
+    "selectedWork": "Selected Work",
+    "headline": "Systems built to run,<br>not just to demo.",
+    "lead": "These personal projects come from real engineering exploration: breaking down complex problems, establishing clear boundaries, and incorporating execution, auditing, and long-term maintenance into system design.",
+    "exploreProjects": "Explore projects",
+    "projectNote": "These projects also serve to validate the complete engineering workflow of AI-assisted requirements breakdown, architecture design, code generation, test completion, and documentation.",
+    "technologyStack": "technology stack"
+  },
+  "blog": {
+    "title": "Blog",
+    "latestPosts": "Latest Posts",
+    "viewAll": "View all",
+    "relatedPosts": "Related Posts",
+    "minRead": "min read",
+    "categories": "Categories",
+    "tags": "Tags",
+    "allPosts": "All Posts",
+    "postsIn": "posts",
+    "noPosts": "No posts yet",
+    "backToBlog": "Back to Blog"
+  },
+  "knowledge": {
+    "title": "Knowledge",
+    "exploreNotes": "Explore Notes",
+    "notesInCategory": "notes",
+    "viewAllNotes": "View all notes"
+  },
+  "changelog": {
+    "title": "Changelog",
+    "version": "Version",
+    "date": "Date"
+  },
+  "common": {
+    "backToTop": "Back to top",
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "notFound": "Page Not Found",
+    "notFoundDescription": "The page you're looking for doesn't exist or has been removed.",
+    "goHome": "Go Home",
+    "builtWith": "Built with Astro",
+    "rss": "RSS",
+    "language": "Language",
+    "switchLanguage": "Switch Language",
+    "changelog": "Changelog"
+  }
+}

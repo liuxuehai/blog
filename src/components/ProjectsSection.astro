@@ -1,18 +1,29 @@
 ---
 import { ArrowUpRight } from "lucide-astro";
-import { projects } from "../data/projects";
+import { getProjectsData } from "../data/projects";
 import Button from "./Button.astro";
 import SectionTitle from "./SectionTitle.astro";
+import { useTranslations } from "../lib/i18n";
 
+const { t, locale } = useTranslations(Astro);
+const projects = getProjectsData(locale);
 const featuredProjects = projects.filter((project) => project.featured);
+
+const statusLabels = {
+	active: locale === 'zh-CN' ? '活跃' : 'Active',
+	archived: locale === 'zh-CN' ? '归档' : 'Archived',
+	prototype: locale === 'zh-CN' ? '原型' : 'Prototype'
+};
+
+const projectDesc = locale === 'zh-CN' ? "一些正在维护或开源的项目。" : "Some maintained or open-source projects.";
 ---
 
 <section class="home-section" aria-labelledby="projects-title">
 	<SectionTitle
 		titleId="projects-title"
 		eyebrow="Projects"
-		title="Projects"
-		description="一些正在维护或开源的项目。"
+		title={t('nav.projects')}
+		description={projectDesc}
 	/>
 
 	<div class="project-grid">
@@ -25,7 +36,7 @@ const featuredProjects = projects.filter((project) => project.featured);
 							{project.category}
 						</span>
 						<span class={`status-badge status-${project.status}`}>
-							{project.status === "active" ? "Active" : project.status === "archived" ? "Archived" : "Prototype"}
+							{statusLabels[project.status]}
 						</span>
 					</div>
 					<div class="project-copy">
@@ -33,7 +44,7 @@ const featuredProjects = projects.filter((project) => project.featured);
 						<p class="subtitle">{project.subtitle}</p>
 						<p>{project.description}</p>
 					</div>
-					<ul class="project-stack" aria-label={`${project.name} technology stack`}>
+					<ul class="project-stack" aria-label={`${project.name} ${t('projects.technologyStack')}`}>
 						{project.stack.map((item) => <li>{item}</li>)}
 					</ul>
 					<div class="project-links">

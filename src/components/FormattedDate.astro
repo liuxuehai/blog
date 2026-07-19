@@ -1,14 +1,17 @@
 ---
+import { useTranslations } from "../lib/i18n";
+
 interface Props {
 	date: Date;
 }
 
 const { date } = Astro.props;
+const { locale } = useTranslations(Astro);
 ---
 
 <time datetime={date.toISOString()}>
 	{
-		date.toLocaleDateString('en-us', {
+		date.toLocaleDateString(locale === 'zh-CN' ? 'zh-CN' : 'en-US', {
 			year: 'numeric',
 			month: 'short',
 			day: 'numeric',

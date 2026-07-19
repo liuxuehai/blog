@@ -1,16 +1,16 @@
 ---
-import PostCard from "../../components/PostCard.astro";
-import SectionTitle from "../../components/SectionTitle.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../lib/i18n";
+import PostCard from "../../../components/PostCard.astro";
+import SectionTitle from "../../../components/SectionTitle.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../lib/i18n";
 import {
 	getAllTags,
 	getPostsByTag,
 	getTagFromSlug,
 	getTagSlug,
-} from "../../lib/content";
+} from "../../../lib/content";
 
-const { t, locale } = useTranslations(Astro);
+const { t } = useTranslations(Astro);
 
 export async function getStaticPaths() {
 	const tags = await getAllTags();
@@ -23,10 +23,6 @@ export async function getStaticPaths() {
 const fallbackTag = await getTagFromSlug(Astro.params.slug ?? "");
 const tag = Astro.props.tag ?? fallbackTag;
 const posts = tag ? await getPostsByTag(tag) : [];
-
-const postCountText = locale === 'zh-CN'
-	? `共 ${posts.length} 篇文章。`
-	: `${posts.length} posts found.`;
 ---
 
 <BaseLayout title={`${tag ?? "Tag"} | ${t('site.title')}`} description={t('site.description')}>
@@ -34,7 +30,7 @@ const postCountText = locale === 'zh-CN'
 		<SectionTitle
 			eyebrow="Tag"
 			title={tag ?? "Tag"}
-			description={postCountText}
+			description={`${posts.length} posts found.`}
 			headingLevel="h1"
 		/>
 		<div class="post-list">

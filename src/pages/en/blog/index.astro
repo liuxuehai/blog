@@ -1,14 +1,14 @@
 ---
-import PostCard from "../../components/PostCard.astro";
-import SectionTitle from "../../components/SectionTitle.astro";
-import BaseLayout from "../../layouts/BaseLayout.astro";
-import { useTranslations } from "../../lib/i18n";
+import PostCard from "../../../components/PostCard.astro";
+import SectionTitle from "../../../components/SectionTitle.astro";
+import BaseLayout from "../../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../../lib/i18n";
 import {
 	getCategoryLabel,
 	getCategorySlug,
 	getGroupedPostsByCategory,
-} from "../../lib/content";
-import { BLOG_CATEGORIES } from "../../data/taxonomy";
+} from "../../../lib/content";
+import { BLOG_CATEGORIES } from "../../../data/taxonomy";
 
 const { t, getLocaleUrl } = useTranslations(Astro);
 const groupedPosts = await getGroupedPostsByCategory();
@@ -29,7 +29,7 @@ const groupedPosts = await getGroupedPostsByCategory();
 			return (
 				<section class="category-section">
 					<div class="category-heading">
-						<h2>{getCategoryLabel(category)}</h2>
+						<h2>{getCategoryLabel(category, 'en')}</h2>
 						<a href={getLocaleUrl(`/category/${getCategorySlug(category)}/`)}>
 							{t('blog.viewAll')}
 						</a>

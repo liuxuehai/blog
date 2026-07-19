@@ -1,0 +1,85 @@
+{
+  "site": {
+    "title": "Max",
+    "description": "分享技术、记录思考、构建项目。"
+  },
+  "nav": {
+    "home": "首页",
+    "knowledge": "知识库",
+    "blog": "博客",
+    "projects": "项目",
+    "about": "关于",
+    "github": "GitHub"
+  },
+  "hero": {
+    "eyebrow": "独立开发者",
+    "statement": "用 AI、云和 Web 构建。",
+    "description": "记录 AI、Astro、Cloudflare 与现代 Web 开发中的实践、判断和长期笔记。",
+    "primaryAction": "探索笔记",
+    "secondaryAction": "GitHub",
+    "workingWith": "使用技术",
+    "currentFocus": "当前重点",
+    "boardFooter": "开放笔记。运行中的软件。"
+  },
+  "about": {
+    "title": "关于",
+    "years": "年软件工程经验",
+    "java": "后端与架构基础",
+    "ai": "应用于实际工程流程",
+    "capabilities": "能力",
+    "whatIWorkOn": "我的工作方向",
+    "experience": "经历",
+    "selectedSystems": "代表性系统",
+    "sectionCopy": "代表性经历按系统领域整理，仅展示公开所需的技术职责与工程范围。",
+    "contact": "联系",
+    "contactText": "合作、交流或问题，欢迎邮件联系：",
+    "personalWork": "个人作品",
+    "viewProjects": "查看智能体、量化交易与全栈平台项目"
+  },
+  "projects": {
+    "title": "项目",
+    "selectedWork": "精选作品",
+    "headline": "为运行而生，<br>不只是演示。",
+    "lead": "这些个人项目来自真实的工程探索：拆解复杂问题，建立清晰边界，再把执行、审计与长期维护纳入系统设计。",
+    "exploreProjects": "探索项目",
+    "projectNote": "这些项目也用于验证 AI 辅助需求拆解、架构设计、代码生成、测试补齐与文档沉淀的完整工程流程。",
+    "technologyStack": "技术栈"
+  },
+  "blog": {
+    "title": "博客",
+    "latestPosts": "最新文章",
+    "viewAll": "查看全部",
+    "relatedPosts": "相关文章",
+    "minRead": "分钟阅读",
+    "categories": "分类",
+    "tags": "标签",
+    "allPosts": "所有文章",
+    "postsIn": "篇文章",
+    "noPosts": "暂无文章",
+    "backToBlog": "返回博客"
+  },
+  "knowledge": {
+    "title": "知识库",
+    "exploreNotes": "探索笔记",
+    "notesInCategory": "个笔记",
+    "viewAllNotes": "查看所有笔记"
+  },
+  "changelog": {
+    "title": "更新日志",
+    "version": "版本",
+    "date": "日期"
+  },
+  "common": {
+    "backToTop": "回到顶部",
+    "loading": "加载中...",
+    "error": "出错了",
+    "notFound": "页面未找到",
+    "notFoundDescription": "您访问的页面不存在或已被移除。",
+    "goHome": "返回首页",
+    "builtWith": "使用 Astro 构建",
+    "rss": "RSS 订阅",
+    "language": "语言",
+    "switchLanguage": "切换语言",
+    "changelog": "更新日志"
+  }
+}

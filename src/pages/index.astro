@@ -4,10 +4,12 @@ import Hero from "../components/Hero.astro";
 import KnowledgeSection from "../components/KnowledgeSection.astro";
 import LatestPosts from "../components/LatestPosts.astro";
 import ProjectsSection from "../components/ProjectsSection.astro";
-import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { useTranslations } from "../lib/i18n";
+
+const { t, locale } = useTranslations(Astro);
 ---
 
-<BaseLayout title={SITE_TITLE} description={SITE_DESCRIPTION}>
+<BaseLayout title={t('site.title')} description={t('site.description')}>
 	<Hero />
 	<KnowledgeSection />
 	<LatestPosts />

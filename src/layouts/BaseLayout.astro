@@ -3,7 +3,10 @@ import BaseHead from "../components/BaseHead.astro";
 import Footer from "../components/Footer.astro";
 import Header from "../components/Header.astro";
 import type { ImageMetadata } from "astro";
-import { SITE_DESCRIPTION, SITE_LANG, SITE_TITLE } from "../consts";
+import { SITE_DESCRIPTION, SITE_TITLE } from "../consts";
+import { useTranslations } from "../lib/i18n";
+
+const { locale } = useTranslations(Astro);
 
 type Props = {
 	title?: string;
@@ -29,7 +32,7 @@ const {
 ---
 
 <!doctype html>
-<html lang={SITE_LANG}>
+<html lang={locale}>
 	<head>
 		<BaseHead
 			title={title}

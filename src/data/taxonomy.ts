@@ -18,18 +18,22 @@ export const BLOG_CATEGORIES = [
 export type NoteCategory = (typeof NOTE_CATEGORIES)[number];
 export type BlogCategory = (typeof BLOG_CATEGORIES)[number];
 
-export const CATEGORY_LABELS: Record<BlogCategory, string> = {
-	AI: "AI",
-	Astro: "Astro",
-	Cloudflare: "Cloudflare",
-	Frontend: "前端",
-	Backend: "后端",
-	Database: "数据库",
-	DevOps: "DevOps",
-	Linux: "Linux",
-	Server: "服务器",
-	Others: "其他",
+export const CATEGORY_LABELS: Record<BlogCategory, Record<string, string>> = {
+	AI: { 'zh-CN': 'AI', 'en': 'AI' },
+	Astro: { 'zh-CN': 'Astro', 'en': 'Astro' },
+	Cloudflare: { 'zh-CN': 'Cloudflare', 'en': 'Cloudflare' },
+	Frontend: { 'zh-CN': '前端', 'en': 'Frontend' },
+	Backend: { 'zh-CN': '后端', 'en': 'Backend' },
+	Database: { 'zh-CN': '数据库', 'en': 'Database' },
+	DevOps: { 'zh-CN': 'DevOps', 'en': 'DevOps' },
+	Linux: { 'zh-CN': 'Linux', 'en': 'Linux' },
+	Server: { 'zh-CN': '服务器', 'en': 'Server' },
+	Others: { 'zh-CN': '其他', 'en': 'Others' },
 };
+
+export function getCategoryLabelLocalized(category: BlogCategory, locale: string = 'zh-CN'): string {
+	return CATEGORY_LABELS[category]?.[locale] ?? category;
+}
 
 export const CATEGORY_SLUGS: Record<BlogCategory, string> = {
 	AI: "ai",

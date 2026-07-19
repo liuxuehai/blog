@@ -1,7 +1,11 @@
 ---
-import { hero } from "../data/home";
+import { getHeroData } from "../data/home";
 import Badge from "./Badge.astro";
 import Button from "./Button.astro";
+import { useTranslations } from "../lib/i18n";
+
+const { t, locale, getLocaleUrl } = useTranslations(Astro);
+const hero = getHeroData(locale);
 ---
 
 <section class="hero" aria-labelledby="hero-title">
@@ -12,7 +16,7 @@ import Button from "./Button.astro";
 		<p class="lead">{hero.description}</p>
 
 		<div class="actions">
-			<Button href={hero.primaryAction.href}>{hero.primaryAction.label}</Button>
+			<Button href={getLocaleUrl(hero.primaryAction.href)}>{hero.primaryAction.label}</Button>
 			<Button
 				href={hero.secondaryAction.href}
 				variant="secondary"
@@ -23,7 +27,7 @@ import Button from "./Button.astro";
 		</div>
 
 		<div class="stack" aria-label="Technology stack">
-			<span>Working with</span>
+			<span>{t('hero.workingWith')}</span>
 			{hero.techStack.map((item) => <Badge label={item} />)}
 		</div>
 	</div>
@@ -44,7 +48,7 @@ import Button from "./Button.astro";
 				</li>
 			))}
 		</ul>
-		<p class="board-footer">Open notes. Working software.</p>
+		<p class="board-footer">{t('hero.boardFooter')}</p>
 	</aside>
 </section>
 

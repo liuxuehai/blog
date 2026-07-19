@@ -1,20 +1,25 @@
 ---
 import { ArrowUpRight } from "lucide-astro";
-import { knowledge } from "../data/knowledge";
+import { getKnowledgeData } from "../data/knowledge";
 import { getNoteCountsByCategory } from "../lib/content";
 import KnowledgeIcon from "./KnowledgeIcon.astro";
 import SectionTitle from "./SectionTitle.astro";
+import { useTranslations } from "../lib/i18n";
 
+const { t, locale } = useTranslations(Astro);
+const knowledge = getKnowledgeData(locale);
 const noteCounts = await getNoteCountsByCategory();
 const publishedKnowledge = knowledge.filter((item) => (noteCounts[item.category] ?? 0) > 0);
+
+const notesLabel = locale === 'zh-CN' ? '笔记' : 'Notes';
 ---
 
 <section class="home-section" aria-labelledby="knowledge-title">
 	<SectionTitle
 		titleId="knowledge-title"
 		eyebrow="Knowledge"
-		title="Knowledge"
-		description="持续整理的技术笔记与实践经验。"
+		title={t('knowledge.title')}
+		description={locale === 'zh-CN' ? "持续整理的技术笔记与实践经验。" : "Continuously organized technical notes and practical experience."}
 	/>
 
 	<div class="knowledge-directory">
@@ -35,7 +40,7 @@ const publishedKnowledge = knowledge.filter((item) => (noteCounts[item.category]
 						</ul>
 					</div>
 					<div class="entry-meta">
-						<span>{noteCounts[item.category] ?? 0} Notes</span>
+						<span>{noteCounts[item.category] ?? 0} {notesLabel}</span>
 						<ArrowUpRight size={18} strokeWidth={1.8} aria-hidden="true" />
 					</div>
 				</a>

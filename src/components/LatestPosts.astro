@@ -2,6 +2,7 @@
 import { ArrowRight } from "lucide-astro";
 import FormattedDate from "./FormattedDate.astro";
 import SectionTitle from "./SectionTitle.astro";
+import { useTranslations } from "../lib/i18n";
 import {
 	getCategoryLabel,
 	getLatestPosts,
@@ -9,6 +10,7 @@ import {
 	getReadingTime,
 } from "../lib/content";
 
+const { t, getLocaleUrl, locale } = useTranslations(Astro);
 const posts = await getLatestPosts(4);
 ---
 
@@ -17,10 +19,10 @@ const posts = await getLatestPosts(4);
 		<SectionTitle
 			titleId="latest-posts-title"
 			eyebrow="Blog"
-			title="Latest Posts"
-			description="最近发布的文章与更新。"
+			title={t('blog.latestPosts')}
+			description={locale === 'zh-CN' ? "最近发布的文章与更新。" : "Recently published articles and updates."}
 		/>
-		<a href="/blog">All posts <ArrowRight size={15} aria-hidden="true" /></a>
+		<a href={getLocaleUrl("/blog")}>{t('blog.viewAll')} <ArrowRight size={15} aria-hidden="true" /></a>
 	</div>
 
 	<div class="post-list">
@@ -35,7 +37,7 @@ const posts = await getLatestPosts(4);
 					</div>
 					<p class="meta">
 						<span><FormattedDate date={post.data.pubDate} /></span>
-						<span>{getReadingTime(post)} min read</span>
+						<span>{getReadingTime(post)} {t('blog.minRead')}</span>
 					</p>
 					<ArrowRight class="row-arrow" size={18} strokeWidth={1.8} aria-hidden="true" />
 				</a>

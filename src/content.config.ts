@@ -10,7 +10,9 @@ const blog = defineCollection({
 	schema: ({ image }) =>
 		z.object({
 			title: z.string(),
+			titleEn: z.string().optional(),
 			description: z.string(),
+			descriptionEn: z.string().optional(),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			category: z.enum(BLOG_CATEGORIES),

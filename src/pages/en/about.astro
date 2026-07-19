@@ -1,8 +1,8 @@
 ---
 import { ArrowUpRight, Check } from "lucide-astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
-import { useTranslations } from "../lib/i18n";
-import { getProfileData } from "../data/profile";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { useTranslations } from "../../lib/i18n";
+import { getProfileData } from "../../data/profile";
 
 const { t, locale, getLocaleUrl } = useTranslations(Astro);
 const { profile, focusAreas, professionalWork } = getProfileData(locale);

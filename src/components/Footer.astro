@@ -1,19 +1,22 @@
 ---
+import { useTranslations } from "../lib/i18n";
 import { GITHUB_URL, SITE_AUTHOR } from "../consts";
 
+const { t, getLocaleUrl } = useTranslations(Astro);
+
 const footerLinks = [
-	{ href: "/notes", label: "Knowledge" },
-	{ href: "/blog", label: "Blog" },
-	{ href: "/projects", label: "Projects" },
-	{ href: "/changelog", label: "Changelog" },
+	{ href: getLocaleUrl("/notes"), label: t('nav.knowledge') },
+	{ href: getLocaleUrl("/blog"), label: t('nav.blog') },
+	{ href: getLocaleUrl("/projects"), label: t('nav.projects') },
+	{ href: getLocaleUrl("/changelog"), label: t('common.changelog') },
 	...(GITHUB_URL ? [{ href: GITHUB_URL, label: "GitHub", external: true }] : []),
-	{ href: "/rss.xml", label: "RSS" },
+	{ href: "/rss.xml", label: t('common.rss') },
 ];
 ---
 
 <footer class="site-footer">
 	<div class="footer-inner">
-		<a class="footer-brand" href="/">{SITE_AUTHOR}</a>
+		<a class="footer-brand" href={getLocaleUrl("/")}>{SITE_AUTHOR}</a>
 		<nav class="footer-links" aria-label="Footer navigation">
 			{
 				footerLinks.map((link) => (
@@ -27,7 +30,7 @@ const footerLinks = [
 				))
 			}
 		</nav>
-		<p>Built with Astro</p>
+		<p>{t('common.builtWith')}</p>
 	</div>
 </footer>
 

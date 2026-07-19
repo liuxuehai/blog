@@ -1,20 +1,36 @@
 ---
+import { useTranslations } from "../lib/i18n";
 import { GITHUB_URL, SITE_AUTHOR } from "../consts";
 import HeaderLink from "./HeaderLink.astro";
 import ThemeToggle from "./ThemeToggle.astro";
 
+const { t, getLocaleUrl, locale } = useTranslations(Astro);
+
 const navItems = [
-	{ href: "/", label: "Home" },
-	{ href: "/notes", label: "Knowledge" },
-	{ href: "/blog", label: "Blog" },
-	{ href: "/projects", label: "Projects" },
-	{ href: "/about", label: "About" },
+	{ href: getLocaleUrl("/"), label: t('nav.home') },
+	{ href: getLocaleUrl("/notes"), label: t('nav.knowledge') },
+	{ href: getLocaleUrl("/blog"), label: t('nav.blog') },
+	{ href: getLocaleUrl("/projects"), label: t('nav.projects') },
+	{ href: getLocaleUrl("/about"), label: t('nav.about') },
 ];
+
+const switchLocale = locale === 'zh-CN' ? 'en' : 'zh-CN';
+const switchLabel = locale === 'zh-CN' ? 'English' : '中文';
+const currentPath = Astro.url.pathname;
+// Simple logic to switch path.
+// If current is /en/..., new is /... (if zh-CN) or stay /en/... (if en)
+// If current is /..., new is /en/... (if en)
+let switchPath = currentPath;
+if (locale === 'zh-CN') {
+    switchPath = `/en${currentPath}`;
+} else {
+    switchPath = currentPath.replace(/^\/en/, '') || '/';
+}
 ---
 
 <header class="site-header">
 	<nav class="site-nav" aria-label="Primary navigation">
-		<a class="logo" href="/" aria-label={`${SITE_AUTHOR} home`}>
+		<a class="logo" href={getLocaleUrl("/")} aria-label={`${SITE_AUTHOR} home`}>
 			<span aria-hidden="true">M</span>
 			<strong>{SITE_AUTHOR}</strong>
 		</a>
@@ -24,10 +40,13 @@ const navItems = [
 		</div>
 
 		<div class="header-actions">
+			<a class="lang-switch" href={switchPath} title={t('common.switchLanguage')}>
+				{switchLabel}
+			</a>
 			{
 				GITHUB_URL && (
 					<a class="github-link" href={GITHUB_URL} target="_blank" rel="noreferrer">
-						GitHub
+						{t('nav.github')}
 					</a>
 				)
 			}
@@ -126,7 +145,23 @@ const navItems = [
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
-		gap: 0.5rem;
+		gap: 0.75rem;
+	}
+
+	.lang-switch {
+		font-size: 0.82rem;
+		font-weight: 700;
+		color: rgba(var(--color-text-base), 0.7);
+		text-decoration: none;
+		padding: 0.35rem 0.65rem;
+		border: 1px solid rgba(var(--color-border), 0.9);
+		border-radius: 6px;
+		transition: all 0.2s;
+	}
+
+	.lang-switch:hover {
+		color: rgb(var(--color-text-base));
+		background: rgba(var(--color-card), 0.45);
 	}
 
 	@media (max-width: 760px) {

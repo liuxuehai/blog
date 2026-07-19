@@ -1,6 +1,8 @@
 ---
 title: "把个人网站改造成 Content Layer"
+titleEn: "Transforming a Personal Site with Content Layer"
 description: "记录这个 Astro 个人网站如何把 Blog、Notes、RSS、分类和标签统一到一套内容层。"
+descriptionEn: "How this Astro site unifies Blog, Notes, RSS, categories, and tags into a single content layer."
 pubDate: 2026-07-12
 category: Astro
 tags:
