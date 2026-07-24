@@ -10,7 +10,7 @@ const footerLinks = [
 	{ href: getLocaleUrl("/projects"), label: t('nav.projects') },
 	{ href: getLocaleUrl("/changelog"), label: t('common.changelog') },
 	...(GITHUB_URL ? [{ href: GITHUB_URL, label: "GitHub", external: true }] : []),
-	{ href: "/rss.xml", label: t('common.rss') },
+	{ href: getLocaleUrl("/rss.xml"), label: t('common.rss') },
 ];
 ---
 

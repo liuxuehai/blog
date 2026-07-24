@@ -5,9 +5,11 @@ import '../styles/global.css';
 import type { ImageMetadata } from 'astro';
 import {
 	SITE_AUTHOR,
-	SITE_LOCALE,
 	SITE_TITLE,
 } from '../consts';
+import { useTranslations } from '../lib/i18n';
+
+const { locale } = useTranslations(Astro);
 
 interface Props {
 	title: string;
@@ -34,6 +36,16 @@ const imageURL =
 	typeof image === 'string'
 		? new URL(image, Astro.site)
 		: new URL(image.src, Astro.site);
+
+// hreflang: generate alternate URLs for both languages
+const pathname = Astro.url.pathname;
+const isEn = pathname.startsWith('/en/') || pathname === '/en';
+const zhPath = isEn ? pathname.replace(/^\/en/, '') || '/' : pathname;
+const enPath = pathname.startsWith('/en/') || pathname === '/en' ? pathname : `/en${pathname}`;
+const zhURL = new URL(zhPath, Astro.site).href;
+const enURL = new URL(enPath, Astro.site).href;
+const ogLocale = locale === 'zh-CN' ? 'zh_CN' : 'en_US';
+const ogAlternateLocale = locale === 'zh-CN' ? 'en_US' : 'zh_CN';
 ---
 
 <!-- Global Metadata -->
@@ -45,8 +57,14 @@ const imageURL =
 <link
 	rel="alternate"
 	type="application/rss+xml"
-	title={SITE_TITLE}
+	title={`${SITE_TITLE} (中文)`}
 	href={new URL('rss.xml', Astro.site)}
+/>
+<link
+	rel="alternate"
+	type="application/rss+xml"
+	title={`${SITE_TITLE} (English)`}
+	href={new URL('en/rss.xml', Astro.site)}
 />
 <meta name="generator" content={Astro.generator} />
 
@@ -70,6 +88,11 @@ const imageURL =
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
+<!-- hreflang tags for i18n -->
+<link rel="alternate" hreflang="zh-CN" href={zhURL} />
+<link rel="alternate" hreflang="en" href={enURL} />
+<link rel="alternate" hreflang="x-default" href={zhURL} />
+
 <!-- Primary Meta Tags -->
 <title>{title}</title>
 <meta name="title" content={title} />
@@ -79,7 +102,8 @@ const imageURL =
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={type} />
 <meta property="og:site_name" content={SITE_TITLE} />
-<meta property="og:locale" content={SITE_LOCALE} />
+<meta property="og:locale" content={ogLocale} />
+<meta property="og:locale:alternate" content={ogAlternateLocale} />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />

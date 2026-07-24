@@ -71,7 +71,7 @@ const image = cover ?? heroImage;
 							{
 								category && (
 									<a href={getLocaleUrl(`/category/${getCategorySlug(category)}/`)}>
-										{getCategoryLabel(category)}
+										{getCategoryLabel(category, locale)}
 									</a>
 								)
 							}
@@ -90,8 +90,8 @@ const image = cover ?? heroImage;
 						<ul>
 							{relatedPosts.map((post) => (
 								<li>
-									<a href={getPostUrl(post)}>{post.data.title}</a>
-									<span>{post.data.description}</span>
+									<a href={getLocaleUrl(getPostUrl(post))}>{locale === 'en' && post.data.titleEn ? post.data.titleEn : post.data.title}</a>
+									<span>{locale === 'en' && post.data.descriptionEn ? post.data.descriptionEn : post.data.description}</span>
 								</li>
 							))}
 						</ul>

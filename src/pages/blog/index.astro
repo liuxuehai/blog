@@ -10,7 +10,7 @@ import {
 } from "../../lib/content";
 import { BLOG_CATEGORIES } from "../../data/taxonomy";
 
-const { t, getLocaleUrl } = useTranslations(Astro);
+const { t, getLocaleUrl, locale } = useTranslations(Astro);
 const groupedPosts = await getGroupedPostsByCategory();
 ---
 
@@ -29,7 +29,7 @@ const groupedPosts = await getGroupedPostsByCategory();
 			return (
 				<section class="category-section">
 					<div class="category-heading">
-						<h2>{getCategoryLabel(category)}</h2>
+						<h2>{getCategoryLabel(category, locale)}</h2>
 						<a href={getLocaleUrl(`/category/${getCategorySlug(category)}/`)}>
 							{t('blog.viewAll')}
 						</a>

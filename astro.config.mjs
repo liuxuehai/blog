@@ -16,7 +16,18 @@ export default defineConfig({
 			defaultLocale: 'root',
 			locales: {
 				root: { label: '简体中文', lang: 'zh-CN' },
-				en: { label: 'English', lang: 'en' },
+				en: {
+					label: 'English',
+					lang: 'en',
+					translations: {
+						'sidebar.Main site': 'Main site',
+						'sidebar.Home': 'Home',
+						'sidebar.Blog': 'Blog',
+						'sidebar.Projects': 'Projects',
+						'sidebar.About': 'About',
+						'sidebar.Knowledge': 'Knowledge',
+					},
+				},
 			},
 			pagination: false,
 			disable404Route: true,

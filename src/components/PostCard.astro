@@ -17,16 +17,18 @@ type Props = {
 };
 
 const { post, headingLevel = "h3" } = Astro.props;
-const { t, getLocaleUrl } = useTranslations(Astro);
+const { t, getLocaleUrl, locale } = useTranslations(Astro);
 const Heading = headingLevel;
 const image = post.data.cover ?? post.data.heroImage;
-const postUrl = getPostUrl(post);
+const postUrl = getLocaleUrl(getPostUrl(post));
+const postTitle = locale === 'en' && post.data.titleEn ? post.data.titleEn : post.data.title;
+const postDescription = locale === 'en' && post.data.descriptionEn ? post.data.descriptionEn : post.data.description;
 ---
 
 <article class="post-card">
 	{
 		image && (
-			<a class="image-link" href={postUrl} aria-label={post.data.title}>
+			<a class="image-link" href={postUrl} aria-label={postTitle}>
 				<Image width={720} height={360} src={image} alt="" />
 			</a>
 		)
@@ -34,15 +36,15 @@ const postUrl = getPostUrl(post);
 	<div class="content">
 		<div class="meta">
 			<a href={getLocaleUrl(`/category/${getCategorySlug(post.data.category)}/`)}>
-				{getCategoryLabel(post.data.category)}
+				{getCategoryLabel(post.data.category, locale)}
 			</a>
 			<span><FormattedDate date={post.data.pubDate} /></span>
 			<span>{getReadingTime(post)} {t('blog.minRead')}</span>
 		</div>
 		<Heading class="title">
-			<a href={postUrl}>{post.data.title}</a>
+			<a href={postUrl}>{postTitle}</a>
 		</Heading>
-		<p>{post.data.description}</p>
+		<p>{postDescription}</p>
 		{
 			post.data.tags.length > 0 && (
 				<div class="tags" aria-label="Tags">

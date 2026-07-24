@@ -25,7 +25,7 @@ export async function getStaticPaths() {
 
 const { category } = Astro.props;
 const resolvedCategory = category;
-const pageTitle = `${getCategoryLabel(resolvedCategory)} | ${t('site.title')}`;
+const pageTitle = `${getCategoryLabel(resolvedCategory, locale)} | ${t('site.title')}`;
 const posts = await getPostsByCategory(resolvedCategory);
 
 const postCountText = locale === 'zh-CN'
@@ -37,7 +37,7 @@ const postCountText = locale === 'zh-CN'
 	<section>
 		<SectionTitle
 			eyebrow="Category"
-			title={getCategoryLabel(resolvedCategory)}
+			title={getCategoryLabel(resolvedCategory, locale)}
 			description={postCountText}
 			headingLevel="h1"
 		/>

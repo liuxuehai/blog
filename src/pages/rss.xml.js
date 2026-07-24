@@ -10,7 +10,7 @@ export async function GET(context) {
 		site: context.site,
 		items: posts.map((post) => {
 			const categories = Array.from(
-				new Set([getCategoryLabel(post.data.category), ...post.data.tags]),
+				new Set([getCategoryLabel(post.data.category, 'zh-CN'), ...post.data.tags]),
 			);
 
 			return {
