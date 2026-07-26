@@ -12,6 +12,7 @@ sidebar:
 
 ## Current Notes
 
+- [Bot 架构知识库](/notes/ai/bot/)：一个 Rust 实现的 local-first AI Agent 系统——架构设计、核心模块与面试深度解析
 - [AI 辅助开发的工程化闭环](/notes/ai/ai-assisted-engineering-workflow/)：从需求拆解到人工审查和知识沉淀的完整流程
 
 ## Focus

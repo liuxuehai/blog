@@ -13,6 +13,11 @@ sidebar:
 ## Current Notes
 
 - [Java 微服务架构治理实践](/notes/backend/java-microservice-architecture-governance/)：服务边界、数据所有权、一致性、幂等与发布治理
+- [缓存穿透、击穿、雪崩与 Hotkey 实战](/notes/backend/cache-penetration-breakdown-avalanche/)：缓存三大问题的根因、治理方案选型与京东 hotkey 热点探测
+- [Seata 分布式事务](/notes/backend/seata/)：AT / TCC / Saga / XA 四种模式的原理、选型与工程实践
+- [Sentinel 流量治理](/notes/backend/sentinel/)：流控规则、熔断降级、热点参数限流、系统保护、集群流控
+- [消息队列](/notes/backend/mq/)：RabbitMQ / Kafka / RocketMQ / Pulsar 核心对比与选型
+- [秒杀系统设计](/notes/backend/flash-sale/)：库存扣减、防超卖、逐层限流、降级熔断与异步下单
 
 ## Focus
 
