@@ -8,7 +8,8 @@ export type KnowledgeIcon =
 	| "server"
 	| "database"
 	| "container"
-	| "terminal";
+	| "terminal"
+	| "layers";
 
 export interface KnowledgeCategory {
 	id: string;
@@ -74,6 +75,16 @@ export function getKnowledgeData(locale: string): KnowledgeCategory[] {
 			description: isZh ? "服务端架构、API、数据流与工程实践。" : "Server architecture, API, data flow, and engineering practices.",
 			href: `/notes/${CATEGORY_SLUGS.Backend}`,
 			topics: ["API", "Service", "Runtime"],
+			status: "Coming Soon",
+		},
+		{
+			id: "architecture",
+			category: "Architecture",
+			title: "Architecture",
+			icon: "layers",
+			description: isZh ? "DDD、聚合设计、限界上下文与领域建模。" : "DDD, aggregate design, bounded contexts, and domain modeling.",
+			href: `/notes/${CATEGORY_SLUGS.Architecture}`,
+			topics: ["DDD", "Domain", "Aggregate"],
 			status: "Coming Soon",
 		},
 		{
