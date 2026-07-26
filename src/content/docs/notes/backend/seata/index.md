@@ -95,4 +95,4 @@ seata:
 
 - [缓存穿透、击穿、雪崩与 Hotkey 实战](/notes/backend/cache-penetration-breakdown-avalanche/)：缓存三大问题与热点探测
 - [Java 微服务架构治理实践](/notes/backend/java-microservice-architecture-governance/)：服务边界与一致性
-- [DDD 领域驱动设计](/notes/ddd/)：聚合、领域事件与跨聚合事务
+- [DDD 领域驱动设计](/notes/architecture/)：聚合、领域事件与跨聚合事务

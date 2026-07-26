@@ -77,4 +77,4 @@ sidebar:
 - [Seata 分布式事务](/notes/backend/seata/)：事务消息与分布式事务的配合
 - [Sentinel 流量治理](/notes/backend/sentinel/)：MQ 消费者的限流保护
 - [Java 微服务架构治理实践](/notes/backend/java-microservice-architecture-governance/)：事件驱动架构
-- [DDD 领域驱动设计](/notes/ddd/)：领域事件与消息队列
+- [DDD 领域驱动设计](/notes/architecture/)：领域事件与消息队列

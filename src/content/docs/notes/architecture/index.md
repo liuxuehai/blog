@@ -34,14 +34,14 @@ sidebar:
 
 ## 知识库结构
 
-- [业务建模流程](/notes/ddd/business-modeling/)：从还原业务流程到领域模型落地的完整过程
-- [核心概念](/notes/ddd/core-concepts/)：统一语言、实体、值对象、聚合、仓储、领域服务、应用服务、领域事件
-- [架构与建模风格](/notes/ddd/architecture/)：分层架构、贫血 vs 充血模型、与传统三层架构的对比
-- [业务规则放置策略](/notes/ddd/rule-placement/)：规则该放值对象、聚合根、领域服务还是应用服务
-- [聚合与聚合根设计](/notes/ddd/aggregate-design/)：聚合根职责、设计步骤、边界划分、跨聚合事务、常见错误
-- [限界上下文与微服务](/notes/ddd/bounded-context/)：Bounded Context、Context Map、核心域 / 支撑域 / 通用域
-- [工程实践](/notes/ddd/real-world-examples/)：业财系统建模、支付渠道路由、CQRS、老系统引入 DDD
-- [面试专题](/notes/ddd/interview/)：常见问题、高难度追问、面试话术
+- [业务建模流程](/notes/architecture/business-modeling/)：从还原业务流程到领域模型落地的完整过程
+- [核心概念](/notes/architecture/core-concepts/)：统一语言、实体、值对象、聚合、仓储、领域服务、应用服务、领域事件
+- [架构与建模风格](/notes/architecture/architecture/)：分层架构、贫血 vs 充血模型、与传统三层架构的对比
+- [业务规则放置策略](/notes/architecture/rule-placement/)：规则该放值对象、聚合根、领域服务还是应用服务
+- [聚合与聚合根设计](/notes/architecture/aggregate-design/)：聚合根职责、设计步骤、边界划分、跨聚合事务、常见错误
+- [限界上下文与微服务](/notes/architecture/bounded-context/)：Bounded Context、Context Map、核心域 / 支撑域 / 通用域
+- [工程实践](/notes/architecture/real-world-examples/)：业财系统建模、支付渠道路由、CQRS、老系统引入 DDD
+- [面试专题](/notes/architecture/interview/)：常见问题、高难度追问、面试话术
 
 ## 面试一句话总结
 
