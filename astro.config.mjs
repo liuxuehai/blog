@@ -1,5 +1,6 @@
 // @ts-check
 
+import sitemap from '@astrojs/sitemap';
 import starlight from '@astrojs/starlight';
 import { defineConfig } from 'astro/config';
 
@@ -80,4 +81,5 @@ export default defineConfig({
 			],
 		}),
 	],
+	sitemap(),
 });
