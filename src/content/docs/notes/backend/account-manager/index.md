@@ -13,7 +13,7 @@ sidebar:
 updatedDate: 2025-10-03
 difficulty: advanced
 status: stable
-lastReviewed: 2025-10-15
+lastReviewed: 2026-07-15
 ---
 
 这里整理 Account Manager 的核心知识库——一个用 Rust 构建的统一 AI 账号代理与协议转换系统。
