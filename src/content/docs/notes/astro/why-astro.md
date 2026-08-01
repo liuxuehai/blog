@@ -7,10 +7,10 @@ tags:
   - Architecture
   - Static Site
 order: 21
-updatedDate: 2026-07-13
+updatedDate: 2025-05-10
 difficulty: beginner
 status: stable
-lastReviewed: 2026-07-13
+lastReviewed: 2025-08-25
 draft: false
 sidebar:
   order: 21

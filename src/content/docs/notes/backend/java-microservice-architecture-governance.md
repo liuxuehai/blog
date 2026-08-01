@@ -8,10 +8,10 @@ tags:
   - Architecture
   - Distributed Systems
 order: 51
-updatedDate: 2026-07-15
+updatedDate: 2024-08-08
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-15
+lastReviewed: 2025-02-01
 draft: false
 sidebar:
   order: 51

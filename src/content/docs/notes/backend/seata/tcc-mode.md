@@ -7,10 +7,10 @@ tags:
   - TCC Mode
   - Distributed Transaction
 order: 532
-updatedDate: 2026-07-26
+updatedDate: 2024-08-18
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-02-10
 draft: false
 sidebar:
   order: 532

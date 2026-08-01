@@ -1,5 +1,4 @@
 ---
-import { ArrowUpRight } from "lucide-astro";
 import { getProjectsData } from "../data/projects";
 import Button from "./Button.astro";
 import SectionTitle from "./SectionTitle.astro";
@@ -49,9 +48,12 @@ const projectDesc = locale === 'zh-CN' ? "一些正在维护或开源的项目�
 					</ul>
 					<div class="project-links">
 						{project.links.map((link) => (
-							<Button href={link.href} variant={link.primary ? "primary" : "secondary"}>
+							<Button
+								href={link.href}
+								variant={link.primary ? "primary" : "secondary"}
+								external={link.href.startsWith("http")}
+							>
 								{link.label}
-								<ArrowUpRight size={14} strokeWidth={1.8} aria-hidden="true" />
 							</Button>
 						))}
 					</div>

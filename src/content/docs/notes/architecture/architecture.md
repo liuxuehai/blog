@@ -7,10 +7,10 @@ tags:
   - Architecture
   - Design Patterns
 order: 32
-updatedDate: 2026-07-26
+updatedDate: 2024-06-10
 difficulty: intermediate
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-03-20
 draft: false
 sidebar:
   order: 32

@@ -44,8 +44,8 @@ export function getProjectsData(locale: string): Project[] {
 				],
 			featured: true,
 			links: [
-				{ label: "GitHub", href: "#", primary: true },
-				{ label: isZh ? "文档" : "Documentation", href: "#" },
+				{ label: "GitHub", href: "https://github.com/lp855674/bot", primary: true },
+				{ label: isZh ? "文档" : "Documentation", href: "/notes/ai/bot/" },
 			],
 		},
 		{
@@ -71,7 +71,7 @@ export function getProjectsData(locale: string): Project[] {
 				],
 			featured: true,
 			links: [
-				{ label: "GitHub", href: "#", primary: true },
+				{ label: "GitHub", href: "https://github.com/lp855674/trader", primary: true },
 				{ label: "API Docs", href: "#" },
 			],
 		},
@@ -98,7 +98,11 @@ export function getProjectsData(locale: string): Project[] {
 				],
 			featured: false,
 			links: [
-				{ label: "GitHub", href: "#", primary: true },
+				{
+					label: isZh ? "GitHub（私有）" : "GitHub (Private)",
+					href: "https://github.com/liuxuehai/account-manager",
+					primary: true,
+				},
 			],
 		},
 		{
@@ -124,7 +128,11 @@ export function getProjectsData(locale: string): Project[] {
 				],
 			featured: false,
 			links: [
-				{ label: "GitHub", href: "#", primary: true },
+				{
+					label: isZh ? "GitHub（私有）" : "GitHub (Private)",
+					href: "https://github.com/valamall/mark",
+					primary: true,
+				},
 				{ label: "Live Demo", href: "#" },
 			],
 		},

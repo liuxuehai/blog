@@ -8,10 +8,10 @@ tags:
   - Agent Loop
   - Reflection
 order: 122
-updatedDate: 2026-07-24
+updatedDate: 2025-01-28
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-24
+lastReviewed: 2025-08-15
 draft: false
 sidebar:
   order: 122

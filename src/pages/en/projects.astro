@@ -1,5 +1,5 @@
 ---
-import { ArrowDown, Layers3 } from "lucide-astro";
+import { ArrowDown, ArrowUpRight, Layers3 } from "lucide-astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import { getProjectsData } from "../../data/projects";
 import { useTranslations } from "../../lib/i18n";
@@ -44,6 +44,18 @@ const description = t('site.description');
 						<ul class="stack" aria-label={`${project.name} ${t('projects.technologyStack')}`}>
 							{project.stack.map((item) => <li>{item}</li>)}
 						</ul>
+						<div class="project-links">
+							{project.links.filter((link) => link.href !== "#").map((link) => (
+								<a
+									href={link.href}
+									target={link.href.startsWith("http") ? "_blank" : undefined}
+									rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+								>
+									{link.label}
+									<ArrowUpRight size={15} strokeWidth={1.8} aria-hidden="true" />
+								</a>
+							))}
+						</div>
 					</div>
 				</article>
 			))
@@ -196,6 +208,28 @@ const description = t('site.description');
 		font-size: 0.72rem;
 		font-weight: 700;
 		line-height: 1;
+	}
+
+	.project-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.75rem 1.25rem;
+		margin-top: 1.5rem;
+	}
+
+	.project-links a {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+		color: rgb(var(--color-text-base));
+		font-size: 0.82rem;
+		font-weight: 750;
+		text-decoration: none;
+	}
+
+	.project-links a:hover,
+	.project-links a:focus-visible {
+		color: rgb(var(--color-accent));
 	}
 
 	.project-note {

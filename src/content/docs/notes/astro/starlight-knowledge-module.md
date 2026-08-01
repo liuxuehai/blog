@@ -7,10 +7,10 @@ tags:
   - Starlight
   - Knowledge
 order: 22
-updatedDate: 2026-07-13
+updatedDate: 2025-05-25
 difficulty: intermediate
 status: stable
-lastReviewed: 2026-07-13
+lastReviewed: 2025-09-01
 draft: false
 sidebar:
   order: 22

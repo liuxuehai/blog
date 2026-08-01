@@ -85,7 +85,7 @@ const { profile, focusAreas, professionalWork } = getProfileData(locale);
 
 	<section class="contact" aria-label="Contact">
 		<p class="eyebrow">{t('about.contact')}</p>
-		<p>{t('about.contactText')}<a class="email-link" href="mailto:liuxuehai2023@gmail.com">liuxuehai2023@gmail.com</a></p>
+		<p>{t('about.contactText')}<a class="email-link" href={`mailto:${profile.email}`}>{profile.email}</a></p>
 	</section>
 
 	<a class="projects-link" href={getLocaleUrl("/projects")}>
@@ -409,3 +409,5 @@ const { profile, focusAreas, professionalWork } = getProfileData(locale);
 		}
 	}
 </style>
+
+

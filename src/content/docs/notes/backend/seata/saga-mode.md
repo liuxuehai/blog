@@ -8,10 +8,10 @@ tags:
   - Distributed Transaction
   - State Machine
 order: 533
-updatedDate: 2026-07-26
+updatedDate: 2024-08-25
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-02-10
 draft: false
 sidebar:
   order: 533

@@ -7,10 +7,10 @@ tags:
   - System Protection
   - Adaptive
 order: 544
-updatedDate: 2026-07-26
+updatedDate: 2024-10-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-03-05
 draft: false
 sidebar:
   order: 544

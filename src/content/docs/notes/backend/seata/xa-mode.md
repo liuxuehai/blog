@@ -8,10 +8,10 @@ tags:
   - Distributed Transaction
   - 2PC
 order: 534
-updatedDate: 2026-07-26
+updatedDate: 2024-09-02
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-02-10
 draft: false
 sidebar:
   order: 534

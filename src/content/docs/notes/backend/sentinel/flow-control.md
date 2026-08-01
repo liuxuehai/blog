@@ -7,10 +7,10 @@ tags:
   - Flow Control
   - Rate Limiting
 order: 541
-updatedDate: 2026-07-26
+updatedDate: 2024-09-15
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-03-05
 draft: false
 sidebar:
   order: 541

@@ -7,10 +7,10 @@ tags:
   - Security
   - Cache
 order: 32
-updatedDate: 2026-07-13
+updatedDate: 2025-07-05
 difficulty: intermediate
 status: stable
-lastReviewed: 2026-07-13
+lastReviewed: 2025-09-10
 draft: false
 sidebar:
   order: 32

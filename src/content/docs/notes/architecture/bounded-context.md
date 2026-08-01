@@ -7,10 +7,10 @@ tags:
   - Microservices
   - Bounded Context
 order: 34
-updatedDate: 2026-07-26
+updatedDate: 2024-03-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2024-09-05
 draft: false
 sidebar:
   order: 34

@@ -7,10 +7,10 @@ tags:
   - Business Rules
   - Design Principles
 order: 31
-updatedDate: 2026-07-26
+updatedDate: 2024-05-08
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-01-12
 draft: false
 sidebar:
   order: 31

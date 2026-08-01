@@ -7,10 +7,10 @@ tags:
   - Message Queue
   - AMQP
 order: 551
-updatedDate: 2026-07-26
+updatedDate: 2024-07-25
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2024-10-20
 draft: false
 sidebar:
   order: 551

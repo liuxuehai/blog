@@ -7,10 +7,10 @@ tags:
   - Message Queue
   - Financial
 order: 553
-updatedDate: 2026-07-26
+updatedDate: 2024-07-15
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2024-10-20
 draft: false
 sidebar:
   order: 553

@@ -7,10 +7,10 @@ tags:
   - Astro
   - Deployment
 order: 31
-updatedDate: 2026-07-13
+updatedDate: 2025-06-15
 difficulty: beginner
 status: stable
-lastReviewed: 2026-07-13
+lastReviewed: 2025-09-10
 draft: false
 sidebar:
   order: 31

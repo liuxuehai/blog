@@ -8,10 +8,10 @@ tags:
   - Interview
   - System Design
 order: 125
-updatedDate: 2026-07-24
+updatedDate: 2025-03-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-24
+lastReviewed: 2025-09-10
 draft: false
 sidebar:
   order: 125

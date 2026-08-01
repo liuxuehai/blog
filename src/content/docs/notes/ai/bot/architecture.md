@@ -7,10 +7,10 @@ tags:
   - Rust
   - Architecture
 order: 121
-updatedDate: 2026-07-24
+updatedDate: 2025-01-10
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-24
+lastReviewed: 2025-08-15
 draft: false
 sidebar:
   order: 121

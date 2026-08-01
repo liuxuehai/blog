@@ -7,10 +7,10 @@ tags:
   - Circuit Breaking
   - Resilience
 order: 542
-updatedDate: 2026-07-26
+updatedDate: 2024-09-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2025-03-05
 draft: false
 sidebar:
   order: 542

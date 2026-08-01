@@ -6,10 +6,10 @@ tags:
   - DDD
   - Domain Modeling
 order: 31
-updatedDate: 2026-07-26
+updatedDate: 2024-03-12
 difficulty: intermediate
 status: stable
-lastReviewed: 2026-07-26
+lastReviewed: 2024-09-05
 draft: false
 sidebar:
   order: 31
