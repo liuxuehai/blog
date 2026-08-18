@@ -87,4 +87,4 @@ HTTP/2 对应类型在 `client/conn/http2.rs:24-60`，Builder 在 `:67-80`，han
 
 - [HTTP/1 状态机](/notes/source/rust/hyper/http1-state-machine/)
 - [运行时与 IO 抽象](/notes/source/rust/hyper/runtime-io/)
-- [grpc-go ClientConn](/notes/source/go/grpc-go/client-conn/)
+- [grpc-go ClientConn](/notes/source/go/grpc-go/clientconn/)
