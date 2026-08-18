@@ -13,3 +13,4 @@ sidebar:
 - [Astro](/notes/astro/)
 - [Cloudflare](/notes/cloudflare/)
 - [Backend](/notes/backend/)
+- [源码解析](/notes/source/)：48 个开源仓库的分册式深度解析
