@@ -8,10 +8,10 @@ tags:
   - Concurrency
   - IO
 order: 33
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 33
@@ -20,6 +20,13 @@ sidebar:
 Valkey IO Threads 最值得读的不是“开几个线程”，而是任务如何在主线程与 worker 间流动。`io_threads.c` 用不同方向、不同竞争关系的队列组合出一个受控拓扑，使 worker 不需要为每个 client 争抢全局锁。
 
 <!-- more -->
+
+## 先给答案：Valkey 多线程 I/O 优化的是“搬运”，不是任意命令并行执行
+
+网络读写、协议解析和响应发送会消耗 CPU，但它们不一定需要同时修改 Redis 核心数据结构。Valkey 将这类工作分派给 IO worker，再由主线程在合适的时机汇总结果；命令执行仍受主线程状态和顺序约束。
+
+队列拓扑使用不同的单生产者/多生产者关系，是因为任务的所有者不同：主线程可能向多个 worker 投递，而多个 worker 的完成结果又需要被主线程安全消费。用一个“万能并发队列”虽然概念简单，却会把所有方向的同步成本叠加到最热路径。
+
 
 ## 队列拓扑
 
@@ -76,5 +83,3 @@ idle -> dispatch -> queued -> processing -> completed -> drained
 - [总体架构](/notes/source/redis/valkey/architecture/)
 - [后台工作边界](/notes/source/redis/valkey/background-work/)
 - [Netty Pipeline 与 EventLoop](/notes/source/java/base/netty/architecture/)
-
-

@@ -4,10 +4,10 @@ description: DiscoveryClient、ServiceRegistry、服务缓存与失败容忍的�
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Nacos, Service Discovery]
 order: 83
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 83
@@ -16,6 +16,13 @@ sidebar:
 Nacos 发现适配覆盖两条方向：客户端查询实例，以及应用启动后向 Nacos 注册自己。
 
 <!-- more -->
+
+## 先给答案：服务发现同时维护“我是谁”和“别人在哪里”两条链
+
+注册链负责实例启动、元数据上报、心跳和注销；查询链负责从本地缓存或 Nacos 获取实例列表，再交给负载均衡选择目标。两条链的故障语义不同：注册失败影响可见性，查询失败可能触发缓存降级。
+
+本地缓存提高可用性，却可能返回过期实例；心跳和健康检查也不能保证业务一定可用。排查调用失败时要区分服务不存在、实例列表陈旧、实例已摘除但缓存未更新，以及真正的网络或业务错误。
+
 
 ## 两条链路
 

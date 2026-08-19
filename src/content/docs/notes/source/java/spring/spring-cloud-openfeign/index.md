@@ -8,10 +8,10 @@ tags:
   - HTTP Client
   - Proxy
 order: 6
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 6
@@ -20,6 +20,17 @@ sidebar:
 Spring Cloud OpenFeign 把一个带 `@FeignClient` 的 Java 接口变成可注入的 HTTP 客户端代理。源码阅读的主线是：注册 BeanDefinition，按客户端创建隔离上下文，再由 `FeignClientFactoryBean` 组装 Feign Builder 与目标代理。
 
 <!-- more -->
+
+## 本册问题地图
+
+OpenFeign 的源码主线是“接口声明如何变成一次带契约、编码、负载均衡和容错的 HTTP 调用”：
+
+1. `@FeignClient` 如何被扫描成 FactoryBean？
+2. FactoryBean 如何为每个客户端创建代理和独立配置上下文？
+3. Spring MVC 注解如何变成 HTTP method、path、header 和 body？
+4. 代理调用经过哪些 InvocationHandler、Client 和 decoder？
+5. 负载均衡、重试、熔断和 fallback 分别位于哪一层？
+
 
 ## 版本快照
 

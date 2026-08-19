@@ -4,10 +4,10 @@ description: Netty 4.2 的 EventLoop 线程归属、I/O 与任务调度、Select
 category: Backend
 tags: [Source Reading, Netty, Reactor, Concurrency]
 order: 22
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 22
@@ -16,6 +16,13 @@ sidebar:
 Netty 的“主从 Reactor”只是部署形态，真正保证低锁开销的是更细的规则：一个 Channel 注册到一个 EventLoop，Channel 的状态变化和 Handler 回调尽量在这个 EventLoop 上串行执行。
 
 <!-- more -->
+
+## 先给答案：Netty 的线程模型是在限制并发入口，而不是消灭并发
+
+Netty 让一个 Channel 的事件长期绑定到一个 EventLoop，使同一条连接上的 Handler 默认按顺序执行；同时让一个 EventLoop 管理多个 Channel，避免“一个连接一个线程”的线程数量爆炸。并发仍然存在，但被收敛在连接之间，而不是让多个线程同时改同一个 Channel 状态。
+
+因此跨线程注册不会直接修改 EventLoop 内部结构，而是把任务投递回目标 EventLoop 的任务队列，等事件循环在自己的线程中执行。这个设计换来了少锁和稳定的顺序性，但也意味着 Handler 中的阻塞调用会占住整组 Channel，业务线程隔离不是可选优化，而是线程模型成立的前提。
+
 
 ## 结构
 

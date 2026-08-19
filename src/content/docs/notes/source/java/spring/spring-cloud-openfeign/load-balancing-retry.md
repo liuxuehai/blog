@@ -4,10 +4,10 @@ description: Feign 请求如何从服务名解析实例、重建 URL，并在 Sp
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Load Balancing, Retry]
 order: 65
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 65
@@ -16,6 +16,13 @@ sidebar:
 OpenFeign 的负载均衡不是代理层的另一个装饰，而是 Feign `Client` 的实现替换：代理照常生成请求，执行时由包装客户端根据服务名选择实例并重写 URL。
 
 <!-- more -->
+
+## 先给答案：负载均衡选择实例，重试决定是否再次发起请求，两者不能混成一个“可靠性开关”
+
+负载均衡在服务名到具体实例之间做选择；重试在调用失败后决定是否换实例或再次发送。GET 等幂等请求和带副作用的 POST 对重试的安全性不同，网络超时还可能意味着服务端已经执行成功。
+
+因此重试边界必须结合请求方法、异常类型、超时阶段和业务幂等键。只增加次数会放大下游压力；更换实例也不能修复所有错误，配置错误、序列化错误和业务异常不应盲目重试。
+
 
 ## 执行链
 

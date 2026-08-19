@@ -4,10 +4,10 @@ description: DefaultResultSetHandler 的自动映射、构造器注入、嵌套�
 category: Backend
 tags: [Source Reading, MyBatis, ResultMap, JDBC]
 order: 15
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 15
@@ -16,6 +16,13 @@ sidebar:
 结果映射既要把一行列值填进 Java Bean，又要在多行结果中合并同一个父对象、创建子集合，并避免嵌套查询无限递归。
 
 <!-- more -->
+
+## 先给答案：结果映射是在“数据库列名”和“对象属性图”之间补一层可解释的契约
+
+数据库返回的是行和列，Java 代码需要的是对象、嵌套对象或集合。MyBatis 不把这两种结构硬编码成一一对应，而是先构建 `ResultMap`，再根据列值、属性类型和嵌套映射规则逐步装配对象。
+
+映射越灵活，运行时决策越多：自动映射可能带来便利，也可能把列名拼写错误变成静默的 `null`；嵌套查询可以延迟加载，却会把一次查询放大成 N+1。阅读结果映射时不能只看“字段有没有填上”，还要追踪对象何时创建、嵌套查询何时触发、列为空时选择了哪条分支。
+
 
 ## 数据流
 

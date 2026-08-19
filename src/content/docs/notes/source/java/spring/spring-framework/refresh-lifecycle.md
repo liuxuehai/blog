@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Lifecycle
 order: 12
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 12
@@ -19,6 +19,13 @@ sidebar:
 `refresh()` 是 Spring 容器启动的总编排器。它把配置读取、工厂准备、处理器注册、事件基础设施和单例创建串成一个有严格先后关系的生命周期。
 
 <!-- more -->
+
+## 先给答案：`refresh()` 是把“配置对象”推进成“可运行容器”的状态机
+
+`refresh()` 不是一串初始化代码，而是一组有前置条件的阶段：先创建并准备 BeanFactory，再注册处理器和事件机制，最后预实例化非懒加载单例。顺序的核心原因是，后面的 Bean 创建必须知道前面已经安装了哪些处理器和基础设施。
+
+如果把预实例化提前，Bean 可能在后置处理器注册前就被创建，AOP、注解注入或自定义初始化就会失效；如果失败后不销毁已创建资源，容器重启或测试隔离会留下半成品。阅读 `refresh()` 要追踪的不是十二个方法名，而是每一步给下一步增加了什么能力。
+
 
 ## 调用链
 

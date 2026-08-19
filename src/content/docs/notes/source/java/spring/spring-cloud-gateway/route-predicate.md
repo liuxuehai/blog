@@ -4,10 +4,10 @@ description: RouteDefinition、Java DSL、AsyncPredicate 组合和权重路由�
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Route, Predicate]
 order: 53
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 53
@@ -16,6 +16,13 @@ sidebar:
 路由是 Gateway 的决策对象：predicate 决定“是否接管请求”，URI 和 filters 决定“接管后怎么处理”。配置 DSL 和配置文件最终都收敛到同一套 `Route`。
 
 <!-- more -->
+
+## 先给答案：Route 是“匹配条件 + 过滤计划 + 目标 URI”的不可变请求决策
+
+Predicate 只回答请求是否匹配，Filter 负责改写请求或响应，URI 则定义最终转发目标。配置绑定和 Java DSL 最终都要生成同一种 Route，因此运行时不应关心配置来自哪里。
+
+权重路由、路径重写和多个 Predicate 的组合会改变匹配顺序与可观察行为。排查路由错误时按三步走：路由是否加载、Predicate 是否匹配、Filter 是否把请求改成了另一个目标。
+
 
 ## 数据流
 

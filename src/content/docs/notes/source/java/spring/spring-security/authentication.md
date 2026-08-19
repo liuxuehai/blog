@@ -4,10 +4,10 @@ description: Authentication Filter、ProviderManager 与 AuthenticationProvider 
 category: Backend
 tags: [Source Reading, Spring Security, Authentication]
 order: 43
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 43
@@ -16,6 +16,13 @@ sidebar:
 认证把未认证凭证转换成带权限的 `Authentication`，再由过滤器保存成功结果或转换失败。
 
 <!-- more -->
+
+## 先给答案：Provider 链把“凭证类型差异”隔离在认证策略内部
+
+AuthenticationManager 接收统一的认证请求，ProviderManager 再把它交给支持该 token 类型的 AuthenticationProvider。用户名密码、JWT、OAuth2、Remember-me 可以共享上层流程，却拥有不同的凭证解析和校验实现。
+
+Provider 返回“不支持”、认证失败和认证成功的语义不同；异常处理器据此决定继续尝试、返回未认证还是拒绝。不要把“没有 provider 支持”和“凭证错误”混为一谈，它们对应不同的配置故障和安全响应。
+
 
 ## 调用链
 

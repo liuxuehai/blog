@@ -4,10 +4,10 @@ description: Spring Data Redis 源码解析：连接工厂、RedisTemplate、序
 category: Backend
 tags: [Source Reading, Spring Data Redis, Redis, Data Access]
 order: 7
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 7
@@ -16,6 +16,17 @@ sidebar:
 Spring Data Redis 将 Lettuce、Jedis、Standalone、Sentinel、Cluster 统一到 `RedisConnectionFactory`，再由 `RedisTemplate` 组合连接、序列化、事务与命令操作。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Data Redis 的核心是把不同 Redis 客户端统一成 Spring 资源模型，同时保留命令、事务、序列化和消息订阅的差异。本册追踪：
+
+1. ConnectionFactory 如何创建、复用和释放底层连接？
+2. RedisTemplate 如何把对象操作翻译成连接回调和序列化命令？
+3. key、value、hash field 和 stream entry 分别由谁序列化？
+4. Pipeline、事务和线程绑定为什么不能混用普通连接？
+5. Pub/Sub 与 Stream 在消费、确认和失败恢复上有什么不同？
+
 
 ## 版本快照
 

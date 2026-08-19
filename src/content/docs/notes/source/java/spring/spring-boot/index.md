@@ -7,10 +7,10 @@ tags:
   - Spring Boot
   - Auto Configuration
 order: 2
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 2
@@ -19,6 +19,20 @@ sidebar:
 Spring Boot 的核心不是少写配置，而是把 Spring Framework 的容器能力包装成一条可扩展的启动流水线：应用发现环境、筛选自动配置、绑定外部属性，最后选择并启动 Web 运行时。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Boot 的核心不是少写配置，而是把“运行环境、条件判断、自动装配和应用启动”编排成一条可解释的装配链：
+
+1. `SpringApplication.run()` 如何准备环境、上下文和监听器？
+2. 自动配置候选从哪里来，为什么使用 imports 文件而不是扫描所有类？
+3. 条件注解如何决定某个配置生效或跳过？
+4. 配置绑定如何把扁平、分层、类型化配置变成对象？
+5. WebServer 为什么在容器 refresh 过程中创建，并如何被生命周期管理？
+6. Actuator 如何把内部能力抽象成 endpoint operation，再适配 HTTP/JMX 等协议？
+
+读完整册后，应当能解释“一个 starter 为什么会生效、什么时候不生效，以及启动失败时该看哪一层”。
+
 
 ## 版本快照
 

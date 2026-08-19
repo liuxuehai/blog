@@ -4,10 +4,10 @@ description: MyBatis 源码解析总览：配置 Builder、Mapper 动态代理�
 category: Backend
 tags: [Source Reading, Java, MyBatis, ORM]
 order: 1
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 1
@@ -16,6 +16,19 @@ sidebar:
 MyBatis 不是把 SQL 隐藏起来的全自动 ORM，而是把配置、SQL、参数、结果和事务组织成一条可插拔执行管线。读懂它的关键，是追踪一个 Mapper 方法如何从代理对象变成 `MappedStatement`，再变成 JDBC `Statement`。
 
 <!-- more -->
+
+## 本册问题地图
+
+MyBatis 把“调用一个 Java 接口”翻译成“执行一条 SQL 并恢复对象图”。这条翻译链可以拆成五个连续问题：
+
+1. **接口为什么不需要实现类？** 启动期把 XML/注解编译为 `MappedStatement`，运行期由 Mapper 动态代理查表分派。
+2. **参数怎样进入 SQL？** `MapperMethod` 整理参数，`SqlSource` 生成 `BoundSql`，ParameterHandler 完成 JDBC 绑定。
+3. **不同执行策略在哪里切换？** `SqlSession` 提供统一入口，Executor 负责 SIMPLE、REUSE、BATCH、缓存和事务边界。
+4. **数据库行怎样变回对象？** ResultSetHandler 结合 `ResultMap`、类型处理器和嵌套规则构造对象图。
+5. **缓存和插件为什么容易互相影响？** 两者都包裹执行链：缓存可能让后续阶段短路，插件可能改变 SQL、参数与缓存 key。
+
+读完整册后，应当能从 Mapper 方法一路追到 JDBC，再从 ResultSet 追回应答对象；遇到问题时，也能先判断故障属于配置期、执行期还是映射期。
+
 
 ## 版本快照
 

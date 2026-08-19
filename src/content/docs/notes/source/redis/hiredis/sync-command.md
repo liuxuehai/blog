@@ -8,10 +8,10 @@ tags:
   - Redis
   - Blocking IO
 order: 42
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 42
@@ -20,6 +20,13 @@ sidebar:
 `redisCommand` 看起来是一个函数调用，内部却是“编码、写出、读入、解析、返回”五个阶段。理解它，就能解释为什么 hiredis 同时提供 `redisAppendCommand` 和 `redisGetReply`，也能解释 pipeline 如何工作。
 
 <!-- more -->
+
+## 先给答案：同步命令 API 的本质是“写入可以批量化，等待可以集中化”
+
+`AppendCommand` 先把命令追加到输出缓冲，`GetReply` 再负责把缓冲写完并读取、解析 reply。拆开后，调用方可以连续发送多条命令，减少每条命令一次 write/read 往返；但它也必须承担输出缓冲增长、partial write 和错误后队列状态的管理。
+
+所以同步不等于“一次调用一次网络往返”。真正的阻塞点在 GetReply：它等待输出完成和对应响应完成。若只追加不取 reply，内存和服务端 pending 请求都会增长；若中途写失败后继续复用 context，还可能让后续 reply 与命令关系失真。
+
 
 ## 调用链
 
@@ -86,4 +93,3 @@ output buffer: [已写部分 | 未写部分]
 - [RESP Reader 状态机](/notes/source/redis/hiredis/resp-reader/)
 - [同步命令链与异步 API](/notes/source/redis/hiredis/async-api/)
 - [Redis ae 事件循环](/notes/source/redis/redis/event-loop/)
-

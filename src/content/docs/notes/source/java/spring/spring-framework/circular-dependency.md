@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Circular Dependency
 order: 14
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 14
@@ -19,6 +19,13 @@ sidebar:
 三级缓存解决的不是所有循环依赖，而是单例、属性注入场景下“对象已经实例化，但完整初始化尚未结束”的提前引用问题。
 
 <!-- more -->
+
+## 先给答案：三级缓存解决的是“提前暴露可引用对象”，不是任意循环依赖
+
+setter/field 注入的循环依赖之所以可解，是因为对象可以先实例化，再把一个尚未完成初始化的引用交给另一个 Bean。三级缓存保存的不是三个版本的成品，而是成品、早期引用和“如何创建早期引用”的工厂。
+
+工厂这一层很重要：如果 Bean 最终需要代理，被注入的早期引用也必须有机会变成同一个代理，否则容器里和已注入位置会出现两个身份。构造器循环无法解决，是因为对象连实例化都还没完成，没有可以提前暴露的引用。
+
 
 ## 三层结构
 

@@ -4,10 +4,10 @@ description: Spring Boot 条件匹配、结果记录与 ConditionEvaluationRepor
 category: Backend
 tags: [Source Reading, Spring Boot, Conditions]
 order: 24
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 24
@@ -16,6 +16,13 @@ sidebar:
 条件系统让自动配置能够回答“当前环境是否满足启用要求”，并把命中与未命中的原因保留下来，避免启动诊断只能靠猜。
 
 <!-- more -->
+
+## 先给答案：条件注解把“是否装配”的判断变成可诊断的决策记录
+
+条件判断不是简单返回 true/false。Boot 需要知道哪个类、哪个属性或哪个 Bean 导致配置生效或跳过，并把结果记录下来供启动报告和故障排查使用。
+
+条件的顺序也会影响结果：classpath 条件、Bean 条件和属性条件分别观察不同阶段的事实。一个配置“不生效”可能是候选没有进入、条件不匹配，或条件匹配后又被用户定义的 Bean 覆盖，不能只凭最终 Bean 是否存在反推原因。
+
 
 ## 状态流转
 

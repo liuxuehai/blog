@@ -4,10 +4,10 @@ description: RedisMessageListenerContainer 的单连接多订阅、异步分发�
 category: Backend
 tags: [Source Reading, Spring Data Redis, PubSub]
 order: 75
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 75
@@ -16,6 +16,13 @@ sidebar:
 `RedisMessageListenerContainer` 把 Redis 的订阅连接与业务 listener 解耦：一个 subscriber 负责收消息，task executor 负责分发。
 
 <!-- more -->
+
+## 先给答案：Pub/Sub 适合实时广播，不提供 Stream 那样的可回放消费进度
+
+Pub/Sub 消息发送给当前在线订阅者，断线期间的消息不会自动补发；Stream 则把消息写入持久化结构，消费者可以通过 ID 和 group 记录进度、确认和待处理消息。
+
+因此选择不是“哪个 API 更现代”，而是业务是否需要离线补偿、消费确认和重放。订阅连接通常要独占，不能像普通命令连接一样混用；处理器阻塞还会影响同一订阅连接上的后续消息。
+
 
 ## 结构
 

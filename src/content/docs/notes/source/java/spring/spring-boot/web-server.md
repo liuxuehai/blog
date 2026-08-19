@@ -4,10 +4,10 @@ description: ServletWebServerApplicationContext 如何在 refresh 阶段创建�
 category: Backend
 tags: [Source Reading, Spring Boot, Web Server]
 order: 26
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 26
@@ -16,6 +16,13 @@ sidebar:
 Spring Boot 把 Web 容器抽象为 `WebServerFactory`，让应用上下文不依赖 Tomcat 的具体 API，同时保留连接器、端口和 SSL 的定制入口。
 
 <!-- more -->
+
+## 先给答案：内嵌 WebServer 必须成为 ApplicationContext 生命周期的一部分
+
+WebServer 不是在 main 方法里独立启动的外部组件，而是在上下文 refresh 期间由 WebServerFactory 创建，并注册到 WebServerStartStopLifecycle。这样服务器启动、Bean 初始化、端口绑定和上下文关闭可以共享同一套生命周期与失败回滚。
+
+如果端口绑定发生在容器准备好之前，应用可能出现“端口已监听但 Bean 未就绪”；如果服务器不随上下文关闭，测试和热重启会留下线程与端口。把 WebServer 纳入 refresh，是为了让网络可用性与应用可用性拥有同一个状态边界。
+
 
 ## 创建链路
 

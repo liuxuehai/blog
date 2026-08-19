@@ -8,10 +8,10 @@ tags:
   - Background Task
   - Fork
 order: 34
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 34
@@ -20,6 +20,13 @@ sidebar:
 Valkey 有多种“后台工作”，但它们的安全边界完全不同。IO worker 处理网络字节，BIO 处理阻塞或释放任务，fork child 处理进程级快照；把三者混为一谈，会导致错误的性能和一致性判断。
 
 <!-- more -->
+
+## 先给答案：后台任务的关键是“谁拥有状态”和“完成后如何回到主线程”
+
+Valkey 的后台执行者不是一支可以随便跑命令的线程池。BIO 适合关闭文件、释放资源等阻塞操作；IO worker 负责网络搬运；fork 子进程则通过进程隔离执行快照等任务。它们的共同点是把耗时工作移走，差异在于是否共享地址空间、是否需要访问 Redis 核心状态以及结果如何汇合。
+
+所以异步化的完整链路必须包含投递、执行、完成通知和失败处理。只把工作放入队列而不说明谁消费、谁回收、主线程何时观察结果，不能算讲清后台任务。
+
 
 ## 四类执行者
 
@@ -75,5 +82,3 @@ fork child 继承地址空间的逻辑视图，但通过写时复制隔离后续
 - [IO Threads 队列与任务生命周期](/notes/source/redis/valkey/io-threads/)
 - [分叉与兼容性](/notes/source/redis/valkey/fork-and-compatibility/)
 - [Redis 持久化](/notes/source/redis/redis/persistence/)
-
-

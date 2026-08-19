@@ -4,10 +4,10 @@ description: 从 @EnableFeignClients 到 FeignClientFactoryBean，再到 JDK 代
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Proxy, Spring]
 order: 62
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 62
@@ -16,6 +16,13 @@ sidebar:
 `@FeignClient` 的关键设计是注册一个带状态的 `FactoryBean`，而不是把接口本身直接当作组件。这样代理创建可以延迟到容器真正需要它时，并能读取客户端专属配置。
 
 <!-- more -->
+
+## 先给答案：FactoryBean 把“配置阶段的客户端定义”和“运行阶段的代理对象”分开
+
+扫描阶段只需要登记接口、服务名和配置来源，不应立即发起网络请求；FactoryBean 在容器需要对象时创建真正的代理。这样客户端接口可以像普通 Bean 一样参与依赖注入，同时把目标地址、编码器和容错策略延迟到构建阶段组合。
+
+`getObject()` 返回代理而不是 FactoryBean 本身，是 Spring 工厂语义的关键。排查客户端没注册时要区分扫描不到接口、FactoryBean 没创建、代理创建失败和调用阶段找不到实例。
+
 
 ## 注册链
 

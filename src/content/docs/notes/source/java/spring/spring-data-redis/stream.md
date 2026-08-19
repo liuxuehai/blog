@@ -4,10 +4,10 @@ description: StreamMessageListenerContainer、StreamPollTask、offset 与消费�
 category: Backend
 tags: [Source Reading, Spring Data Redis, Stream]
 order: 76
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 76
@@ -16,6 +16,13 @@ sidebar:
 Stream 消费不是订阅回调，而是由可取消的长轮询任务持续执行 `XREAD` 或 `XREADGROUP`。
 
 <!-- more -->
+
+## 先给答案：Stream 把消息消费从“推送回调”变成“可定位、可确认的日志读取”
+
+每条 entry 有单调 ID，消费者组维护 last-delivered-id 和 pending entries；读取、处理、确认构成一个可恢复的状态机。处理成功后 ACK，异常或消费者崩溃则留下待处理记录，便于重新认领。
+
+这带来了明确责任：读取不等于处理成功，ACK 不等于业务事务与 Redis 写入原子完成，消费者重启还要决定如何扫描 pending。排查重复消费时先看 ID、pending 和 ACK 时机，而不是简单认为 Stream 会自动 exactly-once。
+
 
 ## 调用链
 

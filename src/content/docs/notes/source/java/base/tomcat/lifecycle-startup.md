@@ -4,10 +4,10 @@ description: 从 Bootstrap、Catalina 到 LifecycleBase，理解 Tomcat 组件�
 category: Backend
 tags: [Source Reading, Tomcat, Lifecycle]
 order: 31
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 31 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 31 }
 Tomcat 启动由配置解析、组件树构建、生命周期状态机和父子级联启动共同完成。
 
 <!-- more -->
+
+## 先给答案：Tomcat 生命周期状态机解决的是“复杂组件树如何一致启动和停止”
+
+Tomcat 不是一个对象，而是一棵组件树。每个组件都需要经历初始化、启动、运行、停止和销毁，父子组件的顺序必须一致；状态机把非法跃迁拒绝在组件内部，监听器则把生命周期事件传播给依赖方。
+
+如果只靠调用约定，重复 start、半途失败和父组件停止时的子组件清理都会变成隐性 bug。状态机的代价是启动逻辑更分散，但它把“当前组件处于什么状态、下一步能做什么”变成了可检查事实。
+
 
 ```text
 Bootstrap -> Catalina.load -> Digester -> Server/Service/Connector/Engine

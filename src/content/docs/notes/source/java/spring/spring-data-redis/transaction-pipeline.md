@@ -4,10 +4,10 @@ description: RedisTemplate 如何绑定事务连接、执行 MULTI/EXEC，以及
 category: Backend
 tags: [Source Reading, Spring Data Redis, Transaction]
 order: 77
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 77
@@ -16,6 +16,13 @@ sidebar:
 Redis 事务和 pipeline 都要求多个命令共享连接，但两者语义不同：事务关注队列与原子提交，pipeline 关注批量往返。
 
 <!-- more -->
+
+## 先给答案：Pipeline 优化往返，事务定义提交边界，两者都不能替代业务一致性
+
+Pipeline 把多条命令集中发送，减少网络往返；MULTI/EXEC 把命令排队并在 EXEC 时提交执行。Spring 的事务连接绑定保证同一线程中的命令进入同一事务上下文，但不会自动把数据库事务和 Redis 事务变成分布式事务。
+
+事务中读取结果、序列化时机和异常处理都有特殊语义；Pipeline 中的返回值也可能延迟到批量执行。使用前要先确认目标是降低 RTT、保证 Redis 内部命令连续执行，还是需要跨资源一致性，三者不是同一个问题。
+
 
 ## 事务链路
 

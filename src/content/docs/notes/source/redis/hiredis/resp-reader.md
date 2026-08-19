@@ -8,10 +8,10 @@ tags:
   - RESP
   - Parser
 order: 43
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 43
@@ -20,6 +20,13 @@ sidebar:
 hiredis 的 reader 不是“一次 read 对应一个 reply”的解析器。网络分片可以截断在任意字节，单次 read 也可能包含多个 reply，因此 `redisReader` 必须保存未完成状态，并在下一次 feed 后继续解析。
 
 <!-- more -->
+
+## 先给答案：RESP reader 是一个可暂停、可恢复、可嵌套的解析状态机
+
+网络读取可能在任意字节处结束，reader 不能假定一次 read 包含完整 reply。它必须记录当前类型、剩余长度、已读内容和嵌套容器，下一批字节到达后从上次状态继续；解析完成后，再把 reply 交给同步或异步上层。
+
+多 reply 和 push reply 进一步说明：协议解析和请求匹配是两件事。reader 只负责识别“收到了什么”，异步 context 再根据命令队列决定“交给哪个 callback”。如果把这两层混在一起，服务端主动推送就可能被误认为普通命令响应。
+
 
 ## 状态机
 
@@ -86,4 +93,3 @@ reader 只在完整对象可构造时返回 reply；遇到不完整 bulk string 
 - [同步命令链](/notes/source/redis/hiredis/sync-command/)
 - [异步 API 与回调队列](/notes/source/redis/hiredis/async-api/)
 - [Redis RESP 输入路径](/notes/source/redis/redis/event-loop/)
-

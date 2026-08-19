@@ -4,10 +4,10 @@ description: ChannelPipeline 的双向链表、入站向后传播、出站向前
 category: Backend
 tags: [Source Reading, Netty, Pipeline, Design Pattern]
 order: 23
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 23
@@ -16,6 +16,13 @@ sidebar:
 Pipeline 把“网络事件如何经过协议层和业务层”变成一条可动态修改的双向链表。它不是普通的责任链：入站和出站方向相反，且每个 Context 可以绑定不同的 executor。
 
 <!-- more -->
+
+## 先给答案：Pipeline 是“按方向传播的责任链”，不是普通的 Handler 列表
+
+入站事件从 Head 向 Tail 传播，出站操作从 Tail 向 Head 传播；每个节点既保存 Handler，又保存上下游链接和执行器上下文。方向性让“读到数据”和“写出数据”可以在同一条链上使用不同的处理顺序，而异常传播则把失败交给链上专门的处理节点。
+
+双向链表的价值不只是插入删除快，更重要的是能从事件发生点沿正确方向寻找下一个可执行 Handler。引用计数也因此必须沿着传播路径配对：某个 Handler 负责消费、转交还是释放 ByteBuf，决定了后续节点还能不能看到数据。
+
 
 ## 数据结构
 

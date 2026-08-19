@@ -4,16 +4,23 @@ description: ContextConfig 如何发现 Web 应用组件，StandardWrapper 如�
 category: Backend
 tags: [Source Reading, Tomcat, Servlet]
 order: 37
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 sidebar: { order: 37 }
 ---
 
 Web 应用启动分成构建部署模型和按需创建 Servlet 两段。前者准备 Context、Wrapper、Listener 与资源，后者避免所有 Servlet 在启动时同时实例化。
 
 <!-- more -->
+
+## 先给答案：Web 应用默认延迟加载是在启动速度和首请求延迟之间取舍
+
+Tomcat 可以在部署时立即创建 Servlet，也可以等到第一次请求再加载。延迟加载减少启动阶段的类加载和初始化成本，适合应用很多但访问不均匀的场景；代价是首个请求可能承担加载、实例化和初始化延迟。
+
+如果 Servlet 初始化包含连接数据库、读取大配置或失败敏感的检查，延迟加载会把启动失败推迟到线上请求。是否提前加载应根据启动探活、首请求 SLA 和初始化副作用决定，而不是把 lazy 当成绝对优化。
+
 
 ```text
 Context start -> ContextConfig#configureStart -> create Wrapper/mappings

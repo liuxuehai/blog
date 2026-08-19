@@ -4,10 +4,10 @@ description: AuthorizationFilter 与 RequestMatcherDelegatingAuthorizationManage
 category: Backend
 tags: [Source Reading, Spring Security, Authorization]
 order: 44
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 44
@@ -16,6 +16,13 @@ sidebar:
 授权发生在认证之后：`AuthorizationManager` 接收身份和被保护对象，返回授权决策。
 
 <!-- more -->
+
+## 先给答案：授权是在身份已经确定之后，对“主体能否执行这次操作”做独立决策
+
+认证回答“你是谁”，授权回答“你能不能做这件事”。AuthorizationManager 接收 Authentication、对象或方法调用以及上下文，返回授予、拒绝或无法决定的结果，从而支持 URL、方法和领域对象级规则。
+
+授权失败不应回到认证流程：已登录但无权限通常是拒绝，未登录才是需要认证。把两者分开后，异常转换、响应状态码和审计记录才能准确表达实际问题。
+
 
 ## 决策链
 

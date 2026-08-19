@@ -4,10 +4,10 @@ description: DefaultSqlSession、Simple/Reuse/BatchExecutor、事务边界和一
 category: Backend
 tags: [Source Reading, MyBatis, JDBC, Transaction]
 order: 13
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 13
@@ -16,6 +16,13 @@ sidebar:
 `SqlSession` 是面向业务的门面，`Executor` 才是 MyBatis 的执行内核。前者把 statement id 变成调用，后者负责缓存、事务和 JDBC 策略。
 
 <!-- more -->
+
+## 先给答案：SqlSession 是语义外壳，Executor 才是执行策略的分流点
+
+一次查询至少包含四个不同问题：SQL 如何生成、参数如何绑定、结果如何映射、是否需要缓存或批处理。`SqlSession` 对外提供稳定 API，`Executor` 则把 SIMPLE、REUSE、BATCH 和缓存包装器组织起来，让这些策略不污染 Mapper 调用方。
+
+这也解释了 MyBatis 的缓存边界：一级缓存天然跟随 session 生命周期，二级缓存则跨 session 共享；批处理执行器可以延迟真正提交，因此“方法返回”不一定等于“数据库已经执行并提交”。阅读执行链时要一直追踪两个状态：当前 session 是否仍然存在，以及 statement 是否已经从内存队列进入 JDBC。
+
 
 ## 调用链
 

@@ -4,10 +4,10 @@ description: FeignCircuitBreakerTargeter 如何把普通代理切换为熔断 In
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Circuit Breaker, Fallback]
 order: 66
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 66
@@ -16,6 +16,13 @@ sidebar:
 OpenFeign 将熔断接入点放在 `Targeter`，因此接口契约、编码器和服务发现仍然复用；只有最终的代理分派被替换为带 CircuitBreaker 的 `InvocationHandler`。
 
 <!-- more -->
+
+## 先给答案：fallback 是失败后的业务响应策略，熔断器是减少失败调用的状态机
+
+Targeter 可以把原始 Feign 调用包进熔断装饰器；熔断器统计失败并决定是否快速拒绝，fallback/fallbackFactory 再把异常转换成备用结果或降级信息。两者顺序决定 fallback 能否拿到原始异常和调用参数。
+
+fallback 不能掩盖所有错误：如果降级返回空对象，业务可能把失败当成成功；如果熔断范围过大，健康请求也会被短路。排查时要记录原始异常、熔断状态和 fallback 原因，而不是只看最终 HTTP 结果。
+
 
 ## Targeter 分叉
 

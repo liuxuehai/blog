@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - AOP
 order: 15
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 15
@@ -19,6 +19,13 @@ sidebar:
 Spring AOP 的核心不是“扫描注解”，而是一个 BeanPostProcessor 在合适时机筛选 Advisor、准备 TargetSource，并把目标对象包装成可调用代理。
 
 <!-- more -->
+
+## 先给答案：AOP 代理是在 Bean 生命周期中“选择最终暴露身份”
+
+AOP 不会把切面代码直接写进业务方法，而是在 Bean 创建完成前后判断是否需要包装。代理负责拦截调用，目标对象负责实际业务；事务、缓存和异步等能力因此可以共享同一套调用边界。
+
+代理选择也决定了限制：JDK 代理依赖接口类型，CGLIB 通过子类覆盖方法；自调用绕过代理，是因为调用没有经过代理对象的拦截入口。循环依赖场景下，早期引用是否已经经过代理工厂，会直接影响最终引用的一致性。
+
 
 ## 代理链路
 

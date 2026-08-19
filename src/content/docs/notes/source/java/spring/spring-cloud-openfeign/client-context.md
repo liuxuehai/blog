@@ -4,10 +4,10 @@ description: NamedContextFactory 如何为每个 Feign 客户端创建独立配�
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Context, Configuration]
 order: 64
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 64
@@ -16,6 +16,13 @@ sidebar:
 OpenFeign 没有把所有客户端 Bean 放进同一个应用上下文，而是用 `FeignClientFactory` 为每个客户端维护一个命名子上下文。这是“同一应用中多个下游拥有不同 Codec、超时和拦截器”的基础。
 
 <!-- more -->
+
+## 先给答案：每个 Feign 客户端需要子上下文来隔离“同类型、不同服务”的配置
+
+不同客户端可能使用不同 decoder、interceptor、超时或负载策略，但这些 Bean 类型名称又高度相似。为每个客户端建立独立配置上下文，可以让默认配置共享，同时让特定客户端覆盖自己的组件，而不污染全局 Spring 容器。
+
+隔离并非完全独立：父上下文仍提供基础 Bean，属性与 Bean 覆盖还存在优先级。配置排查要明确 Bean 是从父上下文继承、子上下文创建，还是被属性覆盖。
+
 
 ## 上下文结构
 

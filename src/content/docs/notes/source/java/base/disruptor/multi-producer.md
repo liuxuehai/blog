@@ -8,10 +8,10 @@ tags:
   - CAS
   - Concurrency
 order: 15
-updatedDate: 2026-08-14
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-14
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 15
@@ -20,6 +20,13 @@ sidebar:
 `SingleProducerSequencer` 干净得像单线程代码，因为它本来就是。一旦允许多个线程同时发布，「抢到序号」和「数据写完了」就不再是同一件事——`MultiProducerSequencer` 的全部复杂度都来自弥合这条裂缝。
 
 <!-- more -->
+
+## 先给答案：多生产者真正要协调的不是“写数据”，而是“宣布可见”
+
+多个生产者可以各自写入不同槽位，但消费者不能只看“最大的已申请序号”，因为更大的序号可能已经写完，较小的序号却还停在半途。Disruptor 因此把过程拆成两步：先用 CAS 抢到唯一序号，再通过 `availableBuffer` 标记该序号已经完成写入。
+
+这解释了多生产者实现中看似绕路的扫描逻辑：消费者要找的不是“有人申请过的最大位置”，而是从当前游标开始**连续可见的最后位置**。只要中间有一个生产者尚未发布，后面的数据即使已经写完，也不能越过它交付给消费者。
+
 
 ## 问题背景：乱序发布
 

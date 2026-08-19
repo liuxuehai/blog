@@ -7,10 +7,10 @@ tags:
   - Netty
   - NIO
 order: 2
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 2
@@ -19,6 +19,19 @@ sidebar:
 Netty 是一个面向高并发网络应用的异步事件驱动框架。它把 Java NIO 的 Selector、连接生命周期、内存管理、协议编解码和写出背压组织成一套可组合的 Channel 抽象，解决的是“网络 I/O 细节不应侵入业务代码”的问题。
 
 <!-- more -->
+
+## 本册问题地图
+
+Netty 不只是“基于 NIO 的网络库”，它把网络编程中最容易失控的几件事拆成可组合的机制：线程归属、事件传播、字节存储、协议边界和定时任务。本册沿着一条连接的生命周期阅读：
+
+1. **连接由谁接收，又由谁长期负责？** Boss/Worker EventLoop 如何划分 accept、register 和 read/write。
+2. **事件怎样穿过业务处理链？** Pipeline 如何区分入站、出站和异常传播。
+3. **字节数据怎样从网络缓冲变成完整消息？** ByteBuf 的容量、引用计数和拆包状态如何配合。
+4. **为什么同一份数据有时可以不复制？** FileRegion、CompositeByteBuf 和聚合写分别省掉了哪一次 copy。
+5. **连接空闲后谁负责发现和处理？** 时间轮如何把定时检查变成低开销任务。
+
+读完整册后，应当能回答“一个 TCP 字节从网卡进入，到 Handler 处理，再到响应写出，中间经过了哪些线程、缓冲区和状态机”。
+
 
 ## 版本快照
 

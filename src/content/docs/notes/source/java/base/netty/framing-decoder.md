@@ -4,10 +4,10 @@ description: ByteToMessageDecoder 的累积器、重入保护、引用计数和 
 category: Backend
 tags: [Source Reading, Netty, Codec, Protocol]
 order: 27
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 27
@@ -16,6 +16,13 @@ sidebar:
 TCP 只保证字节流，不保证消息边界。Netty 的解码器把“字节可能不完整、一次可能有多帧、输入可能重入”集中处理，业务 Handler 只接收完整消息。
 
 <!-- more -->
+
+## 先给答案：拆包器是在 TCP 的连续字节流上重新建立消息边界
+
+TCP 只保证字节按序到达，不保证一次 write 对应一次 read。拆包器必须保存跨 read 的中间状态：半个头部要等待更多字节，长度字段错误要拒绝，多个完整帧则要在一次 read 中循环产出。
+
+因此长度字段协议的核心不是“读出一个 int”，而是验证长度是否可信、帧是否完整、解码失败后是否还能恢复同步。把边界检查放在解码器而不是业务 Handler，可以让后续业务只接收完整消息，但也要求限制最大帧长，避免攻击者用一个超大长度占住内存。
+
 
 ## 解码链路
 

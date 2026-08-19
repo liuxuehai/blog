@@ -4,10 +4,10 @@ description: Endpoint、Operation、EndpointDiscoverer 与 WebEndpointAutoConfig
 category: Backend
 tags: [Source Reading, Spring Boot, Actuator]
 order: 27
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 27
@@ -16,6 +16,13 @@ sidebar:
 Actuator 将健康检查、指标、环境和映射信息抽象为端点操作，再由不同适配层暴露为 HTTP、JMX 或其他协议。
 
 <!-- more -->
+
+## 先给答案：Actuator 把运维能力拆成“操作定义”和“协议暴露”两层
+
+Endpoint 只描述可执行的运维操作，Web、JMX 等适配器负责把操作转换成具体协议请求。这样同一个 health、metrics 或 env 能力不必为每种协议复制一份业务逻辑。
+
+端点暴露和端点存在也不是一回事：操作可能被安全策略、暴露配置、可用性或权限过滤。排查“端点访问不到”时要区分 endpoint 是否注册、operation 是否发现、协议适配器是否暴露，以及 Security 是否拒绝。
+
 
 ## 端点发现链路
 

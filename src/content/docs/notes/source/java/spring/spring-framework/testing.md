@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Testing
 order: 18
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 18
@@ -19,6 +19,13 @@ sidebar:
 Spring Test 的关键不是提供更多注解，而是把测试实例、ApplicationContext、事务和监听器组织成一个可复用的执行上下文。
 
 <!-- more -->
+
+## 先给答案：测试上下文缓存优化的是启动成本，隔离责任仍由测试配置承担
+
+Spring 测试框架根据测试类、配置位置、Profile 和自定义上下文定制器生成缓存键；相同键可以复用已启动的 ApplicationContext，避免每个测试重新创建容器。
+
+缓存不会自动修复测试之间的状态污染。Mock Bean、动态属性、数据库状态和容器中可变单例都可能让“同一个上下文”在测试间泄漏状态。需要清理时，测试框架通过监听器和 `@DirtiesContext` 让缓存失效，代价是下一次测试重新启动。
+
 
 ## 测试执行链
 

@@ -4,10 +4,10 @@ description: RequestRateLimiter、Redis 令牌桶与 Spring Cloud CircuitBreaker
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Rate Limit, Circuit Breaker]
 order: 55
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 55
@@ -16,6 +16,13 @@ sidebar:
 Gateway 把限流和熔断实现成普通路由过滤器，因此它们可以参与统一排序、异常传播和 fallback，而不是另起一套请求生命周期。
 
 <!-- more -->
+
+## 先给答案：限流控制“请求能不能进入”，熔断控制“失败服务是否继续被调用”
+
+Redis 限流通常在请求真正转发前根据 key 和窗口消耗配额；熔断器则根据一段时间内的失败或慢调用状态，在 Open 状态快速失败，Half-Open 时放少量探测请求。两者都能返回 fallback，却处在不同的时间和状态边界。
+
+限流过严会拒绝健康请求，熔断过早会放大短暂抖动；fallback 也不等于成功，只是把失败转换成可控响应。排查时要区分配额耗尽、下游连接失败、超时和熔断状态迁移。
+
 
 ## 流程
 

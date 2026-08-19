@@ -4,10 +4,10 @@ description: HashedWheelTimer 的槽位与 remainingRounds，以及 IdleStateHan
 category: Backend
 tags: [Source Reading, Netty, Timer, Timeout]
 order: 26
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 26
@@ -16,6 +16,13 @@ sidebar:
 Netty 的时间轮适合海量、精度要求不是纳秒级的超时任务；`IdleStateHandler` 则把连接读写活动转换为定时事件。两者结合后，心跳、连接保活和空闲断开都能复用 EventLoop 的调度能力。
 
 <!-- more -->
+
+## 先给答案：时间轮把大量定时任务从“逐个计时”变成“按槽批量检查”
+
+连接空闲检测的任务数量通常与连接数同量级，如果每个任务都独立维护精确计时器，调度结构会承受大量插入、删除和唤醒成本。时间轮把过期时间映射到槽位，用 `remainingRounds` 表示还要绕几圈；每次 tick 只处理当前槽中的任务。
+
+这意味着 IdleStateHandler 发现的是“超过阈值的状态”，不是业务请求已经失败。读空闲、写空闲和读写都空闲分别对应不同的心跳或断开策略；处理器还必须考虑事件触发后连接是否继续存活，以及任务取消时槽位中残留引用如何清理。
+
 
 ## 时间轮结构
 

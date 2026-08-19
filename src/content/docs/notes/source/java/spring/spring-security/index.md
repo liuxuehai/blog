@@ -4,10 +4,10 @@ description: Spring Security 源码解析总览：Servlet 过滤器链、认证�
 category: Backend
 tags: [Source Reading, Spring Security, Authentication, Authorization]
 order: 4
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 4
@@ -16,6 +16,19 @@ sidebar:
 Spring Security 把安全控制拆成可组合的过滤器、认证管理器、授权管理器和上下文策略。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Security 的核心不是“加几个注解”，而是把请求身份、认证方式、授权决策和上下文传播组织成一条过滤链：
+
+1. 请求如何选中唯一的 `SecurityFilterChain`？
+2. 凭证如何被转换成 Authentication，再由 Provider 链处理？
+3. 认证成功后，SecurityContext 如何保存并跨线程传播？
+4. 授权决策为什么从固定 voter 模式走向 `AuthorizationManager`？
+5. 认证失败和授权拒绝为什么是两条不同的响应路径？
+
+读完整册后，应当能从请求进入过滤器开始，解释“当前用户是谁、凭证是否有效、是否有权限、结果如何写回响应”。
+
 
 ## 版本快照
 

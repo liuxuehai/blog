@@ -4,10 +4,10 @@ description: NioEndpoint 的监听、Selector、SocketProcessor 与协议处理�
 category: Backend
 tags: [Source Reading, Tomcat, NIO]
 order: 33
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 33 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 33 }
 Tomcat 的 NIO 层把等待就绪事件和执行协议处理分开：Selector 发现事件，SocketProcessor 执行协议处理。
 
 <!-- more -->
+
+## 先给答案：NIO Endpoint 把“少量 I/O 线程”和“可扩展业务线程”分开
+
+Poller 负责等待 socket 就绪，Worker 线程负责处理协议和请求；这样线程不会为大量空闲连接各自阻塞等待。一个连接的 I/O 事件可以高效复用，而可能阻塞的 Servlet 执行又不会占住 Poller。
+
+边界在于线程池仍然有限：如果业务处理阻塞，Worker 队列会堆积，连接虽然被 Poller 发现可读，整体响应仍会变慢。排查 NIO 性能时要区分 selector、socket read/write、Executor 排队和应用代码耗时。
+
 
 ```text
 Acceptor -> accept -> Selector -> processKey(read/write)

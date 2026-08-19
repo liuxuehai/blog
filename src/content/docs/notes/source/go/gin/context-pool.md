@@ -8,10 +8,10 @@ tags:
   - sync.Pool
   - Concurrency
 order: 13
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 13
@@ -20,6 +20,13 @@ sidebar:
 Gin 把请求级状态集中在 `Context`，再用 `sync.Pool` 复用对象。性能收益来自减少分配，但正确性依赖严格的 reset 边界。
 
 <!-- more -->
+
+## 先给答案：Context 池化省掉的是对象分配，不是请求状态本身
+
+Gin 用 `sync.Pool` 复用 `Context`，前提是每次请求开始前彻底 reset，结束后不能再把它当作当前请求的容器。池化只优化生命周期明确、短时间高频创建的对象；它不会让 handler 自动变得线程安全，也不会延长 Context 的有效期。
+
+`Copy` 的存在正是为了跨 goroutine 使用：异步任务需要的是请求数据的快照和可安全访问的副本，而不是把原始 Context 带出请求生命周期。判断能否异步使用时，重点不是“这个指针是否还能访问”，而是数据是否已经与池中下一个请求隔离。
+
 
 ## 生命周期
 

@@ -7,10 +7,10 @@ tags:
   - Gin
   - Radix Tree
 order: 12
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 12
@@ -19,6 +19,13 @@ sidebar:
 Gin 的路由树不是“每段一个节点”的普通 Trie，而是把连续静态字符压缩成一条边，并把动态段放到分支末端。
 
 <!-- more -->
+
+## 先给答案：Gin 路由树解决的是“高效查找”和“路径歧义”两个问题
+
+压缩 Radix tree 通过合并公共前缀减少节点，但真正难的是同时支持静态段、参数段和 catch-all。Gin 的匹配规则是：静态分支优先，动态分支作为回退；如果静态分支走不通，再恢复到保存的候选节点继续尝试。
+
+所以 `/users/new` 与 `/users/:id` 并不是靠注册顺序碰巧区分，而是由树结构和回退逻辑共同保证。注册阶段提前拒绝非法 wildcard，查询阶段返回 `tsr`、参数和 `fullPath`，说明路由器不仅要回答“匹配到哪个 handler”，还要回答“路径是否需要规范化以及匹配过程中捕获了什么”。
+
 
 ## 设计概览
 

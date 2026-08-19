@@ -4,10 +4,10 @@ description: Nacos Config Data Resolver、Loader、PropertySource 与动态刷�
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Nacos, Config Data]
 order: 82
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 82
@@ -16,6 +16,13 @@ sidebar:
 Nacos 配置适配的关键是把 `nacos:` 位置解析成 Spring Boot Config Data 资源，再按 profile 和优先级进入环境。
 
 <!-- more -->
+
+## 先给答案：配置适配必须把“定位配置”和“加载配置”拆成两阶段
+
+Resolver 根据应用名、group、namespace、profile 等上下文确定配置身份，Loader 再从 Nacos 获取内容并转换成 Spring 可识别的 PropertySource。两阶段分离后，定位规则可以独立于具体加载协议，也便于处理导入顺序和动态刷新。
+
+动态刷新不是简单替换一个 Map：已有 Bean 是否重新绑定、哪些配置支持刷新、刷新失败是否保留旧值，都涉及运行时状态。排查配置不生效时要先确认 dataId/group/namespace，再确认 PropertySource 优先级和刷新事件是否到达。
+
 
 ## 调用链
 

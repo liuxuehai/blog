@@ -4,10 +4,10 @@ description: XMLConfigBuilder、XMLMapperBuilder、MappedStatement 与 MapperPro
 category: Backend
 tags: [Source Reading, MyBatis, Dynamic Proxy]
 order: 12
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 12
@@ -16,6 +16,13 @@ sidebar:
 MyBatis 的“接口不用实现类”不是魔法，而是两次注册：启动时把 SQL 注册为 `MappedStatement`，运行时把接口注册为 `MapperProxyFactory`。
 
 <!-- more -->
+
+## 先给答案：Mapper 代理只是最后一跳，真正的“实现”在启动期已经被编译成命令表
+
+MyBatis 把接口方法和 SQL 文件拆成两个阶段：启动时解析 XML/注解，校验并注册 `MappedStatement`；运行时代理只负责根据方法签名找到 statement，再把参数交给 `SqlSession`。所以 Mapper 没有实现类，不代表没有实现，而是把实现从 Java 方法体转移到了配置解析和运行时分派。
+
+这条分工解释了两个常见现象：启动阶段可能因为 namespace、statement id 或重复注册失败；运行阶段则主要处理参数、返回值和会话执行。要排查 Mapper 问题，先判断错误发生在“命令表没建出来”，还是“命令已经找到但执行/映射失败”，不要一上来只看代理类。
+
 
 ## 设计概览
 

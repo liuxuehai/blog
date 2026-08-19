@@ -8,10 +8,10 @@ tags:
   - Binding
   - Validation
 order: 15
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 15
@@ -20,6 +20,13 @@ sidebar:
 Gin 把“从哪里读数据”“如何解码”和“是否校验”拆成三层：Context 选择入口，Binding 负责格式，Validator 负责结构约束。
 
 <!-- more -->
+
+## 先给答案：绑定的难点是“请求体只能消费一次”，不是把字段复制进结构体
+
+Gin 先根据 HTTP 方法、Content-Type 和目标对象选择 Binding，再决定是否读取 body、如何解析、是否执行 validator。路径参数、查询参数和 JSON body 的来源不同，不能用“所有字段都从请求里找”来理解。
+
+body 是一次性流，因此 JSON/XML 等绑定完成后，原始字节通常已经被消费；如果业务还需要第二次读取，就必须显式缓存。`MustBind` 和 `ShouldBind` 的差别也不只是命名：一个会直接改变响应状态并中止流程，另一个把错误交给调用方决定，错误策略应该和接口的统一响应约定一起选择。
+
 
 ## 绑定决策图
 

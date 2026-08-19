@@ -4,10 +4,10 @@ description: Redis 如何用快照、增量日志和 fork 重写平衡恢复速�
 category: Database
 tags: [Source Reading, Redis, Persistence]
 order: 15
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 15
@@ -16,6 +16,13 @@ sidebar:
 Redis 的持久化不是 RDB 与 AOF 二选一这么简单：RDB 提供紧凑快照，AOF 记录命令语义，重写阶段再把历史压缩成新的 base 文件和增量文件。
 
 <!-- more -->
+
+## 先给答案：RDB 和 AOF 保存的是不同的恢复承诺
+
+RDB 更像某个时间点的压缩快照，恢复快、文件紧凑，但快照之后的写入可能丢失；AOF 记录写命令，重放粒度更细，但文件增长和重写成本更高。选择持久化方式，本质上是在恢复速度、数据丢失窗口、磁盘写放大和运维复杂度之间取舍。
+
+AOF 重写也不是简单复制旧文件，而是根据当前内存状态生成一份更短的等价历史，并用增量缓冲接住重写期间的新写入。重启恢复时要关注“旧文件、重写产物、增量部分”如何确定最终权威顺序，否则只看文件存在与否无法解释数据为何回退或重复。
+
 
 ## 持久化路径
 

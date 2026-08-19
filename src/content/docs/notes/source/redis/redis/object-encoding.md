@@ -4,10 +4,10 @@ description: Redis 对象头如何选择 SDS、listpack、quicklist、dict 与�
 category: Database
 tags: [Source Reading, Redis, Data Structure]
 order: 13
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 13
@@ -16,6 +16,13 @@ sidebar:
 Redis 把“逻辑类型”和“物理编码”分开：同一个 hash 或 list 可以因规模、元素长度和操作模式选择不同布局。
 
 <!-- more -->
+
+## 先给答案：对象编码是在内存、操作复杂度和升级成本之间做动态选择
+
+Redis 对外暴露的是 list、set、zset 等逻辑类型，内部却可以根据元素数量、大小和操作模式选择更紧凑或更适合随机访问的编码。编码切换的目的不是让所有操作都最快，而是让常见的小对象少占内存，同时在规模变大后仍能保持可接受的复杂度。
+
+这也意味着“同一个命令”可能在不同数据规模下走完全不同的实现。排查性能问题不能只看命令名，还要看对象当前编码、是否发生升级、升级是否在命令执行路径上同步完成，以及编码是否改变了迭代和删除成本。
+
 
 ## 对象分层
 

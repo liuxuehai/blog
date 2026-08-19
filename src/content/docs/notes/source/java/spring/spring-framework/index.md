@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - IoC
 order: 1
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 1
@@ -19,6 +19,20 @@ sidebar:
 Spring Framework 的核心价值不是“提供注解”，而是把对象创建、依赖解析、生命周期回调、代理和资源访问组织成可扩展的容器协议。本册基于 `main @ c7712052ce953722448967dc9c780fa959a08d48`（2026-08-13）阅读。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Framework 的核心不是“容器里有很多 Bean”，而是把对象创建、依赖装配、横切逻辑和资源生命周期组织成可扩展的流程。本册沿着一个 Bean 从定义到销毁的生命周期阅读：
+
+1. `BeanDefinition` 如何被解析成容器可以执行的计划？
+2. `refresh()` 为什么必须先准备后置处理器，再实例化单例？
+3. Bean 的实例化、注入、初始化和代理创建为什么有固定顺序？
+4. 循环依赖为什么需要三级缓存，为什么构造器循环仍然无法解决？
+5. AOP、事务和资源转换如何插入主流程，而不是硬编码进每个业务对象？
+6. 测试上下文为什么可以缓存，缓存失效时又由谁负责隔离？
+
+读完整册后，应当能解释“一个带有依赖、AOP 和事务的 Bean 是怎样变成最终可用对象的”。
+
 
 ## 版本快照
 

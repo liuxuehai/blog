@@ -8,10 +8,10 @@ tags:
   - Middleware
   - Chain of Responsibility
 order: 14
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 14
@@ -20,6 +20,13 @@ sidebar:
 Gin 没有为每个中间件创建嵌套对象，而是把 middleware 和终端 handler 合并为一个数组，再用 Context 的 index 驱动执行。
 
 <!-- more -->
+
+## 先给答案：Gin 中间件的核心是“控制调用权”，不是简单的前后置回调
+
+中间件通过共享的 handler chain 和当前 index 控制执行权：调用 `Next` 才会继续向后执行，返回后再沿调用栈向前收尾；调用 `Abort` 则把 index 推到终点，使后续 handler 不再获得执行机会。于是同一套机制既能实现前置鉴权，也能实现后置日志、异常恢复和响应头补写。
+
+这也带来一个容易忽略的边界：`Abort` 只阻止后续链路，不会自动终止当前函数；如果中间件在 `Abort` 后继续写入响应或调用 `Next`，结果取决于调用顺序。判断一个中间件是否真正“短路”，要看它有没有结束当前函数，以及响应是否已经提交，而不能只看有没有调用 `Abort`。
+
 
 ## 执行模型
 

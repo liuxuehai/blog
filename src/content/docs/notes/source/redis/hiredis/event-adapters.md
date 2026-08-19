@@ -8,10 +8,10 @@ tags:
   - Event Loop
   - Adapter
 order: 45
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 45
@@ -20,6 +20,13 @@ sidebar:
 hiredis 把事件循环适配压缩为几个动作：打开/关闭读事件、打开/关闭写事件、安排定时器、清理私有状态。核心 async 代码只调用这些 hook，不需要知道外部 loop 的 watcher 类型。
 
 <!-- more -->
+
+## 先给答案：adapter 的价值是把事件库差异压缩到四种能力
+
+hiredis 不拥有完整事件循环，只向外部 adapter 暴露读事件、写事件、计时器和 cleanup 四类能力。这样协议解析、命令队列和 callback 生命周期可以复用，libevent、libev、libuv 等事件库只需分别实现映射层。
+
+但“解耦事件库”也把责任交给调用方：必须正确启停读写监听、处理 timer 重置、在断开时清理上下文，并保证回调运行线程符合业务预期。头文件 adapter 方便集成，却不意味着事件库对象可以随意跨线程销毁。
+
 
 ## 适配接口
 
@@ -84,4 +91,3 @@ adapter 不只是注册回调，还必须在 context 销毁时撤销读写 watch
 - [异步 API 与回调队列](/notes/source/redis/hiredis/async-api/)
 - [总体架构](/notes/source/redis/hiredis/architecture/)
 - [Redis ae 事件循环](/notes/source/redis/redis/event-loop/)
-

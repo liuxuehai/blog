@@ -8,10 +8,10 @@ tags:
   - Concurrency
   - Lock-Free
 order: 1
-updatedDate: 2026-08-14
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-14
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 1
@@ -20,6 +20,19 @@ sidebar:
 Disruptor 是 LMAX 交易所开源的**单机进程内消息传递框架**，用一个预分配的环形数组 + 一组原子序号替代 `BlockingQueue`，在单线程六百万 TPS 的量级上把入队出队的延迟压到百纳秒级。全部主源码只有 71 个文件，是「代码极少但含金量极高」的典型。
 
 <!-- more -->
+
+## 本册问题地图
+
+不要把 Disruptor 理解成“一个更快的队列”。本册沿着一条事件的生命周期回答问题：
+
+1. **事件放在哪里？** `RingBuffer` 预分配固定槽位，用递增 `Sequence` 映射到物理下标。
+2. **生产者怎样避免覆盖未消费数据？** 申请序号时比较 wrap point 与最慢 gating sequence。
+3. **多生产者怎样避免把半成品交给消费者？** 抢号与发布分离，`availableBuffer` 记录连续可见边界。
+4. **消费者为什么不需要争抢队头？** 每个消费者维护自己的进度，并通过 barrier 表达依赖关系。
+5. **低延迟从哪里来，代价是什么？** 固定容量、对象复用、显式内存屏障与可配置等待策略减少锁和分配，但会占用更多内存，并要求业务处理器遵守序号协议。
+
+读完整册后，应当能从“发布一条事件”一直讲到“最慢消费者如何反压生产者”，而不是只记住 RingBuffer、CAS 和伪共享三个名词。
+
 
 ## 版本快照
 

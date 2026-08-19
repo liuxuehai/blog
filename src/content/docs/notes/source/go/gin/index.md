@@ -8,10 +8,10 @@ tags:
   - Go
   - HTTP
 order: 1
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 1
@@ -20,6 +20,19 @@ sidebar:
 Gin 是一个围绕 `net/http` 构建的高性能 Web 框架。本册不按 API 罗列功能，而是沿着路由注册、请求分派、Context 生命周期和输入绑定四条链路读源码。
 
 <!-- more -->
+
+## 本册问题地图
+
+Gin 把一次 HTTP 请求压缩成“路由匹配 + Context 状态 + handler chain”三段短路径。本册回答：
+
+1. **路由注册后保存在哪里？** 每种 HTTP 方法维护一棵压缩 Radix tree，静态段、参数段与 catch-all 有明确优先级。
+2. **请求命中路由后如何执行多个 handler？** handler 被合并成扁平 chain，`Context.index` 控制前进、回退与中止。
+3. **为什么能复用 Context？** 请求开始前 reset，结束后放回 `sync.Pool`；跨 goroutine 必须复制所需状态。
+4. **请求数据怎样进入结构体？** Binding 根据方法和 Content-Type 选择解码器，再交给 validator；body 的一次性读取决定了缓存边界。
+5. **为什么 `Abort` 之后代码还可能继续执行？** `Abort` 只阻止后续 handler，不会自动 return 当前函数，也不会撤销已经写出的响应。
+
+读完整册后，应当能从 `ServeHTTP` 追到树匹配、参数写入、middleware 执行和响应提交，并能解释 404、重定向、绑定失败和异步处理各自在哪一层发生。
+
 
 ## 版本快照
 
@@ -79,5 +92,3 @@ Gin 是一个围绕 `net/http` 构建的高性能 Web 框架。本册不按 API 
 
 - [Go 源码解析](/notes/source/go/)
 - [XXL-JOB 源码解析](/notes/source/java/rpc/xxl-job/)
-
-

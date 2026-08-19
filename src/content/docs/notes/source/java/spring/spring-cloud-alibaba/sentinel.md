@@ -4,10 +4,10 @@ description: Sentinel 自动配置、Web 拦截器、规则转换器与初始化
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Sentinel, Circuit Breaker]
 order: 84
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 84
@@ -16,6 +16,13 @@ sidebar:
 Sentinel starter 把 Spring Web、配置属性和外部规则源接到 Sentinel 核心，不重新实现滑动窗口、Slot 链或熔断状态机。
 
 <!-- more -->
+
+## 先给答案：Sentinel 适配的任务是把外部规则接入应用调用链，而不是重新实现流控算法
+
+适配层负责自动配置、规则数据源、资源命名和异常转换，把 Sentinel 的 Entry/Slot 保护链接到 Spring MVC、Feign 或 WebFlux 的入口。规则更新还要处理快照、监听和失败回退，不能只在启动时读取一次。
+
+限流、熔断、系统保护和降级响应发生在不同层次；一个请求被拒绝不一定是 QPS 超限，也可能是慢调用比例、并发数或系统负载触发。排查时要记录资源名、规则类型、触发原因和最终异常转换。
+
 
 ## 适配图
 

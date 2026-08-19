@@ -4,10 +4,10 @@ description: ae 文件事件、时间事件和 beforeSleep 的调度边界。
 category: Database
 tags: [Source Reading, Redis, Event Loop]
 order: 12
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 12
@@ -16,6 +16,13 @@ sidebar:
 `ae` 是一个小而关键的抽象：底层 multiplexing 只负责“哪些 fd 就绪”，Redis 再把时间事件、任务队列和睡眠前处理拼成完整主循环。
 
 <!-- more -->
+
+## 先给答案：Redis 单线程化的是命令执行，不是整个进程
+
+事件循环把文件事件、时间事件和命令执行串成有序路径，避免多个线程同时修改核心数据结构；但持久化、关闭文件、惰性释放和部分后台任务可以在其他执行者中进行。真正的边界是：哪些操作必须看到一致的 Redis 状态，哪些操作可以异步化。
+
+因此一个慢命令会阻塞所有客户端的命令响应，即使机器上还有很多 CPU；而后台线程也不能随意执行任意命令，因为它们不能破坏主线程维护的对象和事件顺序。阅读 Redis 并发模型时，先区分“谁拥有状态”，再区分“谁执行耗时工作”。
+
 
 ## 主循环
 

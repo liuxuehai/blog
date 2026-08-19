@@ -4,10 +4,10 @@ description: WebappClassLoaderBase 的委派顺序、隔离边界与应用卸载
 category: Backend
 tags: [Source Reading, Tomcat, ClassLoader]
 order: 36
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 36 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 36 }
 Tomcat 必须允许多个应用使用不同版本依赖，同时共享 Servlet API 和容器公共类，因此类加载隔离是部署模型的一部分。
 
 <!-- more -->
+
+## 先给答案：Web 应用类加载器是在“共享容器能力”和“应用版本隔离”之间做选择
+
+Tomcat 不能简单使用严格双亲委派，因为不同 Web 应用可能需要加载同名但不同版本的库；同时 Java 核心类和容器 API 又必须保持统一，不能被应用自己的 jar 覆盖。
+
+因此加载顺序按类别区分：系统类、容器类优先，应用类在隔离范围内自行查找。代价是类加载问题更难排查：同名类来自哪个 loader、线程上下文类加载器是什么、卸载时是否仍有线程或静态引用，都可能决定热部署是否成功。
+
 
 ```text
 Bootstrap/JDK <- Common <- Catalina/Shared <- WebappClassLoader

@@ -8,10 +8,10 @@ tags:
   - Redis
   - C
 order: 4
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 4
@@ -20,6 +20,17 @@ sidebar:
 hiredis 是 Redis 官方 C 客户端的底层实现。它把网络连接、命令编码、RESP 增量解析和异步事件适配拆成可组合的几层，既能提供阻塞式 `redisCommand`，也能把同一套协议状态接入 libevent、libev、libuv、Redis `ae` 或自定义 poll 循环。
 
 <!-- more -->
+
+## 本册问题地图
+
+hiredis 是 Redis 客户端协议栈的轻量实现，本册不从 API 列表开始，而是追踪“一条命令如何变成 reply”：
+
+1. **RESP 数据如何在不完整的网络字节中被识别？** reader 状态机如何保存半包和嵌套结构。
+2. **同步 API 为什么拆成 Append 和 GetReply？** 写命令与等待响应分离后，批量请求获得了什么能力。
+3. **异步 API 如何保证 reply 不错配？** 命令队列、callback 队列和连接状态怎样共同推进。
+4. **为什么协议层不绑定某个事件库？** adapter 只映射读写、计时器和 cleanup，事件循环所有权留给调用方。
+5. **断线和超时后谁负责释放？** context、pending command、reader 和外部 event loop 的生命周期如何收口。
+
 
 ## 版本快照
 
@@ -75,4 +86,3 @@ dict.c          异步请求回调和订阅状态所需的字典
 - [Redis 源码解析](/notes/source/redis/redis/)
 - [Valkey 源码解析](/notes/source/redis/valkey/)
 - [Netty 源码解析](/notes/source/java/base/netty/)
-

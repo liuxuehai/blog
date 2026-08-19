@@ -4,10 +4,10 @@ description: Netty 的 FileRegion、CompositeByteBuf、写出聚合和零拷贝�
 category: Backend
 tags: [Source Reading, Netty, Zero Copy, ByteBuf]
 order: 25
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 25
@@ -16,6 +16,13 @@ sidebar:
 Netty 里的“零拷贝”不是一种单一技术：`FileRegion` 依赖操作系统的 `transferTo`，`CompositeByteBuf` 避免把多个 ByteBuf 合并成一块连续内存，切片和 duplicate 则避免复制底层字节。
 
 <!-- more -->
+
+## 先给答案：零拷贝不是“完全不复制”，而是减少不必要的数据搬运和用户态往返
+
+文件发送、多个 ByteBuf 聚合和写缓冲优化，省掉的 copy 次数并不相同：FileRegion 可能让文件内容直接进入内核发送路径；CompositeByteBuf 让多个逻辑片段共享视图；聚合写则减少 syscall 或 flush 次数。
+
+所以零拷贝的收益取决于数据来源、传输协议和下游 Handler 是否需要修改内容。如果业务必须逐字节解压、加密或重排，数据仍要进入用户态；如果组合对象跨线程传递，还要同时管理每个组成 buffer 的引用计数。正确问题不是“有没有 zero-copy”，而是“这条路径上哪一次复制最贵，能否安全省掉”。
+
 
 ## 三种路径
 

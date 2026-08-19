@@ -4,10 +4,10 @@ description: replication ID、offset、backlog 如何实现全量和部分重同
 category: Database
 tags: [Source Reading, Redis, Replication]
 order: 16
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 16
@@ -16,6 +16,13 @@ sidebar:
 Redis 复制把主节点产生的写命令编号为连续 offset，并将近期字节保存在 replication backlog；副本断线重连时，只要请求区间仍在 backlog 内，就能避免重新发送完整快照。
 
 <!-- more -->
+
+## 先给答案：复制的核心不是“把命令发过去”，而是让副本知道自己缺哪一段历史
+
+主节点通过 replication offset 描述复制流位置，副本通过 backlog 判断断线后能否从缺口继续增量同步；如果历史已经被覆盖，才退化为全量同步。offset 是连续字节流的位置，不是简单的命令编号，因此重连时必须同时匹配运行标识和复制历史。
+
+全量同步包含快照传输与期间新增命令的补发，意味着副本即使收到快照，也不能立即忽略主节点在制作快照期间产生的写入。复制语义不是强一致事务提交：主节点响应、数据进入复制 backlog、副本真正应用之间仍存在可观察窗口。
+
 
 ## 复制数据流
 

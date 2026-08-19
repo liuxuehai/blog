@@ -4,10 +4,10 @@ description: Tomcat 源码解析总览：生命周期、Connector、Container、
 category: Backend
 tags: [Source Reading, Tomcat, Servlet]
 order: 3
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 3 }
 ---
@@ -15,6 +15,21 @@ sidebar: { order: 3 }
 Tomcat 是 Servlet 容器与 HTTP 服务器的组合。它把连接接入、协议解析、虚拟主机路由、Web 应用生命周期和 Servlet 调用拆成可替换的层次。
 
 <!-- more -->
+
+## 本册问题地图
+
+Tomcat 的核心是把“一个 Web 应用”放进一个可启动、可隔离、可处理请求的容器体系。本册沿着启动到请求的路径回答：
+
+1. Server、Service、Engine、Host、Context 为什么分成四级？
+2. 生命周期状态机如何保证组件按顺序启动和停止？
+3. 类加载器为什么不能完全使用严格双亲委派？
+4. NIO Endpoint 如何把 socket 事件交给工作线程？
+5. Mapper 如何把 URI 找到 Context、Wrapper 和 Servlet？
+6. Coyote、Adapter、Container 和 Valve 如何把协议请求转成 Servlet 调用？
+7. Web 应用为什么默认延迟加载，什么时候会被提前启动？
+
+读完整册后，应当能解释一个 HTTP 请求从端口进入 Tomcat 到 Servlet 执行，经历了哪些边界和适配层。
+
 
 ## 版本快照
 

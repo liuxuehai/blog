@@ -4,10 +4,10 @@ description: FilterChainProxy 如何匹配请求并执行虚拟过滤器链。
 category: Backend
 tags: [Source Reading, Spring Security, Servlet Filter]
 order: 42
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 42
@@ -16,6 +16,13 @@ sidebar:
 `FilterChainProxy` 是 Servlet 栈的总调度器，把请求交给第一条匹配的 `SecurityFilterChain`。
 
 <!-- more -->
+
+## 先给答案：FilterChainProxy 先决定“用哪条链”，链内 Filter 再决定“请求能否继续”
+
+不同请求可能需要不同安全策略，因此 Security 不是把所有 Filter 无条件串在一起，而是先按 matcher 选择第一条匹配链，再按顺序执行链内过滤器。第一条匹配链原则要求链的范围和顺序清晰，否则宽泛规则会吞掉后面的专用规则。
+
+Filter 的顺序代表上下文依赖：认证过滤器要先建立身份，授权过滤器才能做决策，异常处理器还要包住可能抛出的认证/授权异常。调试安全问题时，先确定命中的链，再看具体 Filter 是否运行。
+
 
 ## 设计概览
 

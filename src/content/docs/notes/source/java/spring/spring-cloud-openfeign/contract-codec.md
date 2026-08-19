@@ -4,10 +4,10 @@ description: Spring MVC 注解如何解析为 Feign MethodMetadata，以及 Http
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, HTTP, Serialization]
 order: 63
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 63
@@ -16,6 +16,13 @@ sidebar:
 OpenFeign 的接口方法不是直接反射调用，而是先由 `Contract` 编译成请求元数据，再由编码器和解码器把 Java 对象接到 HTTP 字节流。
 
 <!-- more -->
+
+## 先给答案：Contract 和 Codec 分别解决“请求长什么样”和“数据如何变成对象”
+
+Contract 读取接口注解，把方法签名编译为 RequestTemplate 元数据；Encoder 把参数变成请求体，Decoder 把响应体还原成返回类型。契约解析与编解码分离，才能支持 Spring MVC、JAX-RS 等不同注解模型。
+
+类型信息在响应解码时尤其重要：泛型、集合、错误响应和空响应不能只靠运行时 class 判断。排查“服务端返回正常但客户端解析失败”时，要分别看契约生成的请求、实际 Content-Type 和 decoder 获得的目标类型。
+
 
 ## 编译契约
 

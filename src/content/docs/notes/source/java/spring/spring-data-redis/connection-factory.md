@@ -4,10 +4,10 @@ description: RedisConnectionFactory 如何隔离 Lettuce、Jedis、连接池、S
 category: Backend
 tags: [Source Reading, Spring Data Redis, Connection]
 order: 72
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 72
@@ -16,6 +16,13 @@ sidebar:
 连接工厂不是简单的对象工厂，而是驱动客户端、拓扑资源和 Spring 生命周期之间的边界。
 
 <!-- more -->
+
+## 先给答案：ConnectionFactory 把连接生命周期从业务代码中收口
+
+业务不应该每次命令都手动创建、选择、关闭连接；ConnectionFactory 根据客户端实现提供连接、共享连接、连接池和事务绑定。Lettuce 与 Jedis 的线程模型不同，但上层通过统一接口暴露连接操作。
+
+“拿到连接”也不等于“可以在任何线程和模式下使用”。订阅连接、事务连接和普通命令连接有不同约束；排查连接泄漏或命令错乱时要看连接来源、是否绑定线程/事务以及释放路径。
+
 
 ## 设计概览
 

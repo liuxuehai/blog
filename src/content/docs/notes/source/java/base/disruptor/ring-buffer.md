@@ -8,10 +8,10 @@ tags:
   - Ring Buffer
   - Lock-Free
 order: 12
-updatedDate: 2026-08-14
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-14
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 12
@@ -20,6 +20,13 @@ sidebar:
 环形队列本身没什么稀奇，难点在于**在没有锁的前提下判断「这一格能不能写」**。Disruptor 的答案是一个叫 `wrapPoint` 的减法，和一个叫 `cachedValue` 的缓存——这两行代码撑起了整个生产侧。
 
 <!-- more -->
+
+## 先给答案：RingBuffer 解决的是“固定内存里的有序复用”
+
+环形队列的关键不在于把数组首尾相连，而在于用递增序号同时表达三件事：生产者想写到哪里、消费者已经读到哪里、某个槽位是否可以安全复用。物理下标只是 `sequence & (bufferSize - 1)` 的结果，真正决定安全性的始终是序号之间的距离。
+
+因此“判满”不能简单理解为数组下标追上了头部。生产者必须确认自己不会覆盖最慢消费者尚未读取的数据；消费者也必须等到目标序号已经发布。RingBuffer 用 gating sequences 把这两个边界显式化，换来了无锁、定长和低 GC，但也接受了容量固定、慢消费者会反向限制生产者的代价。
+
 
 ## 问题背景
 

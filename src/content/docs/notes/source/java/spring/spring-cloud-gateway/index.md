@@ -8,10 +8,10 @@ tags:
   - WebFlux
   - Gateway
 order: 5
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 5
@@ -20,6 +20,17 @@ sidebar:
 Spring Cloud Gateway 把请求接入、路由选择、跨切面处理和下游代理组合成一条 WebFlux 链。阅读重点不是配置项，而是 `ServerWebExchange` 如何携带路由状态并穿过有序过滤器。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Cloud Gateway 的核心是把“请求是否属于某条路由、经过哪些过滤器、最终如何转发”变成 Reactor 链：
+
+1. WebFlux 的非阻塞执行模型如何约束 Gateway 过滤器？
+2. Route、Predicate 和 Filter 如何从配置变成可执行链？
+3. 全局过滤器、路由过滤器和排序如何共同决定请求顺序？
+4. URL 重写、负载转发和响应提交分别发生在哪个阶段？
+5. Redis 限流和熔断 fallback 如何处理异步失败与资源释放？
+
 
 ## 版本快照
 

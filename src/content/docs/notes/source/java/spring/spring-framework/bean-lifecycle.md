@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Bean Lifecycle
 order: 13
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 13
@@ -19,6 +19,13 @@ sidebar:
 Spring Bean 的生命周期不是一个回调，而是实例化、依赖注入、Aware、初始化前后处理器和销毁注册共同构成的协议。
 
 <!-- more -->
+
+## 先给答案：Bean 生命周期的关键是“原始对象”和“最终暴露对象”可能不是同一个对象
+
+Spring 先实例化原始对象，再填充依赖、执行 aware 回调和初始化方法，最后让后置处理器决定是否包装成代理。这样既能支持生命周期回调，也能让 AOP、事务、异步等横切逻辑在不改业务类的情况下插入。
+
+因此“属性已经注入”不等于“Bean 已经可以被业务使用”。代理可能在初始化前后参与决策，早期引用还可能影响循环依赖。排查 Bean 行为时必须区分：容器内部正在创建的实例、三级缓存暴露的早期引用，以及最终从容器取出的对象。
+
 
 ## 生命周期图
 

@@ -4,10 +4,10 @@ description: Redis dict 双表迁移如何把扩容停顿拆成许多小步骤�
 category: Database
 tags: [Source Reading, Redis, Hash Table]
 order: 14
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 14
@@ -16,6 +16,13 @@ sidebar:
 Redis 的字典扩容不是一次性复制，而是保留 `ht[0]` 和 `ht[1]`，用 `rehashidx` 表示迁移边界，并让访问路径顺便推进工作。
 
 <!-- more -->
+
+## 先给答案：渐进式 rehash 用“每次多做一点”换掉一次性长停顿
+
+哈希表扩容最直接的办法是一次性分配新表并迁移所有桶，但当 key 很多时，这个操作会阻塞命令执行。Redis 保留旧表和新表，在后续访问或周期维护中逐步搬迁；迁移期间查找通常要同时检查两张表，写入则进入新表。
+
+它解决的是停顿峰值，不是让扩容免费：迁移期间内存会暂时增加，读写路径更复杂，维护预算过低会让 rehash 持续很久。判断 rehash 是否健康，不能只看请求延迟，还要看迁移进度、内存余量和后台维护是否有机会持续运行。
+
 
 ## 数据结构
 

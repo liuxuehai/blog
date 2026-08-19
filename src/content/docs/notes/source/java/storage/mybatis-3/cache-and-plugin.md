@@ -4,10 +4,10 @@ description: MyBatis 一级缓存、二级缓存事务包装和 InterceptorChain
 category: Backend
 tags: [Source Reading, MyBatis, Cache, Plugin]
 order: 14
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 14
@@ -16,6 +16,13 @@ sidebar:
 MyBatis 的缓存不是一个全局 Map：一级缓存属于执行器，二级缓存属于 mapper namespace，并通过事务包装延迟真正提交。插件也不是事件总线，而是对四类核心对象套 JDK 代理。
 
 <!-- more -->
+
+## 先给答案：缓存和插件都在改写执行链，但一个保存结果，一个改变过程
+
+一级/二级缓存的核心问题是“相同查询能否复用结果，以及结果应该跟多大的作用域绑定”；插件的核心问题是“在不修改主流程的情况下，能否观察或改写某个阶段”。两者都包裹 Executor，却不能混为同一种扩展：缓存关心 key、生命周期和失效，插件关心拦截点、责任链顺序和参数变形。
+
+因此缓存命中时，后面的 JDBC、结果集映射甚至部分插件逻辑可能根本不会执行；插件如果修改了 SQL 或分页参数，又可能改变缓存 key 的正确性。排查“缓存读到旧数据”时，必须同时看更新语句的清理范围和插件是否改变了实际执行对象。
+
 
 ## 两级缓存
 

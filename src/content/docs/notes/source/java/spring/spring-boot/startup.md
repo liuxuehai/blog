@@ -4,10 +4,10 @@ description: 从 run() 到上下文刷新，解析 Spring Boot 如何编排环�
 category: Backend
 tags: [Source Reading, Spring Boot, Startup]
 order: 22
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 22
@@ -16,6 +16,13 @@ sidebar:
 `SpringApplication#run()` 是 Boot 的总调度器。它不直接创建所有业务 Bean，而是把环境、监听器、上下文和刷新阶段连接成一条有序流水线。
 
 <!-- more -->
+
+## 先给答案：Boot 启动是在运行时组装一个“符合当前环境的应用容器”
+
+启动过程先收集环境和监听器，再推断 Web 类型、创建 ApplicationContext、加载配置类和自动配置，最后 refresh 并发布就绪事件。它不是简单调用 Spring，而是在 Spring 之上增加了环境推断、默认策略和失败诊断。
+
+启动失败时不要只看最后一行异常：环境没准备好会导致配置读取错误，自动配置条件不满足会导致 Bean 缺失，refresh 失败则可能是依赖或生命周期问题。沿着事件和上下文阶段回溯，才能区分“没找到配置”和“配置找到了但创建失败”。
+
 
 ## 调用链
 

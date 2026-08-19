@@ -4,10 +4,10 @@ description: Binder 如何从 PropertySource 读取层级属性并绑定到对�
 category: Backend
 tags: [Source Reading, Spring Boot, Configuration]
 order: 25
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 25
@@ -16,6 +16,13 @@ sidebar:
 配置绑定是 Spring Boot 把字符串属性提升为类型化对象的基础设施。它同时处理命名规范、嵌套对象、集合、转换器和校验回调。
 
 <!-- more -->
+
+## 先给答案：配置绑定把“字符串环境”转换成“带结构和校验的配置对象”
+
+`Environment#getProperty` 适合读取单个值，却无法自然表达嵌套对象、集合、松散命名、类型转换和校验。Binder 通过属性源、名称规范化、转换服务和目标对象处理器，把多个来源合并成结构化配置。
+
+配置绑定的边界在于来源优先级和类型语义：同名配置可能来自不同 PropertySource，空值、列表替换、Duration/DataSize 等类型也有各自规则。排查绑定问题要同时看最终属性源、规范化后的键、目标类型和校验阶段。
+
 
 ## 绑定链路
 

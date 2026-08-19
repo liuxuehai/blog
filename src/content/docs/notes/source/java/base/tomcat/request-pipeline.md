@@ -4,10 +4,10 @@ description: 从 Http11Processor 到 CoyoteAdapter，再到 Catalina Container �
 category: Backend
 tags: [Source Reading, Tomcat, HTTP]
 order: 34
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 34 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 34 }
 Tomcat 请求处理的关键边界是 Coyote 与 Catalina：前者理解字节流和 HTTP 协议，后者理解 Servlet 请求、容器路由和应用生命周期。
 
 <!-- more -->
+
+## 先给答案：Adapter 是协议世界和 Servlet 容器世界之间的语义翻译器
+
+Coyote 处理 HTTP 连接和协议解析，Container 处理 Web 应用和 Servlet。Adapter 把 Request/Response、异步状态、映射结果和调用入口转换成另一侧能理解的模型，避免协议层直接依赖 Servlet 层。
+
+这层适配也定义了错误边界：协议解析错误、映射失败、Servlet 异常和响应提交失败可能发生在不同阶段。理解请求链时要追踪请求对象在哪次转换中增加了什么信息，而不是只记住 `service()` 最终被调用。
+
 
 ```text
 Socket -> Http11Processor#service -> CoyoteAdapter#service

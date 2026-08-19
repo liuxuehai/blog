@@ -4,10 +4,10 @@ description: Redis 如何在读路径、主动扫描和内存压力下处理 TTL
 category: Database
 tags: [Source Reading, Redis, Expiry, Eviction]
 order: 17
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 17
@@ -16,6 +16,13 @@ sidebar:
 Redis 的过期不是一个必须即时触发的定时器集合，而是惰性删除与主动抽样的组合；内存超过上限后，再由 eviction 逻辑选择受害 key。
 
 <!-- more -->
+
+## 先给答案：过期解决“键还能不能存在”，淘汰解决“内存不够时删谁”
+
+过期时间是业务或命令赋予单个 key 的生命周期；淘汰策略是在达到内存上限后，从仍可能有效的 key 中选择牺牲者。两者都可能让读取返回 miss，却有不同的触发条件、统计指标和一致性含义。
+
+Redis 同时使用惰性删除和主动抽样：访问时保证过期键不会继续被使用，后台周期性清理则避免无人访问的过期键长期占内存。主动清理受预算限制，所以过期并不等于物理内存瞬间归还；在高写入、低访问或大 value 场景下，应分别观察 keyspace、eviction 和 allocator 行为。
+
 
 ## 两条回收路径
 

@@ -4,10 +4,10 @@ description: Server、Service、Engine、Host、Context、Wrapper 的层级职�
 category: Backend
 tags: [Source Reading, Tomcat, Container]
 order: 32
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 32 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 32 }
 Tomcat 的 Container 是表达部署边界的树：Engine 代表服务，Host 代表虚拟主机，Context 代表 Web 应用，Wrapper 代表 Servlet。
 
 <!-- more -->
+
+## 先给答案：四级 Container 是把部署隔离和请求定位拆开
+
+Engine 管全局虚拟服务器，Host 管域名，Context 管 Web 应用，Wrapper 管 Servlet。层级不是为了好看，而是让每一层拥有自己的生命周期、类加载器、配置和请求范围。
+
+请求定位时，层级结构提供逐级缩小的命名空间；启动时，子组件又可以继承父组件能力并保留自己的隔离边界。把所有对象塞进一个 Router 会丢失部署级配置、应用级资源和 Servlet 级映射等差异。
+
 
 ```text
 Server -> Service -> Engine -> Host -> Context -> Wrapper

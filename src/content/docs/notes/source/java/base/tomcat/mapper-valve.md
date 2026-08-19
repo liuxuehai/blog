@@ -4,10 +4,10 @@ description: Tomcat 如何按 Host、Context、Wrapper 逐级路由，并通过 
 category: Backend
 tags: [Source Reading, Tomcat, Routing]
 order: 35
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar: { order: 35 }
 ---
@@ -15,6 +15,13 @@ sidebar: { order: 35 }
 Mapper 负责请求落到哪个容器，Pipeline/Valve 负责请求经过哪些处理步骤。
 
 <!-- more -->
+
+## 先给答案：Mapper 负责“找到对象”，Valve 负责“按容器链执行对象”
+
+URI 映射需要在 Host、Context、Wrapper 多级命名空间中查找，Mapper 把结果压缩成可执行的映射；随后 Pipeline/Valve 负责认证、日志、错误处理和最终调用。查找与执行分离，才能让映射规则变化不必重写整个请求处理链。
+
+映射失败、重定向、静态资源和 Servlet 匹配也因此属于不同分支。排查 404 时先判断请求有没有找到 Context/Wrapper，再判断 Valve 是否执行、Servlet 是否返回 404，不能把所有“找不到”都归为同一层。
+
 
 ```text
 host + URI -> Mapper#map -> Engine/Host/Context/Wrapper

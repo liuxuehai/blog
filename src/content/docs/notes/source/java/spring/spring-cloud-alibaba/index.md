@@ -4,10 +4,10 @@ description: Spring Cloud Alibaba 源码解析总览：自动装配、Nacos、Se
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Nacos, Sentinel, RocketMQ]
 order: 8
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 8
@@ -16,6 +16,19 @@ sidebar:
 Spring Cloud Alibaba 是一组把 Nacos、Sentinel、RocketMQ 等能力接入 Spring Cloud 契约的适配器集合。
 
 <!-- more -->
+
+## 本册问题地图
+
+Spring Cloud Alibaba 的源码重点在“如何把外部中间件能力接入 Spring 扩展点”，而不是重复讲 Nacos、Sentinel 或 RocketMQ 本身：
+
+1. 自动配置如何发现并创建适配组件？
+2. Nacos 配置和服务发现如何映射成 Spring Environment、注册表和事件？
+3. Sentinel 规则如何进入应用内的限流、熔断和保护链？
+4. RocketMQ Binder 如何把消息通道、生产者和消费者接入 Spring Cloud Stream？
+5. 外部系统不可用时，适配层提供什么缓存、降级和重试边界？
+
+读完整册后，应当能区分“上游组件的核心机制”和“Spring Cloud Alibaba 的适配责任”。
+
 
 ## 版本快照
 

@@ -7,10 +7,10 @@ tags:
   - Valkey
   - Compatibility
 order: 32
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 32
@@ -19,6 +19,13 @@ sidebar:
 分叉后的第一原则不是“所有名字都换掉”，而是区分兼容层级：客户端线上的协议兼容、持久化与数据语义兼容，以及构建和运维生态兼容。Valkey 的源码和 README 同时保留新身份与 Redis 兼容线索，正是这个取舍的结果。
 
 <!-- more -->
+
+## 先给答案：兼容性不是“能不能启动”，而是多个生态边界同时不破裂
+
+Valkey 的兼容性至少有三层：协议与命令行为兼容，配置和持久化格式兼容，客户端、模块和运维工具生态兼容。版本宏和分叉标识只是代码层面的信号，不能自动证明所有行为都相同。
+
+分叉项目最值得读的不是“哪里改了名字”，而是哪些共同假设被保留、哪些假设因并发或治理方向改变而被替换。判断是否兼容，要拿具体客户端、命令语义、持久化文件和模块 ABI 做验证，不能把源码目录相似当作行为等价。
+
 
 ## 三层兼容模型
 
@@ -66,5 +73,3 @@ Valkey process
 - [总体架构](/notes/source/redis/valkey/architecture/)
 - [IO Threads 队列与任务生命周期](/notes/source/redis/valkey/io-threads/)
 - [Redis 系索引](../)
-
-

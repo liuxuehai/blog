@@ -8,10 +8,10 @@ tags:
   - Redis
   - Concurrency
 order: 3
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 3
@@ -20,6 +20,16 @@ sidebar:
 Valkey 不是“把 Redis 改名后继续维护”的简单快照，而是从 Redis 7.2 兼容基线继续演进的独立服务端。本册只抓最值得对照阅读的部分：分叉如何保持兼容、主线程如何继续拥有数据状态，以及 IO 多线程究竟把什么工作移出了事件循环。
 
 <!-- more -->
+
+## 本册问题地图
+
+Valkey 的阅读重点不是列出它“比 Redis 多了哪些线程”，而是理解它在保持 Redis 核心语义的前提下，怎样把可并行的工作拆出去：
+
+1. **哪些工作可以并行，哪些仍必须由主线程决定？** 命令状态修改与网络读写、后台 I/O 的边界在哪里。
+2. **IO worker 和 BIO worker 为什么不是同一种队列？** 消费者数量、任务方向和完成通知方式如何不同。
+3. **fork、后台线程和多线程 I/O 分别解决什么问题？** 它们的隔离方式、内存语义和故障边界不能混为一谈。
+4. **如何读分叉项目？** 先建立共同基线，再定位兼容层、并发改造点和行为差异，而不是把所有 diff 当成同等重要。
+
 
 ## 版本快照
 

@@ -4,10 +4,10 @@ description: Gateway 如何用 Mono、Flux 和 ServerWebExchange 组织非阻塞
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Reactor, WebFlux]
 order: 52
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 52
@@ -16,6 +16,13 @@ sidebar:
 Gateway 的“异步”不是把同步代码包进线程池，而是让路由 predicate、过滤器和下游代理都返回响应式 publisher，并在订阅时推进处理。
 
 <!-- more -->
+
+## 先给答案：WebFlux 把“等待 I/O”变成信号传播，但不会让阻塞代码自动变成非阻塞
+
+Reactor 链通过 Publisher/Subscriber 表达数据和完成信号，线程在等待网络时可以处理其他任务；但如果过滤器中调用阻塞数据库、文件或同步客户端，仍会占住事件循环线程。
+
+背压、取消和错误是同一条链上的控制信号：下游处理不过来时要限制上游生产，请求取消时要释放连接和 body，异常时要沿错误路径完成响应。调优不能只看线程数，还要定位阻塞点和未消费的资源。
+
 
 ## 调用链
 

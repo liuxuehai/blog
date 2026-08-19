@@ -4,10 +4,10 @@ description: RedisSerializer、SerializationPair 以及 String、Java、JSON 类
 category: Backend
 tags: [Source Reading, Spring Data Redis, Serialization]
 order: 74
-updatedDate: 2026-08-16
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 74
@@ -16,6 +16,13 @@ sidebar:
 Redis 只接收字节数组，Spring Data Redis 用 serializer 把类型边界显式化，并为 key、value、hash key、hash value 分配独立策略。
 
 <!-- more -->
+
+## 先给答案：序列化格式决定 Redis 数据的长期兼容性，而不只是网络传输效率
+
+Redis 本身只保存字节，Spring Data Redis 必须为 key、value、hash field 和 hash value 选择序列化器。JSON 可读但需要类型信息，JDK 序列化带有 Java 绑定和安全边界，字符串序列化简单却不适合复杂对象。
+
+更换序列化器会改变已有 key 的可读性和 hash field 行为；同一业务如果读写使用不同配置，会出现“Redis 里有值但反序列化失败”。设计格式时要把升级、跨语言、大小、可信输入和回滚一起考虑。
+
 
 ## 数据结构
 

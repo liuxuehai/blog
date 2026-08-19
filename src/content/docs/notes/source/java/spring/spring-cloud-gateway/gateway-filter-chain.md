@@ -4,10 +4,10 @@ description: 全局过滤器、路由过滤器、排序责任链与 Netty 请求
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Filter Chain, Netty]
 order: 54
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 54
@@ -16,6 +16,13 @@ sidebar:
 Gateway filter 是围绕 `ServerWebExchange` 的响应式责任链。过滤器既可以在下游调用前修改请求，也可以在 `chain.filter(exchange)` 返回后处理响应。
 
 <!-- more -->
+
+## 先给答案：GatewayFilter 链同时包住“转发前”和“转发后”两个阶段
+
+过滤器通过 `Mono<Void>` 的嵌套形成前置/后置结构：调用下一个过滤器前可以改请求，返回之后可以改响应。排序决定鉴权、限流、路由选择、转发和响应改写的先后，不能只看过滤器名称。
+
+代理 URL、请求 body 和响应 body 都可能是一次性资源，过滤器如果读取后不重新包装，后续 Handler 会收到空数据；如果异常或取消路径没有释放资源，连接池也会被拖住。
+
 
 ## 责任链
 

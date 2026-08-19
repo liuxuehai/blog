@@ -4,10 +4,10 @@ description: AutoConfiguration.imports 候选发现、排除、排序与 Deferre
 category: Backend
 tags: [Source Reading, Spring Boot, Auto Configuration]
 order: 23
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 23
@@ -16,6 +16,13 @@ sidebar:
 自动装配把“类路径上可能需要的配置”变成候选集合，再交给条件系统决定是否真正注册 Bean。
 
 <!-- more -->
+
+## 先给答案：自动配置是“候选配置 + 条件筛选”，不是无条件替用户创建所有 Bean
+
+Boot 先从 imports 文件获得候选自动配置类，再通过条件判断决定哪些配置可以进入容器。候选与生效是两个阶段：一个 starter 提供候选，classpath、属性、Bean 是否存在和 Web 环境共同决定最终结果。
+
+使用 imports 文件能把候选列表变成可索引、可排序、可诊断的元数据，而不是运行时扫描整个 classpath。排查自动配置时，应该依次看候选是否加载、条件是否匹配、用户 Bean 是否触发 `@ConditionalOnMissingBean` 的回退，以及最终 Bean 是否在 refresh 时创建。
+
 
 ## 数据流
 

@@ -4,10 +4,10 @@ description: SecurityContextHolder、策略实现、请求级清理与异步线�
 category: Backend
 tags: [Source Reading, Spring Security, SecurityContext]
 order: 45
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 45
@@ -16,6 +16,13 @@ sidebar:
 `SecurityContext` 是认证结果与后续组件之间的共享边界，API 与实际存储通过策略解耦。
 
 <!-- more -->
+
+## 先给答案：SecurityContext 的难点是“请求结束时清理”和“异步执行时传播”
+
+ThreadLocal 让当前线程上的过滤器和业务代码可以快速访问身份，但线程池会复用线程，不能把上下文当作线程永久属性。请求开始加载、请求结束保存/清理，构成一个完整生命周期；异步任务则需要显式包装或委托执行器传播上下文。
+
+只在主线程验证登录状态、再把任务丢进普通线程池，会出现异步代码看不到用户或错误继承上一个请求身份。排查时要看上下文的创建线程、使用线程和清理线程是否一致。
+
 
 ## 生命周期
 

@@ -8,10 +8,10 @@ tags:
   - Async IO
   - Callback
 order: 44
-updatedDate: 2026-08-15
+updatedDate: 2026-08-19
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-19
 draft: false
 sidebar:
   order: 44
@@ -20,6 +20,13 @@ sidebar:
 hiredis 异步 API 的核心不是创建线程，而是把“发送命令”和“回调 reply”放入事件循环驱动的状态机。一个 async context 维护连接状态、待处理 callback 队列、读写兴趣和超时回调。
 
 <!-- more -->
+
+## 先给答案：异步客户端把“等待响应”改造成“保存回调并由事件驱动推进”
+
+异步 API 不会在发命令的线程里等待 socket，而是把命令、callback 和释放函数按顺序放入 pending 队列。可写事件负责刷新输出，可读事件驱动 reader 解析 reply，再从队列头取出对应 callback。
+
+顺序匹配成立的前提是：命令发送顺序和服务端响应顺序一致，且连接在断开时能一次性处理所有未完成命令。超时并不是 reader 自己产生的结果，而是外部事件循环触发的定时器；因此 adapter、context 和 callback 的 cleanup 必须协同，否则会出现回调不触发或释放两次。
+
 
 ## 生命周期
 
@@ -84,4 +91,3 @@ redisAsyncCommand
 - [RESP Reader 状态机](/notes/source/redis/hiredis/resp-reader/)
 - [事件循环适配层](/notes/source/redis/hiredis/event-adapters/)
 - [同步命令链](/notes/source/redis/hiredis/sync-command/)
-
