@@ -4,10 +4,10 @@ description: MyBatis-Plus 源码解析总览：实体元数据、Mapper 注入�
 category: Backend
 tags: [Source Reading, Java, MyBatis-Plus, ORM]
 order: 6
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 6
@@ -16,6 +16,16 @@ sidebar:
 MyBatis-Plus 不替换 MyBatis 的执行器，而是在配置、Mapper 元数据、SQL 注入和拦截器层增加约定式能力。读它的关键是看“一个实体如何变成可执行的 MappedStatement”。
 
 <!-- more -->
+
+## 本册问题地图
+
+MyBatis-Plus 的能力可以按“启动期生成，执行期拦截”来读：
+
+1. **通用 CRUD 从哪里来？** 启动期读取实体的表元数据，并把通用方法注入为 `MappedStatement`；运行时不是临时拼接一段神奇 SQL。
+2. **TableInfo 为什么要缓存？** 表名、主键和字段映射在启动后基本稳定，缓存能避免每次调用重复反射，但动态表结构场景要特别谨慎。
+3. **Wrapper 如何保持安全？** 条件被组织为参数化片段，值与 SQL 结构分离；把用户输入直接当列名或片段仍可能破坏安全边界。
+4. **拦截器顺序为什么重要？** 分页、租户、逻辑删除等插件会连续改写 SQL；排查必须看原始 SQL、插件顺序和最终 `BoundSql`。
+5. **增强的边界是什么？** 通用能力减少样板代码，却不能替业务决定复杂查询的索引、锁粒度和事务语义。
 
 ## 版本快照
 

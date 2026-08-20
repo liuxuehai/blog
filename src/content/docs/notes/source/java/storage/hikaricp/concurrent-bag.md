@@ -4,10 +4,10 @@ description: ConcurrentBag 的线程本地优先、共享列表、等待线程�
 category: Backend
 tags: [Source Reading, HikariCP, Concurrency]
 order: 43
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 43
@@ -16,6 +16,12 @@ sidebar:
 `ConcurrentBag` 是 HikariCP 性能设计的核心：优先从当前线程的本地缓存取资源，失败后扫描共享列表，再通过等待线程队列和监听器触发补充。
 
 <!-- more -->
+
+## 先给答案：ConcurrentBag 优先优化“熟悉连接”的快速路径
+
+借用时先尝试线程本地缓存，再尝试共享可用项；如果没有资源，线程登记为等待者，连接归还时直接唤醒匹配的等待线程。这个设计把常见的低竞争路径做快，同时保留高峰期的等待机制，所以“无锁”并不是它的准确描述。
+
+连接状态变化必须与池的关闭和驱逐并发协调。归还一个已被软驱逐的连接不能重新变成可用连接，否则池会把正在淘汰的资源再次发出去。
 
 ```text
 borrow

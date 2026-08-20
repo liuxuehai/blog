@@ -4,15 +4,21 @@ description: ContextManager、Span 生命周期、TraceId 和跨线程传播。
 category: Backend
 tags: [Source Reading, SkyWalking, Trace, Context]
 order: 23
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 23 }
 ---
 
 SkyWalking 的追踪模型以 `TraceContext` 保存当前 segment，以 `AbstractSpan` 表达入口、出口和本地 span；跨服务时把必要上下文编码进协议或请求头。
+
+## 先给答案：Segment 是本地上下文的提交单元，Span 是其中的时间片
+
+入口创建 Segment 和根 Span，子调用创建子 Span；跨线程时把 Context 注入任务，跨进程时把传播头写入 HTTP/RPC 消息。下游提取后继续创建自己的 Segment，并通过父子关系或跨进程引用连接回上游。
+
+Segment 批量上报降低网络开销，但也引入本地队列和丢失窗口。链路缺失应分别检查采样是否命中、上下文是否跨线程传递、插件是否增强成功、队列是否积压，以及 OAP 是否正常接收和存储，不能只看 UI。
 
 ```text
 ContextManager#createEntrySpan

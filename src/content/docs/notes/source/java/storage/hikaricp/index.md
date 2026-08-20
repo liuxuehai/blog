@@ -4,10 +4,10 @@ description: HikariCP 源码解析总览：配置初始化、ConcurrentBag、连
 category: Backend
 tags: [Source Reading, Java, HikariCP, Database]
 order: 4
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 4
@@ -16,6 +16,16 @@ sidebar:
 HikariCP 把连接池的核心热路径压缩到一个低竞争资源容器和一个清晰的连接生命周期：配置完成后封存，借出时包装代理，归还时重置状态，后台任务负责驱逐、保活和补充。
 
 <!-- more -->
+
+## 本册问题地图
+
+HikariCP 的关键不是“连接池 API”，而是高并发下连接从可用到失效的状态管理：
+
+1. **ConcurrentBag 优化了什么？** 优先从线程熟悉的连接和等待线程中快速匹配，减少热路径竞争；它不是完全无锁，也不能消除数据库连接创建成本。
+2. **连接何时创建、借出、归还和驱逐？** 池启动和补充任务负责创建，业务线程借用后必须归还，生命周期、空闲和健康检查决定何时淘汰。
+3. **为什么代理归还要 reset？** 一个请求改变的事务、只读、隔离级别等状态必须清掉，否则下一个请求会继承隐式上下文。
+4. **keepalive 与 maxLifetime 如何配合？** 前者防止长期空闲连接被网络设备清理，后者错峰淘汰老连接；两者都不能修复数据库本身不可用。
+5. **泄漏检测如何解释？** 它发现的是连接长期未归还的迹象，慢 SQL 或长事务可能是合法占用，必须结合调用栈和业务时长判断。
 
 ## 版本快照
 

@@ -4,10 +4,10 @@ description: ShardingSphere 源码解析总览：JDBC 入口、ANTLR 解析、�
 category: Backend
 tags: [Source Reading, Java, ShardingSphere, Database]
 order: 2
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 2
@@ -16,6 +16,16 @@ sidebar:
 ShardingSphere 把一个 JDBC SQL 请求拆成解析、路由、改写、执行和结果归并五个阶段，在不改变业务访问方式的前提下，把逻辑表映射到多个真实数据源。当前源码还把事务、SPI 扩展和 Mode 持久化作为独立边界，形成可组合的数据库中间件内核。
 
 <!-- more -->
+
+## 本册问题地图
+
+ShardingSphere 的主线是把一条逻辑 SQL 拆成“理解、定位、改写、执行、合并”的流水线：
+
+1. **为什么先解析 AST？** 只有先理解表、列、条件、排序和分页的结构，后续才能安全地做分片路由和 SQL 改写；字符串替换无法可靠处理嵌套查询和别名。
+2. **路由与改写谁先谁后？** 路由先决定访问哪些真实库表，改写再为每个目标节点生成可执行 SQL；路由错了，后面 SQL 写得再漂亮也只会查错数据。
+3. **归并为什么不是简单拼接？** 多节点结果需要重新排序、聚合、去重或截断分页，逻辑结果集必须恢复单库语义。
+4. **分布式事务覆盖哪一层？** 事务协调要覆盖多个真实连接的提交边界，不能只在代理层把一次逻辑调用标记为成功。
+5. **治理中心解决什么？** 它同步规则和元数据，不直接替代执行引擎；配置传播延迟仍可能让不同实例暂时使用不同路由规则。
 
 ## 版本快照
 

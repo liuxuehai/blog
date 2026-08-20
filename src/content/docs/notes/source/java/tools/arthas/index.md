@@ -4,10 +4,10 @@ description: Arthas 源码解析：Attach、Instrumentation、字节码增强、
 category: Backend
 tags: [Source Reading, Arthas, JVM, Java]
 order: 1
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 1 }
 ---
@@ -15,6 +15,16 @@ sidebar: { order: 1 }
 Arthas 把 JVM Attach、字节码重转换、命令执行和终端协议组合成一套在线诊断系统；读码重点是“命令如何变成 transformer，再如何把结果流回终端”。
 
 <!-- more -->
+
+## 本册问题地图
+
+Arthas 的源码主线是“附着目标 JVM → 解析命令 → 动态增强 → 收集和渲染结果”：
+
+1. **Agent 如何进入目标进程？** 通过 Attach 机制加载诊断代码，再建立命令通道；目标 JVM 的权限、模块和运行状态决定附着是否成功。
+2. **命令模型为什么和渲染层分离？** 命令负责查询和控制，渲染负责把结果变成人可读输出，同一诊断能力才能复用于不同终端。
+3. **retransform 改变了什么？** 它不是读取现成信息，而是修改运行中类的字节码，让后续调用经过新的观测逻辑。
+4. **为什么必须限制增强范围？** 热方法、递归调用和高频请求会把诊断开销放大；类、方法、条件和次数都应可控。
+5. **诊断工具如何避免制造事故？** 超时、采样、最大输出和及时恢复原字节码，都是把观测成本限制在可接受范围内。
 
 ## 版本快照
 

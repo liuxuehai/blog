@@ -4,10 +4,10 @@ description: DruidDataSource 的借出、归还、创建、校验、缩容和失
 category: Backend
 tags: [Source Reading, Druid, Connection Pool]
 order: 32
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 32
@@ -16,6 +16,12 @@ sidebar:
 Druid 连接池的核心不是“保存一组连接”，而是把租借状态、空闲队列、创建任务和失效回收组织成一个并发状态机。
 
 <!-- more -->
+
+## 先给答案：连接池用复用换建连成本，但把生命周期责任集中起来
+
+借出路径要从可用队列拿到连接，并检查连接是否已关闭、超时或失效；归还路径要把连接重新标记为空闲，并重置事务、自动提交等状态。后台任务负责补充连接、检测空闲和淘汰老连接，业务线程不应承担全部维护工作。
+
+池太小会让应用线程排队，池太大则会让数据库线程、锁和缓冲区过载。连接泄漏、坏连接复用和归还状态污染是三类不同问题，应分别从借出记录、健康检测和代理 reset 排查。
 
 ```text
 new connection

@@ -4,10 +4,10 @@ description: Seata 2.x 源码解析：TM/TC/RM、全局事务生命周期、AT�
 category: Backend
 tags: [Source Reading, Seata, Distributed Transaction, Java]
 order: 5
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 5 }
 ---
@@ -15,6 +15,16 @@ sidebar: { order: 5 }
 Seata 的源码主线不是“一个事务注解”，而是客户端拦截、TM/TC/RM 协作、分支注册、二阶段执行和失败重试组成的协议。阅读时先建立角色边界，再进入 AT 的数据库代理，最后对照 TCC、Saga 与 XA 的资源模型。
 
 <!-- more -->
+
+## 本册问题地图
+
+Seata 要先分清 TM、TC、RM 的责任，再比较 AT、TCC、Saga 和 XA：
+
+1. **一次全局事务谁负责什么？** TM 发起和结束全局事务，TC 维护全局状态与分支，RM 执行本地资源操作并上报结果。
+2. **AT 为什么需要 undo log 和全局锁？** 一阶段先提交本地 SQL，同时保存前镜像/后镜像；二阶段回滚依靠 undo log 恢复，并用全局锁减少并发覆盖。
+3. **TCC 的空回滚和悬挂是什么？** Try 未成功时 Cancel 也可能到达，必须安全地空回滚；Try 晚到则不能再执行，避免悬挂写入。
+4. **不同模式如何取舍？** AT 对业务侵入较小但依赖 SQL 镜像和锁，TCC 控制精细但需要实现补偿，Saga 适合长流程，XA 依赖资源管理器的两阶段能力。
+5. **TC 重启如何恢复？** 依靠持久化事务状态、超时扫描、状态查询和幂等分支操作推进，而不是无条件重复 RPC。
 
 ## 版本快照
 

@@ -4,10 +4,10 @@ description: SQLRouteEngine 的入口/装饰路由、RouteContext、RouteUnit �
 category: Backend
 tags: [Source Reading, ShardingSphere, Routing, Database]
 order: 23
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 23
@@ -16,6 +16,12 @@ sidebar:
 路由阶段回答“这条 SQL 要访问哪些真实数据源和表”。它不直接拼 SQL，而是先产出结构化的 `RouteContext`，让后续改写阶段可以根据路由单元决定表名、参数和执行分组。
 
 <!-- more -->
+
+## 先给答案：路由只决定“去哪儿”，不决定“结果怎样合并”
+
+分片引擎先从 AST 提取分片键和逻辑表，再根据规则计算真实数据源与表名。之后 SQL 改写器为每个目标节点生成具体语句，执行引擎并发发送，归并引擎再把多个结果恢复成一份逻辑结果。这个顺序把决策拆开：路由错了是数据范围错，改写错了是节点 SQL 错，归并错了则是结果语义错。
+
+没有分片键时通常只能广播或全路由；分页、排序和聚合会让归并成本上升。性能问题不能只看路由命中数，还要看真实扫描量、网络结果量和归并阶段是否在内存中积压。
 
 ## 数据结构
 

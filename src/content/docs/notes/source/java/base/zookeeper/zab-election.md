@@ -4,15 +4,21 @@ description: FastLeaderElection、epoch/zxid 和提案提交的源码链路。
 category: Backend
 tags: [Source Reading, ZooKeeper, ZAB, Consensus]
 order: 42
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 42 }
 ---
 
 ZAB（ZooKeeper Atomic Broadcast）把“谁是 Leader”和“更新按什么顺序提交”绑定在 epoch/zxid 语义中。
+
+## 先给答案：ZAB 选的是能安全延续历史的 Leader
+
+选举不能只看“谁收到的票多”。候选节点需要比较事务历史的新旧程度，通常优先选择拥有更新 zxid 的节点；成为 Leader 后还要通过发现、同步和广播阶段，让多数节点对当前历史达成一致。这样新 Leader 才不会提交一个已经被多数派确认的旧状态。
+
+日志和快照是恢复链的一部分：快照提供基线，proposal 日志补齐增量。网络分区时少数派不能继续提交；重新加入的节点必须先同步，再恢复服务。
 
 ## 状态机
 

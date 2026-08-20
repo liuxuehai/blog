@@ -4,10 +4,10 @@ description: Nacos 配置变更如何通过 MD5 比较、异步 Servlet、事件
 category: Backend
 tags: [Source Reading, Nacos, Configuration, Long Polling]
 order: 33
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 33 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 33 }
 配置中心的关键不是“提供一个 GET 接口”，而是让大量客户端在没有变更时低成本等待，在发生变更时快速唤醒。Nacos 用 MD5 快照、异步请求和事件通知组合出这条路径。
 
 <!-- more -->
+
+## 先给答案：长轮询把“变化检测”从客户端空转变成服务端等待
+
+客户端发送配置摘要，服务端发现没有变化时不立即返回，而是保留请求并等待变更或超时。变更发生后服务端唤醒请求，客户端收到响应再拉取具体内容并更新本地缓存。这样节省的是无变化时的重复请求，不是把配置变成实时推送。
+
+因此延迟排查要按顺序问：客户端是否监听了正确 dataId/group，服务端是否算出摘要变化，请求是否因超时或断线返回，客户端是否成功写入本地缓存，应用是否真的重新读取了新配置。任何一步卡住，都会出现“控制台已改但应用没变”。
 
 ## 请求闭环
 

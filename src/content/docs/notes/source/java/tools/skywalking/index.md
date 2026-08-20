@@ -4,10 +4,10 @@ description: SkyWalking 源码解析：Agent 无侵入插桩、上下文传播�
 category: Backend
 tags: [Source Reading, SkyWalking, APM, Java]
 order: 2
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 2 }
 ---
@@ -15,6 +15,16 @@ sidebar: { order: 2 }
 SkyWalking 由进程内 Agent、OAP 分析平台和多种接收协议组成；源码阅读要同时关注“调用点如何被插桩”和“遥测数据如何被接收、分发、聚合、存储”。
 
 <!-- more -->
+
+## 本册问题地图
+
+SkyWalking 需要同时理解 Agent 插件、上下文传播和 OAP 分析存储：
+
+1. **插件如何做到无侵入？** Agent 在类加载或增强阶段插入拦截逻辑，把数据库、HTTP、RPC 等调用转换成 Span。
+2. **Segment、Span、Context 如何配合？** Span 表示一次局部操作，Segment 聚合一个线程或请求中的本地调用，Context 负责跨线程和跨进程传递关联信息。
+3. **为什么以 Segment 为上报单元？** 本地调用完成后批量发送，减少每个 Span 一次网络交互；代价是队列积压或进程崩溃会影响尚未上报的链路。
+4. **OAP 为什么分接收、分析、存储？** 接收处理协议，分析生成拓扑和指标，存储提供查询模型；Trace、拓扑、指标的读写需求不同，不能只用一张原始表解决。
+5. **链路不完整如何定位？** 先看采样和上下文是否创建，再看跨线程传播、队列是否积压、插件是否增强成功，最后检查 OAP 接收和存储。
 
 ## 版本快照
 

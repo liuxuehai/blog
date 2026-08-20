@@ -4,7 +4,7 @@ description: ClusterConnectionProvider 如何计算 slot、选择节点、处理
 category: Backend
 tags: [Source Reading, Jedis, Redis Cluster]
 order: 56
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 sidebar:
   order: 56
 ---
@@ -12,6 +12,12 @@ sidebar:
 Cluster 客户端的难点不是发命令，而是先回答“命令应该发到哪个节点”，并在拓扑变化时快速修正答案。
 
 <!-- more -->
+
+## 先给答案：MOVED 是拓扑更新，ASK 是本次请求的临时指引
+
+客户端先根据 slot 缓存选择节点。节点返回 MOVED，表示 slot 的权威归属已经改变，客户端应刷新或修正拓扑后再发起请求；返回 ASK，表示迁移期间本次请求应先发送 ASKING，再把命令交给目标节点，但不能因此立即把全局映射改掉。
+
+所以集群故障要区分映射过期、迁移中的临时路由、跨 slot 命令和连接断开。统一增加重试可能把一个已经执行但响应丢失的命令再次执行，写操作必须有幂等设计。
 
 ```text
 key(s)

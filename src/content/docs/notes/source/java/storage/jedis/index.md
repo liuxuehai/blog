@@ -4,10 +4,10 @@ description: Jedis 源码解析总览：RESP 编解码、连接生命周期、�
 category: Backend
 tags: [Source Reading, Java, Jedis, Redis]
 order: 5
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 5
@@ -16,6 +16,16 @@ sidebar:
 Jedis 是 Redis 的 Java 客户端。当前版本把命令建模、RESP 协议、连接提供者和集群路由拆开，既保留轻量单连接 API，也支持池化、Pipeline、事务和 Cluster。
 
 <!-- more -->
+
+## 本册问题地图
+
+Jedis 的阅读重点是“连接所有权 + 集群拓扑 + 命令时序”：
+
+1. **为什么普通连接通常不应跨线程共享？** 连接内部有读写状态和协议响应顺序；连接池解决的是借用隔离，不是让同一个连接变成无状态对象。
+2. **Pipeline 与事务分别延迟什么？** Pipeline 批量发送并集中读取响应，事务把命令放入 Redis 事务队列并在 EXEC 时执行，二者不能混为一谈。
+3. **集群路由先做什么？** 根据 key 计算 slot，再从拓扑缓存选择节点；MOVED 表示映射需要更新，ASK 表示本次请求临时跟随迁移。
+4. **为什么重试次数不是万能药？** 拓扑过期、跨 slot、连接失效和命令已执行但响应丢失，分别需要刷新映射、拆分 key、重建连接或业务幂等。
+5. **客户端缓存解决什么？** 它减少重复读取，但缓存失效和拓扑变化仍要有明确的回退路径。
 
 ## 版本快照
 

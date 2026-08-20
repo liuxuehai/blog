@@ -8,10 +8,10 @@ tags:
   - RPC
   - Microservices
 order: 2
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 2
@@ -20,6 +20,17 @@ sidebar:
 Dubbo 把一次远程调用拆成可替换的扩展点：配置层组装服务，注册中心提供地址，Cluster 负责治理与容错，Protocol/Remoting 负责传输。阅读重点不是记住某个协议，而是看清“扩展加载 + Invoker 链 + URL 元数据”如何把这些层串起来。
 
 <!-- more -->
+
+## 本册问题地图
+
+Dubbo 的主线不是“调用一个接口”，而是把一次调用逐层变成可治理的 Invoker：
+
+1. **SPI 为什么重要？** 它把协议、注册中心、序列化和负载均衡变成可替换扩展；但包装器、自适应扩展和依赖注入也让真正执行的对象不一定是配置里看到的那个类。
+2. **服务导出和服务引用为什么都围绕 Invoker？** 本地实现和远程代理最终都提供统一调用接口，因此过滤器、监控、集群容错可以复用；代价是排障必须区分代理、路由、Invoker、协议和连接层。
+3. **Directory、Router、LoadBalance、Cluster 各自决定什么？** Directory 给候选地址，Router 做约束过滤，LoadBalance 选一次调用的目标，Cluster 决定失败后是否重试、快速失败或转移。
+4. **Failover 为什么可能放大故障？** 重试能提高成功率，却可能重复执行非幂等写操作，还会把下游变慢进一步放大成雪崩。
+5. **注册中心变更如何进入请求链？** 订阅回调先更新目录，再影响路由和选择；因此地址已变更不等于下一次请求立刻使用新列表。
+6. **协议层到底承担什么？** 编解码只负责字节与请求对象转换，连接复用、异步响应和线程派发共同决定一次调用何时完成。
 
 ## 版本快照
 

@@ -4,10 +4,10 @@ description: Druid 源码解析总览：连接池、JDBC 代理、SQL Parser、�
 category: Backend
 tags: [Source Reading, Java, Druid, Database]
 order: 3
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 3
@@ -16,6 +16,16 @@ sidebar:
 Druid 将数据库访问拆成连接池、JDBC 对象代理、过滤器链、SQL AST、安全检查和统计监控几层。它既是连接池，也是一个能够观察并约束 JDBC 行为的数据库访问基础设施。
 
 <!-- more -->
+
+## 本册问题地图
+
+Druid 要同时看连接生命周期和 SQL 观测链：
+
+1. **连接池为什么能提速？** 复用已经建立的连接，减少握手、认证和初始化成本；但池子不是越大越好，过多连接会把压力转移给数据库。
+2. **借出与归还各自承担什么？** 借出要确认连接可用并占用资源，归还要清理事务和会话状态；只把对象放回队列不等于连接恢复干净。
+3. **SQL Parser 为什么构造 AST？** 统计、改写和安全检查都需要语义结构，AST 能区分真正的表名、函数和字符串内容。
+4. **Filter 链为什么可插拔？** 监控、统计、防火墙和日志关注点不同，链式过滤让它们在 JDBC 调用边界复用，而不改变业务代码。
+5. **WallFilter 的边界是什么？** 它降低危险 SQL 进入数据库的概率，但不能替代权限、参数化和数据库自身的安全策略。
 
 ## 版本快照
 

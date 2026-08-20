@@ -4,10 +4,10 @@ description: RocketMQ 如何通过 MappedFileQueue、追加记录和刷盘策略
 category: Backend
 tags: [Source Reading, RocketMQ, CommitLog, mmap]
 order: 12
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 12
@@ -16,6 +16,12 @@ sidebar:
 `CommitLog` 把消息组织成连续物理日志，写入路径追求追加和批量，读取路径依靠索引跳回具体偏移。
 
 <!-- more -->
+
+## 先给答案：日志写成功不等于消费者立即可见
+
+CommitLog 的核心取舍是让写入尽量变成连续追加，再把消费定位交给异步索引。消息写入物理文件后，还要经历提交/刷盘、`ReputMessageService` 重放、`ConsumeQueue` 建索引，以及消费者拉取和位点推进；所以排查“生产成功但消费不到”时，要按这条因果链逐段确认，而不是直接怀疑消费端。
+
+mmap 减少了用户态与文件缓存之间的复制和系统调用，但它只是内存映射，不自动等于数据已经落盘。异常时尤其要区分：文件空间不足会阻止追加；异步刷盘故障可能丢失最近数据；尾部半条记录可能是崩溃恢复边界；索引落后则表现为可见性延迟而非物理日志不存在。
 
 ## 设计概览
 

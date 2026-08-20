@@ -4,15 +4,21 @@ description: Seata TC 重试队列、全局状态、分支状态、锁释放与�
 category: Backend
 tags: [Source Reading, Seata, Recovery, State Machine]
 order: 56
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 56 }
 ---
 
 Seata 的可靠性主要来自 TC 的状态机和后台重试，而不是一次 RPC 的成功率。提交或回滚失败时，TC 保留 session，把全局状态放入 retry 集合，下一轮调度重新读取分支并执行；成功后才关闭、解锁和清理。
+
+## 先给答案：恢复把协调器宕机变成可重放的事务状态机
+
+TC 重启后先从持久化状态恢复全局事务，再按超时、提交中、回滚中等状态扫描分支。恢复动作不能简单地“再发一次提交/回滚”，而要先判断分支当前状态，并依赖分支接口幂等、状态查询、undo log 和锁清理，避免重复补偿造成二次损害。
+
+恢复的目标不是让每个分支都立刻成功，而是让不确定状态最终收敛：已提交分支不再回滚，已回滚分支不重复补偿，长期无法联系的分支进入重试或人工介入边界。
 
 ## 重试状态机
 

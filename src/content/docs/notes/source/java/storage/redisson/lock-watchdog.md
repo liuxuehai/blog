@@ -4,10 +4,10 @@ description: RedissonLock 的 Hash 锁模型、重入、Pub/Sub 等待、释放�
 category: Backend
 tags: [Source Reading, Redisson, Distributed Lock]
 order: 43
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 43
@@ -16,6 +16,12 @@ sidebar:
 `RedissonLock` 用 Redis Hash 保存“客户端实例 + 线程”的重入次数，用 TTL 作为租约；未指定 lease time 时，再由 watchdog 周期性延长 TTL。
 
 <!-- more -->
+
+## 先给答案：锁的安全性来自持有者与租约的共同约束
+
+加锁时要记录唯一 owner，释放时只允许同一 owner 删除或减少重入计数；未设置固定 lease 时，看门狗周期性续期，防止正常执行中的锁提前过期。业务线程停止、进程崩溃或网络隔离后，续期会停止，租约最终释放，这才是故障恢复的来源。
+
+看门狗不是“永不过期”：客户端长时间停顿、Redis 不可达、续期任务延迟都可能让锁自然失效。若旧持有者恢复后继续写，仍需 fencing token 或业务版本校验阻止过期持有者覆盖新持有者的结果。
 
 ## 锁模型
 

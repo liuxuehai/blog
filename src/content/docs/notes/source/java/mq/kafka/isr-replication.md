@@ -12,6 +12,12 @@ Kafka 采用 follower 按 offset 拉取的复制模型；ISR 把“能够及时�
 
 <!-- more -->
 
+## 先给答案：Kafka 的可靠性边界是提交位置，不是 Leader 写入位置
+
+Leader 追加消息后，Follower 拉取并写入自己的日志；当满足副本同步条件时，分区推进 HW，消费者才可以读取这条已提交记录。LEO 只说明某个副本本地写到哪里，ISR 说明哪些副本仍有资格参与安全提交。
+
+因此 `acks=all` 仍需结合 `min.insync.replicas`、ISR 收缩和选主策略理解。Leader 返回成功但消息尚未过 HW，可能在故障中丢失或暂不可见；ISR 过小导致写入失败，则是以可用性换安全性，而不是 Kafka 随机丢消息。
+
 ```text
 Leader ReplicaManager ──serve fetch──► Follower ReplicaFetcherThread
        │                                      │

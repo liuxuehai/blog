@@ -4,7 +4,7 @@ description: MybatisPlusInterceptor 如何编排 InnerInterceptor 并在 query�
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Interceptor]
 order: 65
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 sidebar:
   order: 65
 ---
@@ -12,6 +12,12 @@ sidebar:
 MyBatis-Plus 用一个外层 MyBatis `Interceptor` 统一承载多个 `InnerInterceptor`，把分页、租户、数据权限、乐观锁和防全表更新拆成可组合组件。
 
 <!-- more -->
+
+## 先给答案：MyBatis-Plus 是在 MyBatis 执行边界上做有序改写
+
+外层聚合器接收一次 MyBatis 执行，再按顺序调用分页、租户、逻辑删除等内层拦截器。每个插件都可能读取或修改 SQL、参数和分页上下文，因此顺序会改变最终语义：先改写表范围还是先生成分页 SQL，结果可能不同。
+
+排查时不要停在 Mapper 方法名。应依次确认实体元数据、原始 SQL、拦截器链顺序、最终 `BoundSql`、数据库实际执行计划。插件能减少重复代码，却不能替代对复杂 SQL、索引和事务边界的判断。
 
 ```text
 MyBatis Invocation

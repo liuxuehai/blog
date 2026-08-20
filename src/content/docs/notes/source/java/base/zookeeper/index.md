@@ -4,10 +4,10 @@ description: ZooKeeper 源码解析：ZAB、Fast Leader Election、会话、Watc
 category: Backend
 tags: [Source Reading, ZooKeeper, Distributed Coordination, Java]
 order: 4
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 4 }
 ---
@@ -15,6 +15,16 @@ sidebar: { order: 4 }
 ZooKeeper 用有序更新、临时节点和一次性 Watcher 提供协调原语；源码主线是客户端请求进入 `ZooKeeperServer`，由 Leader 通过 ZAB 提交，再由各节点的 `DataTree` 应用。
 
 <!-- more -->
+
+## 本册问题地图
+
+ZooKeeper 要沿着“会话、写入、通知、恢复”四条线阅读：
+
+1. **ZAB 为什么需要 Leader 和多数派确认？** 写请求必须形成有序 proposal，并在多数节点确认后提交，保证不同节点不会各自提交冲突历史。
+2. **日志和快照为什么并存？** 日志保留增量操作，快照提供快速恢复点；恢复时先加载快照，再重放其后的日志。
+3. **Session 如何影响临时节点？** 临时节点的生命周期绑定会话，连接短暂断开不一定立即删除，超时后服务端才判定会话失效。
+4. **Watcher 为什么是一次性通知？** 它只报告状态变化，不替客户端保存持续订阅；收到通知后必须重新读取并重新注册。
+5. **读请求是否都线性一致？** 本地读可能看到本节点视角，写入通过 Leader 顺序提交；需要强一致读时必须使用相应同步语义。
 
 ## 版本快照
 

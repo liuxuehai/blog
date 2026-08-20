@@ -4,10 +4,10 @@ description: RocketMQ 源码解析总览：CommitLog、消费索引、长轮询�
 category: Backend
 tags: [Source Reading, RocketMQ, Messaging, Storage]
 order: 1
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 1
@@ -16,6 +16,17 @@ sidebar:
 RocketMQ 是以日志存储为核心的消息系统：消息先进入物理 `CommitLog`，再异步构建消费队列和索引，消费端通过逻辑队列定位物理消息。
 
 <!-- more -->
+
+## 本册问题地图
+
+把 RocketMQ 当成一条“消息从写入到被确认”的流水线来读：
+
+1. **为什么先写 CommitLog，再生成 ConsumeQueue？** 因为顺序追加适合吞吐，而按 Topic/Queue 查找需要轻量索引；两者分开，写入热路径不用为每个消费队列做随机写。
+2. **消息什么时候算“写成功”，什么时候算“消费者可见”？** 写入物理日志、刷盘、索引重放、拉取和消费位点是不同边界，任何一步滞后都会造成“已写入但暂时拉不到”。
+3. **长轮询到底解决了什么？** 它不是让服务端主动推送，而是让 Broker 暂存没有匹配消息的请求，直到消息到达、超时或连接异常再返回。
+4. **重平衡如何改变消费权？** 消费者组重新分配队列后，旧消费者必须停止对应 ProcessQueue；否则同一队列可能出现重复消费或位点覆盖。
+5. **事务消息为什么要先写半消息？** 先把业务消息隐藏起来，再依据本地事务结果提交、回滚或接受回查，避免消费者看到尚未确定的状态。
+6. **DLedger 与传统主从的差别是什么？** 传统复制更像主节点向从节点同步，DLedger 把日志复制、选主和提交位置纳入更严格的多数派协议，故障切换边界不同。
 
 ## 版本快照
 

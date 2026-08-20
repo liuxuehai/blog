@@ -4,15 +4,21 @@ description: Enhancer、ClassFileTransformer、Advice 和 retransform 生命周�
 category: Backend
 tags: [Source Reading, Arthas, Bytecode]
 order: 13
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 13 }
 ---
 
 Arthas 的 `watch`、`trace`、`monitor` 不是各自实现类改写，而是共享 `Enhancer` 将匹配规则编译成 Advice，再触发目标类重转换。
+
+## 先给答案：动态增强把观测点插入正在运行的执行路径
+
+Arthas 通过字节码增强把方法进入、返回、异常和参数采集逻辑织入目标类，再利用 retransform 让已加载的类重新接受变换。增强后，调用路径和原来不同，因此诊断本身会消耗 CPU、分配对象并可能改变时序。
+
+安全使用的关键是收窄类、方法、条件、深度和次数，并限制输出。递归、代理链和高频热方法尤其容易放大成本；观察结束后及时恢复增强，不能把临时诊断当成永久代码部署。
 
 ```text
 command matcher -> Enhancer -> ClassFileTransformer

@@ -4,15 +4,21 @@ description: 从 SphU、CtSph 到 ProcessorSlotChain，追踪 Sentinel 一次 en
 category: Backend
 tags: [Source Reading, Sentinel, Slot Chain]
 order: 42
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 42 }
 ---
 
 `entry` 不是一次简单的计数，而是把资源包装成 `ResourceWrapper`，找到资源共享的 Slot 链，再让每个 Slot 通过 `fireEntry` 递归推进。异常会沿链返回，`exit` 再沿反方向完成统计和熔断反馈。
+
+## 先给答案：Slot 链把一次调用变成有顺序的保护检查
+
+进入资源时创建 Entry 和上下文，随后依次经过统计、热点参数、流控、熔断和系统保护 Slot；任一 Slot 拒绝就立即失败，全部通过才执行真实业务。退出时沿相反方向释放 Entry、更新耗时和异常统计。
+
+顺序不是装饰：统计必须先记录，流控和熔断才能使用数据；异常退出若跳过 `exit`，线程复用时可能遗留上下文，后续请求会被错误关联。新增 Slot 也应明确它读取哪个统计量、在哪一步拒绝、如何回滚状态。
 
 ## 调用链
 

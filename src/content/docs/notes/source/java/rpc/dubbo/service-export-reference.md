@@ -4,10 +4,10 @@ description: ServiceConfig 和 ReferenceConfig 如何把配置转换为服务端
 category: Backend
 tags: [Source Reading, Dubbo, Service Export, Proxy]
 order: 23
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar: { order: 23 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 23 }
 服务导出与引用是 Dubbo 的两条对称链路：提供者把实现对象包装为 Invoker 并交给 Protocol 暴露，消费者把地址转换为 Invoker，再由 ProxyFactory 暴露为接口代理。
 
 <!-- more -->
+
+## 先给答案：导出与引用统一成 Invoker，调用链因此可复用
+
+服务导出把本地实现包装成 Invoker，再交给 Protocol 暴露 Exporter 并注册地址；服务引用则从注册中心得到地址，创建远程 Invoker，经过 Cluster 组装成代理。代理只负责把接口方法转成 Invocation，真正的路由、负载均衡、过滤器、超时和重试发生在 Invoker 链中。
+
+这个统一模型的好处是本地调用和远程调用可以共享治理能力，代价是启动和排障都要分清“配置对象、代理、ClusterInvoker、协议客户端、服务端 Invoker”这些层次。导出成功不等于远端已经可调用，引用拿到代理也不等于连接已经建立；地址注册、连接建立和首次请求可能是延迟发生的。
 
 ## 两条链路
 

@@ -4,10 +4,10 @@ description: Kafka 源码解析总览：分区日志、稀疏索引、ISR、KRaf
 category: Backend
 tags: [Source Reading, Kafka, Messaging, Storage]
 order: 2
-updatedDate: 2026-08-16
+updatedDate: 2026-08-20
 difficulty: advanced
 status: learning
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-20
 draft: false
 sidebar:
   order: 2
@@ -16,6 +16,17 @@ sidebar:
 Kafka 把消息系统拆成业务分区日志、KRaft 元数据日志和消费者组状态日志。本册沿着消息追加、复制、提交和消费重平衡的源码路径阅读。
 
 <!-- more -->
+
+## 本册问题地图
+
+Kafka 要围绕“日志位置、复制提交、消费分配”三条线同时阅读：
+
+1. **分区日志为什么适合吞吐？** 每个分区只做顺序追加，读取主要依赖 offset 和稀疏索引，避免为每条消息维护昂贵的随机索引。
+2. **LEO、HW、ISR 分别回答什么？** LEO 表示副本写到哪里，ISR 表示哪些副本仍满足追赶条件，HW 表示消费者可安全看到哪里；Leader 写入不等于消息已提交。
+3. **Producer ack 的可靠性边界是什么？** `acks=all` 依赖 ISR 和最小同步副本数；如果副本配置、ISR 收缩或 `unclean` 选主策略改变，语义也会改变。
+4. **消费者为什么不能自己决定 assignment？** 组协调器需要看到全组成员和订阅关系，才能让分区所有权在成员间形成一致视图。
+5. **KRaft Controller 做什么？** 它用元数据日志和控制器仲裁管理分区、Leader 和配置状态，替代 ZooKeeper 作为 Kafka 元数据外部依赖。
+6. **零拷贝省掉哪一步？** 主要减少 Broker 在内核页缓存与用户态缓冲区之间的重复搬运，但不代表磁盘、网络或副本复制成本消失。
 
 ## 版本快照
 
