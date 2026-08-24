@@ -4,10 +4,10 @@ description: ConcurrentHashMap、节点状态、读事件和写后维护如何�
 category: Backend
 tags: [Source Reading, Caffeine, Concurrency, Java]
 order: 55
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 55
@@ -16,6 +16,14 @@ sidebar:
 Caffeine 让命中读尽量无锁，写入通过原子 map 操作保证唯一性，顺序结构的更新延迟到维护阶段。
 
 <!-- more -->
+
+## 先给答案：Caffeine 让命中读尽量无锁，写入通过原子 map 操作保证唯一性，顺序结构的更新延迟到维护阶段
+
+Caffeine 让命中读尽量无锁，写入通过原子 map 操作保证唯一性，顺序结构的更新延迟到维护阶段。 理解并发读写路径时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“listener 重入 cache、value 可变、开启统计”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“listener 重入 cache、value 可变、开启统计”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 key -> ConcurrentHashMap -> Node<K,V> -> access/write time + deque links

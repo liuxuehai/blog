@@ -4,10 +4,10 @@ description: Jackson 注解解析、SimpleModule 和 SetupContext 扩展机制�
 category: Backend
 tags: [Source Reading, Jackson, Annotations, Module]
 order: 76
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 76
@@ -16,6 +16,12 @@ sidebar:
 Jackson 把扩展点分成两类：注解描述单个类型或属性的局部意图，Module 描述可复用的全局注册和处理规则。
 
 <!-- more -->
+
+## 先给答案：Jackson 把扩展点分成两类：注解描述单个类型或属性的局部意图，Module 描述可复用的全局注册和处…
+
+Jackson 把扩展点分成两类：注解描述单个类型或属性的局部意图，Module 描述可复用的全局注册和处理规则。 正文沿“Module 注册链 -> 注解和 Module 的边界 -> 为什么不是全靠注解”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“单个字段改名、忽略、格式、某个类型的统一读写规则、批量修改 Bean 属性 writer”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Module 注册链
 

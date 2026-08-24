@@ -4,14 +4,22 @@ description: Redisson 源码面试题：锁、watchdog、Lua、异步管线、Re
 category: Backend
 tags: [Source Reading, Redisson, Interview]
 order: 48
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 48
 ---
+
+<!-- more -->
+
+## 先给答案：Redisson 源码面试题：锁、watchdog、Lua、异步管线、RedLock 与限流器
+
+Redisson 源码面试题：锁、watchdog、Lua、异步管线、RedLock 与限流器。 正文沿“高频问题 -> 代码坐标速查”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界是 watchdog 续期线程停顿导致锁提前过期、Pub/Sub 唤醒后多个客户端重新竞争而非直接获得锁，以及跨主节点锁在故障切换时缺少 fencing token 保护。排查时要同时核对 Redis 中的锁值与 TTL、客户端线程标识、订阅重试状态和下游资源是否拒绝旧持有者。
 
 ## 高频问题
 

@@ -4,10 +4,10 @@ description: HikariCP 如何记录连接等待、使用、创建、超时和池�
 category: Backend
 tags: [Source Reading, HikariCP, Observability]
 order: 47
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 47
@@ -17,13 +17,11 @@ HikariCP 将指标采集抽象成 `MetricsTracker`，把池内事件转为等待
 
 <!-- more -->
 
-```text
-borrow start/end -> wait timer
-connection use   -> usage histogram
-physical create  -> connect timer
-timeout          -> timeout meter
-pool counters    -> PoolStats / MXBean
-```
+## 先给答案：HikariCP 将指标采集抽象成 MetricsTracker，把池内事件转为等待、使用、创建和超时等低…
+
+HikariCP 将指标采集抽象成 MetricsTracker，把池内事件转为等待、使用、创建和超时等低基数指标；MXBean 则提供当前池状态与管理操作。 正文沿“指标挂载点 -> 指标语义 -> 为什么使用 tracker 工厂”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“MXBean 适合暴露池大小、等待线程、软驱逐和暂停等运维语义，但不应成为业务请求的控制面”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 指标挂载点
 

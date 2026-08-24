@@ -4,10 +4,10 @@ description: RocketMQ 客户端如何分配 MessageQueue、维护 ProcessQueue�
 category: Backend
 tags: [Source Reading, RocketMQ, Consumer, Rebalance]
 order: 17
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 17
@@ -16,6 +16,12 @@ sidebar:
 消费者重平衡把 Topic 下的 `MessageQueue` 分配给同组实例；`ProcessQueue` 是每个逻辑队列在客户端的缓存、消费状态和位点边界。
 
 <!-- more -->
+
+## 先给答案：重平衡转移的是队列所有权，不是单条消息
+
+同一消费组以 `MessageQueue` 为最小分配单元，客户端为每个已分配队列维护一个 `ProcessQueue`，把网络拉取、业务消费和位点提交串在同一所有权边界内。新增队列要创建缓冲并启动拉取，移除队列则要先停止旧路径并处理未完成消息。
+
+因此消费者实例数超过队列数不会继续增加并行度；重平衡期间旧请求、消费中的消息和位点提交还可能交错，业务必须接受至少一次语义并保持幂等。顺序消费还需要把队列锁与本地 `ProcessQueue` 状态一起判断。
 
 ## 调用链
 

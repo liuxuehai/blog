@@ -4,10 +4,10 @@ description: Spring Cloud OpenFeign 源码级面试题：注册、代理、契�
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Interview]
 order: 69
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 69
@@ -16,6 +16,12 @@ sidebar:
 本篇把前面几篇的源码坐标串成面试回答。回答顺序建议是“先给调用链，再讲关键抽象，最后补边界和源码证据”。
 
 <!-- more -->
+
+## 先给答案：从接口代理追到最终 Client
+
+`@FeignClient` 先由 Registrar 注册 FactoryBean，实例化时从命名子上下文组装 Builder、Contract、编解码器和 Client，再由 Targeter 生成代理。方法调用则把 Spring MVC 注解解析出的元数据转成 RequestTemplate，经直连地址或负载均衡选择后发出请求。
+
+面试中的关键边界是配置隔离与失败语义：`contextId` 决定客户端级组件，重试和负载均衡会改变实际尝试次数，熔断 fallback 不等于事务回滚。涉及写请求时，必须继续回答幂等键、超时层级和远端结果不确定性。
 
 ## 1. `@FeignClient` 如何变成代理
 

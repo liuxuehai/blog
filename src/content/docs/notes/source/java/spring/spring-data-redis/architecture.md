@@ -4,10 +4,10 @@ description: RedisConnectionFactory、RedisTemplate、序列化和监听容器�
 category: Backend
 tags: [Source Reading, Spring Data Redis, Architecture]
 order: 71
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 71
@@ -16,6 +16,12 @@ sidebar:
 Spring Data Redis 可以拆成连接生命周期链、同步命令链和异步消费链。
 
 <!-- more -->
+
+## 先给答案：模板统一操作，连接与字节仍有明确所有权
+
+Spring Data Redis 通过 `RedisConnectionFactory` 屏蔽 Lettuce/Jedis 差异，`RedisTemplate` 在 callback 边界获取连接、序列化键值、执行命令并释放资源；事务场景则由 ConnectionUtils 把连接绑定到当前线程与事务同步。
+
+抽象不会消除 Redis 语义：序列化决定实际字节协议，事务要求同一连接，Pub/Sub 是瞬时推送，Stream 才有可确认的消费状态。连接复用、阻塞命令和监听容器各有独立生命周期，不能把 template 当成无状态网络客户端。
 
 ## 分层
 

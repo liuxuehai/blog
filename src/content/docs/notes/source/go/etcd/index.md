@@ -4,10 +4,10 @@ description: etcd 源码解析总览：Raft、WAL、快照、MVCC、Watch 与 Le
 category: Backend
 tags: [Source Reading, etcd, Go, Distributed Systems]
 order: 3
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 3
@@ -16,6 +16,16 @@ sidebar:
 etcd 是一个把 Raft 一致性、WAL 持久化、MVCC 键值模型、Watch 事件流和 Lease 生命周期组合在一起的分布式协调存储。本册沿着“请求提交、日志持久化、状态应用、事件派生、客户端观察”的主链路阅读源码。
 
 <!-- more -->
+
+## 本册问题地图
+
+etcd 要沿着“请求如何成为一致状态，再如何变成客户端事件”来读：
+
+1. **Raft 日志、WAL、MVCC 各自保存什么？** Raft 日志描述集群顺序，WAL 保证重启可恢复，MVCC 保存带版本的用户状态；三者不是同一份数据的不同名字。
+2. **什么时候算提交，什么时候客户端能读到？** 日志多数派确认只是共识提交边界，状态机 apply 后才进入可查询的 backend；读路径还要考虑线性一致性选项。
+3. **Watch 为什么是派生流？** 它从已提交的 MVCC 变更生成事件，取消、压缩、慢消费者和历史版本不足都会改变观察结果。
+4. **Lease 如何影响 key？** 租约过期会触发关联 key 的删除事件；keepalive 丢失不一定立刻过期，时间和 leader 判断共同决定结果。
+5. **快照为什么不能替代 WAL？** 快照提供压缩后的状态基线，WAL 保存快照之后的增量；恢复必须按正确顺序组合二者。
 
 ## 版本快照
 

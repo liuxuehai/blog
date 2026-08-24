@@ -4,10 +4,10 @@ description: Actix Web worker、ServiceFactory、路由、提取器、中间件�
 category: Backend
 tags: [Source Reading, Actix Web, Rust, Interview]
 order: 49
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 49
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 面试最常见的误区是把它等同于 Actor。高质量回答应先讲 worker 与 ServiceFactory，再说明 Actor 的可选边界。
 
 <!-- more -->
+
+## 先给答案：Actix Web 面试最常见的误区是把它等同于 Actor
+
+Actix Web 面试最常见的误区是把它等同于 Actor。高质量回答应先讲 worker 与 ServiceFactory，再说明 Actor 的可选边界。 正文沿“1. Actix Web 的核心请求模型是什么 -> 2. App factory 为什么会执行多次 -> 3. ServiceFactory 与 Service 的区别”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“单个 worker CPU 100% 怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. Actix Web 的核心请求模型是什么
 

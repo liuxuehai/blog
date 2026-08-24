@@ -4,15 +4,21 @@ description: ZooKeeper quorum、ZAB、请求处理链和持久化边界的源码
 category: Backend
 tags: [Source Reading, ZooKeeper, Architecture]
 order: 41
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 41 }
 ---
 
-ZooKeeper 的核心不是单机树，而是“单 Leader 顺序提交、Followers 复制、每个节点本地应用”。
+<!-- more -->
+
+## 先给答案：ZooKeeper quorum、ZAB、请求处理链和持久化边界的源码地图
+
+ZooKeeper quorum、ZAB、请求处理链和持久化边界的源码地图。 正文沿“分层 -> 主流程 -> 核心坐标”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“少于半数存活、Leader 切换、Watcher 过多”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

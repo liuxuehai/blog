@@ -4,10 +4,10 @@ description: etcd 高频面试题、高难追问和源码级故障排查路径�
 category: Backend
 tags: [Source Reading, etcd, Go, Interview]
 order: 39
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 39
@@ -16,6 +16,12 @@ sidebar:
 etcd 面试的关键不是只回答“使用 Raft”，而是说明 Raft index、apply、MVCC revision、WAL、Watch 和 Lease 如何在同一状态机边界内协作。
 
 <!-- more -->
+
+## 先给答案：etcd 面试的关键不是只回答“使用 Raft”，而是说明 Raft index、apply、MVCC r…
+
+etcd 面试的关键不是只回答“使用 Raft”，而是说明 Raft index、apply、MVCC revision、WAL、Watch 和 Lease 如何在同一状态机边界内协作。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Watch 延迟持续升高，怎么排查、集群重启后成员无法加入，怎么排查、Lease 过期后键没有删除，怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

@@ -4,10 +4,10 @@ description: Kratos Registrar、Discovery、watcher、HTTP/gRPC resolver、subse
 category: Backend
 tags: [Source Reading, Kratos, Go, Registry, Load Balancing]
 order: 35
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 35
@@ -16,6 +16,12 @@ sidebar:
 Kratos 将“服务注册”“实例变化通知”“节点选择”拆成三个层次：`registry` 定义中心接口，resolver 把实例变化转换为协议地址，`selector` 决定每次请求选哪个节点。
 
 <!-- more -->
+
+## 先给答案：Kratos 将“服务注册”“实例变化通知”“节点选择”拆成三个层次：registry 定义中心接口，re…
+
+Kratos 将“服务注册”“实例变化通知”“节点选择”拆成三个层次：registry 定义中心接口，resolver 把实例变化转换为协议地址，selector 决定每次请求选哪个节点。 正文沿“数据流 -> gRPC resolver -> Selector 边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“selector.Selector 同时拥有 Apply 和 Select：selector/selector.go:12-30”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据流
 

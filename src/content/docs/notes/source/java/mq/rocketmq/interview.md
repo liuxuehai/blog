@@ -4,10 +4,10 @@ description: RocketMQ 高频面试题、高难追问与源码级回答锚点。
 category: Backend
 tags: [Source Reading, RocketMQ, Interview]
 order: 19
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -16,6 +16,12 @@ sidebar:
 RocketMQ 面试的核心是能把“写入、索引、可见性、提交和故障恢复”串成一条证据链。
 
 <!-- more -->
+
+## 先给答案：RocketMQ 的回答主线是写入、可见、提交和恢复四个时刻
+
+CommitLog 本地追加、ConsumeQueue 可见、副本达到提交条件、客户端收到成功响应是不同事件。事务消息又在此基础上增加半消息、最终提交和回查状态；消费端则用队列所有权、`ProcessQueue` 与位点提交形成另一条状态机。
+
+面试和排障都应先说明当前讨论的是哪一个时刻，再给源码入口和失败后的重试边界。只说“顺序写所以快”“同步复制所以不丢”都不完整，因为索引延迟、响应丢失、角色切换和消费幂等仍决定最终行为。
 
 ## 高频题
 

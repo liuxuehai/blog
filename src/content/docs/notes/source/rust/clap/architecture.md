@@ -4,10 +4,10 @@ description: clap、clap_builder、clap_derive、clap_lex 与 clap_complete 的�
 category: Backend
 tags: [Source Reading, Clap, Rust, Architecture]
 order: 60
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 60
@@ -16,6 +16,12 @@ sidebar:
 Clap 把命令行解析拆成“声明模型、词法视图、语法解析、结果容器、派生前端、输出后端”。真正稳定的中心是 `clap_builder`，顶层 `clap` crate 主要负责重导出与 feature 组合。
 
 <!-- more -->
+
+## 先给答案：Clap 把命令行解析拆成“声明模型、词法视图、语法解析、结果容器、派生前端、输出后端”
+
+Clap 把命令行解析拆成“声明模型、词法视图、语法解析、结果容器、派生前端、输出后端”。真正稳定的中心是 clapbuilder，顶层 clap crate 主要负责重导出与 feature 组合。 正文沿“Workspace 地图 -> 三阶段模型 -> 为什么以 Command 树为中枢”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“帮助、错误上下文、suggestions、derive、env、unicode 等能力以 feature 切分”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Workspace 地图
 

@@ -4,10 +4,10 @@ description: go-zero 从治理组件、RPC 运行时到 goctl 生成链的源码
 category: Backend
 tags: [Source Reading, go-zero, Go, Architecture]
 order: 21
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 21
@@ -16,6 +16,12 @@ sidebar:
 go-zero 的架构重点是把“请求保护”和“工程生成”放在同一套默认约束里：运行时负责承载流量，核心库负责限制故障扩散，goctl 负责把契约转换成可运行的服务骨架。
 
 <!-- more -->
+
+## 先给答案：go-zero 的架构重点是把“请求保护”和“工程生成”放在同一套默认约束里：运行时负责承载流量，核心库负…
+
+go-zero 的架构重点是把“请求保护”和“工程生成”放在同一套默认约束里：运行时负责承载流量，核心库负责限制故障扩散，goctl 负责把契约转换成可运行的服务骨架。 正文沿“分层 -> 请求保护顺序 -> 三条主流程”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“只启用服务端保护、把 CPU shedder 当全局限流、生成代码直接改业务”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

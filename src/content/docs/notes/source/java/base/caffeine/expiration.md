@@ -4,10 +4,10 @@ description: 写入过期、访问过期、可变 TTL 和 TimerWheel 的实现�
 category: Backend
 tags: [Source Reading, Caffeine, Expiration, TimerWheel]
 order: 54
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 54
@@ -16,6 +16,14 @@ sidebar:
 Caffeine 把过期时间存入节点，在读、写、维护和可选 scheduler 触发时清理；动态 TTL 用时间轮降低调度成本。
 
 <!-- more -->
+
+## 先给答案：Caffeine 把过期时间存入节点，在读、写、维护和可选 scheduler 触发时清理；动态 TTL …
+
+Caffeine 把过期时间存入节点，在读、写、维护和可选 scheduler 触发时清理；动态 TTL 用时间轮降低调度成本。 理解过期与时间轮时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“没有 scheduler、Expiry 返回 0、refresh 与 expire 同时配置”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“没有 scheduler、Expiry 返回 0、refresh 与 expire 同时配置”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 create/update/read -> variableTime -> fixed queues / TimerWheel

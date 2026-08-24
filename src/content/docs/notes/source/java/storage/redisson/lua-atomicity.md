@@ -4,10 +4,10 @@ description: Redisson 如何把检查、修改、过期、清理和通知组合�
 category: Backend
 tags: [Source Reading, Redisson, Redis, Lua]
 order: 44
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 44
@@ -16,6 +16,12 @@ sidebar:
 Redisson 的高层对象通常不是一条 Redis 命令的包装，而是一段带状态机语义的 Lua 程序。脚本把竞态窗口从 Java 网络往返中移到 Redis 单线程执行边界内。
 
 <!-- more -->
+
+## 先给答案：Redisson 的高层对象通常不是一条 Redis 命令的包装，而是一段带状态机语义的 Lua 程序
+
+Redisson 的高层对象通常不是一条 Redis 命令的包装，而是一段带状态机语义的 Lua 程序。脚本把竞态窗口从 Java 网络往返中移到 Redis 单线程执行边界内。 正文沿“原子化结构 -> Java 侧如何组织脚本 -> 为什么不拆成多条命令”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Cluster 多 key、脚本过长、时间单位混用”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 原子化结构
 

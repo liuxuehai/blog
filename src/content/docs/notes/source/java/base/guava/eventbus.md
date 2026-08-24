@@ -4,10 +4,10 @@ description: EventBus 的反射注册、类型匹配、线程分派与异常处�
 category: Backend
 tags: [Source Reading, Guava, EventBus, Reflection]
 order: 64
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: intermediate
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 64
@@ -16,6 +16,14 @@ sidebar:
 EventBus 把生产者与订阅者的直接引用改成运行时注册关系。它的实现很短，但反射、类型层次遍历、重入保护和异常隔离共同决定行为边界。
 
 <!-- more -->
+
+## 先给答案：EventBus 把生产者与订阅者的直接引用改成运行时注册关系
+
+EventBus 把生产者与订阅者的直接引用改成运行时注册关系。它的实现很短，但反射、类型层次遍历、重入保护和异常隔离共同决定行为边界。 理解EventBus时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“没有订阅者、订阅方法阻塞、代码被 ProGuard/R8 裁剪”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“没有订阅者、订阅方法阻塞、代码被 ProGuard/R8 裁剪”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 register(listener) -> scan @Subscribe -> event type -> Subscriber set

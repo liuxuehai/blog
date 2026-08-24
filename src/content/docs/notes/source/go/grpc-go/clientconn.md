@@ -4,10 +4,10 @@ description: grpc-go ClientConn 的 target 解析、idle、SubConn、连接建�
 category: Backend
 tags: [Source Reading, gRPC, Go, ClientConn]
 order: 42
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 42
@@ -16,6 +16,12 @@ sidebar:
 `ClientConn` 是逻辑 channel，不等于一条 TCP 连接。它持有 resolver、balancer、Picker、多个 `addrConn`、服务配置和连接状态，并允许底层 transport 在地址变化或故障后重建。
 
 <!-- more -->
+
+## 先给答案：ClientConn 是一个持续收敛的连接状态机，不是一次 Dial 的结果
+
+Dial 创建的是逻辑连接管理器。Resolver 产生地址，Balancer 创建或更新 SubConn，SubConn 再建立具体 transport；请求通过 picker 选择当前 Ready 的子连接。地址变化、连接失败和重试都会让这条链反复更新，但业务侧仍持有同一个 ClientConn。
+
+因此排查“RPC 偶发失败”要区分 resolver 没更新、balancer 没选出 Ready、transport 建连失败、picker 暂无可用连接和请求已发出后响应丢失。只看 `ClientConn` 是否非空，无法说明调用链已经可用。
 
 ## 创建与首次连接
 

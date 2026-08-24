@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Architecture
 order: 11
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 11
@@ -19,6 +19,12 @@ sidebar:
 Spring 的架构可以概括为“上层上下文编排，底层 BeanFactory 持有对象图，后置处理器把扩展能力插入创建流程”。理解这条边界，比记住某个注解的效果更重要。
 
 <!-- more -->
+
+## 先给答案：先建立定义图，再创建带扩展能力的实例图
+
+Spring 先把配置解析为 BeanDefinition，再由 BeanFactoryPostProcessor 修改定义并注册 BeanPostProcessor，之后才解析依赖、创建单例和生成必要代理。ApplicationContext 负责这套刷新编排，BeanFactory 持有对象图与作用域状态。
+
+顺序就是能力边界：定义级处理必须早于实例化，实例级处理必须早于业务对象完成初始化，AOP 和事务依赖代理入口，循环依赖的早期引用还可能提前暴露代理。绕过容器取得对象或发生自调用时，相应扩展不会凭空生效。
 
 ## 分层
 

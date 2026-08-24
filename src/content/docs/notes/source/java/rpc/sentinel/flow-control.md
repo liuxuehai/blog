@@ -4,15 +4,21 @@ description: FlowSlot、FlowRuleChecker、RuleManager 与排队、预热、关�
 category: Backend
 tags: [Source Reading, Sentinel, Flow Control, QPS]
 order: 44
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 44 }
 ---
 
-`FlowSlot` 本身只负责取得资源规则并调用 `FlowRuleChecker`。真正的选择逻辑由规则的 grade、strategy、controlBehavior 和 traffic shaping controller 决定，因此“QPS 限流”只是这一层的一个配置结果。
+<!-- more -->
+
+## 先给答案：FlowSlot、FlowRuleChecker、RuleManager 与排队、预热、关联和集群流控的源…
+
+FlowSlot、FlowRuleChecker、RuleManager 与排队、预热、关联和集群流控的源码关系。 正文沿“检查路径 -> 规则快照 -> 热点参数边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“参数流控在 sentinel-parameter-flow-control 扩展模块中实现，不是 core 默认 Slot 的同义词”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 检查路径
 

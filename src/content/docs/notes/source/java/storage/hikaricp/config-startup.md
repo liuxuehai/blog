@@ -4,10 +4,10 @@ description: HikariConfig 的参数校验、HikariDataSource 的延迟启动与�
 category: Backend
 tags: [Source Reading, HikariCP, Configuration]
 order: 42
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 42
@@ -17,20 +17,11 @@ HikariCP 把配置阶段和运行阶段分开：配置对象允许组装，池�
 
 <!-- more -->
 
-```text
-properties / setters
-       |
-       v
-HikariConfig
-  validate()
-       |
-       v
-HikariDataSource
-  seal()
-       |
-       v
-HikariPool
-```
+## 先给答案：HikariCP 把配置阶段和运行阶段分开：配置对象允许组装，池启动前统一校验，启动后封存关键属性，避免运…
+
+HikariCP 把配置阶段和运行阶段分开：配置对象允许组装，池启动前统一校验，启动后封存关键属性，避免运行时改变池容量语义。 正文沿“配置入口 -> 关键校验 -> 延迟启动”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“connectionTimeout 太小、minimumIdle 大于 maximumPoolSize、keepalive 配置过短”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 配置入口
 

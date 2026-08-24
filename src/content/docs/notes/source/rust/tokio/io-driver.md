@@ -4,10 +4,10 @@ description: Tokio 如何用 mio、Registration、ScheduledIo、readiness 位和
 category: Backend
 tags: [Source Reading, Tokio, Rust, IO, Mio]
 order: 50
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 50
@@ -16,6 +16,12 @@ sidebar:
 Tokio 的异步 IO 不是把 `read` 调用送到普通线程池，而是把非阻塞资源注册给 mio。Future 先尝试真实 IO，遇到 `WouldBlock` 后登记 interest 和 Waker，driver 收到 readiness 再把任务唤醒。
 
 <!-- more -->
+
+## 先给答案：Tokio 的异步 IO 不是把 read 调用送到普通线程池，而是把非阻塞资源注册给 mio
+
+Tokio 的异步 IO 不是把 read 调用送到普通线程池，而是把非阻塞资源注册给 mio。Future 先尝试真实 IO，遇到 WouldBlock 后登记 interest 和 Waker，driver 收到 readiness 再把任务唤醒。 正文沿“组件关系 -> driver turn -> ScheduledIo 状态”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“readiness 到达就假设 IO 必成功、自定义 AsyncFd 忘记清 readiness、同方向多个 poll API 混用”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 组件关系
 

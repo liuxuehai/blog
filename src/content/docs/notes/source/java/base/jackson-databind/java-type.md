@@ -4,10 +4,10 @@ description: Jackson TypeFactory、JavaType 层次和泛型擦除后的运行时
 category: Backend
 tags: [Source Reading, Jackson, JavaType, Generics]
 order: 72
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 72
@@ -16,6 +16,12 @@ sidebar:
 Jackson 不把所有目标类型降级成 `Class<?>`，而是用 `JavaType` 保存“这是一个什么结构，以及结构参数是什么”。这是处理泛型集合和多态类型的基础。
 
 <!-- more -->
+
+## 先给答案：JavaType 是把泛型结构从编译期带到运行时的类型计划
+
+`Class<?>` 只能说明“这是一个 List”或“这是一个 Map”，无法说明元素和键值类型。Jackson 通过 `JavaType` 把原始类、类型参数、容器结构和多态信息组合起来，后续缓存才能按完整类型选择 serializer 或 deserializer。
+
+所以反序列化 `List<User>` 失败时，先检查传入的 TypeReference/JavaType 是否保留了 User，而不是先怀疑 JSON。类型计划错了，属性发现和对象构造拿到的就是错误输入；类型计划正确后，才进入字段、构造器和转换规则排查。
 
 ## 类型构造
 

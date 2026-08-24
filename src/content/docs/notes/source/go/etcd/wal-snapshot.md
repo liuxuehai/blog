@@ -4,10 +4,10 @@ description: etcd WAL、Raft snapshot、日志截断、fsync 顺序和启动恢�
 category: Backend
 tags: [Source Reading, etcd, Go, WAL, Snapshot]
 order: 33
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 33
@@ -16,6 +16,12 @@ sidebar:
 etcd 的持久化不是“把 KV 写进一个文件”，而是用 WAL 保存 Raft 元数据和 entries，用 snapshot 降低恢复成本，再用 backend 保存已应用的 MVCC 状态。
 
 <!-- more -->
+
+## 先给答案：etcd 的持久化不是“把 KV 写进一个文件”，而是用 WAL 保存 Raft 元数据和 entries…
+
+etcd 的持久化不是“把 KV 写进一个文件”，而是用 WAL 保存 Raft 元数据和 entries，用 snapshot 降低恢复成本，再用 backend 保存已应用的 MVCC 状态。 正文沿“持久化关系 -> 为什么 snapshot 要先于普通日志释放 -> 快照不是 backend 备份的同义词”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“禁用 fsync、手工删除 WAL、只备份 backend.db”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 持久化关系
 

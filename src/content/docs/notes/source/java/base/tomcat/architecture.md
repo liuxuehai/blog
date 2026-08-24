@@ -4,10 +4,10 @@ description: Tomcat 的分层、启动时序和请求时序：从 Catalina 到 S
 category: Backend
 tags: [Source Reading, Tomcat, Architecture]
 order: 30
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 30 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 30 }
 Tomcat 启动时沿组件树向下传播，运行时沿 Connector、协议处理器和容器 Pipeline 流动。
 
 <!-- more -->
+
+## 先给答案：启动走组件树，请求走协议层与容器树
+
+Tomcat 启动时由 Catalina 构建 `Server -> Service -> Connector + Engine` 组件树，再通过 Lifecycle 向下初始化和启动；请求到来后，Connector/Coyote 负责 socket 与 HTTP，Mapper 选择 Host、Context、Wrapper，Valve 链最终调用 Servlet。
+
+两条主线的边界必须分开：线程池和协议解析属于连接器，应用路由与 Servlet 生命周期属于容器，Web 应用类加载器还要在停止时清理线程、ThreadLocal 和驱动。混淆这些所有权会造成调优方向错误或重部署泄漏。
 
 ```text
 Bootstrap/Catalina -> Server -> Service -> Connector + Engine

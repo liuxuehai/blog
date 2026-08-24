@@ -4,10 +4,10 @@ description: AppInit 初始化、AppRouting 匹配、Scope/Resource/Route 分层
 category: Backend
 tags: [Source Reading, Actix Web, Routing, ServiceFactory]
 order: 42
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 42
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 路由不是一张运行时字符串表，而是启动时由多个 `HttpServiceFactory` 注册、再异步实例化出的 Service 树。
 
 <!-- more -->
+
+## 先给答案：Actix Web 路由不是一张运行时字符串表，而是启动时由多个 HttpServiceFactory 注…
+
+Actix Web 路由不是一张运行时字符串表，而是启动时由多个 HttpServiceFactory 注册、再异步实例化出的 Service 树。 正文沿“三层路由 -> App 初始化 -> Resource 与 guard”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“动态注册期待热更新、同路径 guard 重叠、Scope appdata 覆盖全局”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 三层路由
 

@@ -4,10 +4,10 @@ description: Database、Connection、driver-specific crate 与 Any 抽象如何�
 category: Backend
 tags: [Source Reading, SQLx, Rust, Database Driver]
 order: 73
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 73
@@ -16,6 +16,12 @@ sidebar:
 SQLx 的跨数据库能力不是把所有数据库压扁为最低公分母，而是由 `sqlx-core` 定义协议骨架，再由 PostgreSQL、MySQL、SQLite crate 填充连接、语句、参数、行和错误的事实。
 
 <!-- more -->
+
+## 先给答案：SQLx 的跨数据库能力不是把所有数据库压扁为最低公分母，而是由 sqlx-core 定义协议骨架，再由 …
+
+SQLx 的跨数据库能力不是把所有数据库压扁为最低公分母，而是由 sqlx-core 定义协议骨架，再由 PostgreSQL、MySQL、SQLite crate 填充连接、语句、参数、行和错误的事实。 正文沿“Driver 边界 -> Database 关联类型 -> Any 的取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“`text sqlx-core Database::Connection / Arguments / Row / QueryResult / TypeInfo ^ +-- sqlx-postgres: wire codec + PgConnection + PgRow +-- sqlx-mysql: wire codec + MySqlConnection + MySqlRow +-- sqlx-sqlite: FFI/SQLite protocol + SqliteConnection + SqliteRow `”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Driver 边界
 

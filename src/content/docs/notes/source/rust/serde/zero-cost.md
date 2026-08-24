@@ -4,10 +4,10 @@ description: Serde 的单态化、内联、零拷贝借用、no_std，以及 Con
 category: Backend
 tags: [Source Reading, Serde, Performance, Zero Cost]
 order: 55
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 55
@@ -16,6 +16,12 @@ sidebar:
 Serde 的“零成本”不是所有场景零分配，而是抽象层本身通常可以被单态化和内联，不强制运行时反射、虚调用或统一中间树。具体格式和属性仍可能产生真实成本。
 
 <!-- more -->
+
+## 先给答案：Serde 的“零成本”不是所有场景零分配，而是抽象层本身通常可以被单态化和内联，不强制运行时反射、虚调用…
+
+Serde 的“零成本”不是所有场景零分配，而是抽象层本身通常可以被单态化和内联，不强制运行时反射、虚调用或统一中间树。具体格式和属性仍可能产生真实成本。 正文沿“可被优化掉的层 -> 零拷贝反序列化 -> deserializeinplace”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“大量类型×格式组合、借用字段遇到转义输入、in-place 失败后状态半更新”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 可被优化掉的层
 

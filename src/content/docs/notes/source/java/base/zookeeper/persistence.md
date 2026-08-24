@@ -4,15 +4,21 @@ description: DataTree、TxnLog、快照恢复和日志滚动的源码链路。
 category: Backend
 tags: [Source Reading, ZooKeeper, Persistence]
 order: 45
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 45 }
 ---
 
-内存 `DataTree` 是服务请求的读模型，事务日志和快照才是重启、复制和恢复的事实来源。
+<!-- more -->
+
+## 先给答案：DataTree、TxnLog、快照恢复和日志滚动的源码链路
+
+DataTree、TxnLog、快照恢复和日志滚动的源码链路。 正文沿“数据结构 -> 为什么日志和快照都要有”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“dataDir 与 logDir 共盘、快照过大、磁盘满”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据结构
 

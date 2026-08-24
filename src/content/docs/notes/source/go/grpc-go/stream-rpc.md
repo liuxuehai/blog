@@ -4,10 +4,10 @@ description: grpc-go unary/stream 统一调用模型、消息编解码、Picker�
 category: Backend
 tags: [Source Reading, gRPC, Go, Stream]
 order: 44
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 44
@@ -16,6 +16,12 @@ sidebar:
 grpc-go 在客户端把 unary RPC 也实现成“发送一条消息、关闭发送端、接收一条响应”的特殊 stream。这样 metadata、压缩、Picker、transport、状态和重试逻辑可以共享。
 
 <!-- more -->
+
+## 先给答案：grpc-go 在客户端把 unary RPC 也实现成“发送一条消息、关闭发送端、接收一条响应”的特殊 …
+
+grpc-go 在客户端把 unary RPC 也实现成“发送一条消息、关闭发送端、接收一条响应”的特殊 stream。这样 metadata、压缩、Picker、transport、状态和重试逻辑可以共享。 正文沿“统一调用路径 -> 一次 attempt -> 提交点”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“非幂等写开启重试、流式请求持续发送、WaitForReady 无截止时间”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 统一调用路径
 

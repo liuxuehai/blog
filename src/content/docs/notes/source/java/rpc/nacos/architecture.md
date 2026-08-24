@@ -4,10 +4,10 @@ description: Nacos 启动、集群成员、AP/CP 协议、配置与 Naming 请�
 category: Backend
 tags: [Source Reading, Nacos, Architecture]
 order: 31
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 31 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 31 }
 Nacos 的核心不是单一注册表，而是由成员管理、远程 RPC、数据一致性、领域服务和客户端状态组成的控制平面。理解分层后，AP 与 CP 的边界会比记忆模块名更清晰。
 
 <!-- more -->
+
+## 先给答案：Nacos 的核心不是单一注册表，而是由成员管理、远程 RPC、数据一致性、领域服务和客户端状态组成的控制…
+
+Nacos 的核心不是单一注册表，而是由成员管理、远程 RPC、数据一致性、领域服务和客户端状态组成的控制平面。理解分层后，AP 与 CP 的边界会比记忆模块名更清晰。 正文沿“分层 -> 核心抽象 -> 主流程一：启动”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“单机模式、成员列表未收敛、AP 数据误用 CP 语义”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

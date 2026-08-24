@@ -4,6 +4,11 @@ description: UnifiedLog、LogSegment、offset index 和 time index 如何实现�
 category: Backend
 tags: [Source Reading, Kafka, Log, Storage]
 order: 212
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 212
 ---
@@ -11,6 +16,12 @@ sidebar:
 Kafka 的一个 partition 是只追加的 offset 序列；文件按 segment 切分，索引只记录稀疏位置，再从文件扫描到目标 record。
 
 <!-- more -->
+
+## 先给答案：稀疏索引只负责缩小范围，原始日志负责最终定位和恢复
+
+每个 partition 是单调递增的 offset 序列，按 segment 切分；offset/time index 只记录部分位置，读取先定位最近条目，再顺序扫描到目标 record。这样控制索引体积，同时保留顺序追加和批次读取优势。
+
+索引不是事实源：异常尾部要由 `recover` 扫描日志并重建，副本回退必须同时截断数据文件、offset index、time index 和 transaction index。只按文件名或 base offset 计算物理位置，会忽略 batch 与文件位置的实际边界。
 
 ## 数据结构
 

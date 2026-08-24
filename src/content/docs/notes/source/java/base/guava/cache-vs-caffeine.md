@@ -4,10 +4,10 @@ description: Guava LocalCache 的分段锁、加载占位、过期淘汰与 Caff
 category: Backend
 tags: [Source Reading, Guava, Cache, Caffeine, Concurrency]
 order: 63
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 63
@@ -16,6 +16,12 @@ sidebar:
 Guava Cache 的核心是 `LocalCache` 加 `Segment`：通过分段降低锁竞争，并用加载占位合并同一 key 的并发请求。它与 Caffeine 的差异集中在读路径是否直接修改维护结构。
 
 <!-- more -->
+
+## 先给答案：对照缓存实现，要比较维护模型而不只是接口
+
+两者都提供本地缓存、过期和加载能力，但真正影响行为的是维护时机、并发读写路径、驱逐算法和版本演进。缓存命中时是否触发维护、写操作如何进入队列、加载失败如何传播，都会改变延迟和一致性表现。
+
+因此迁移不能只替换类型名：要重新验证最大容量、权重、刷新与过期语义、统计数据、删除监听器以及异步加载的 Future 行为。API 看起来兼容，不代表故障边界和性能曲线相同。
 
 ```text
 request -> hash -> Segment -> table lookup

@@ -4,6 +4,11 @@ description: Kafka 分区日志、ISR、KRaft、零拷贝和消费者重平衡�
 category: Backend
 tags: [Source Reading, Kafka, Interview]
 order: 219
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 219
 ---
@@ -11,6 +16,12 @@ sidebar:
 Kafka 面试的加分点不在于背参数，而在于能把 offset、epoch、segment、ISR 和 group generation 串成一条故障路径。
 
 <!-- more -->
+
+## 先给答案：Kafka 的源码回答必须说明 offset、epoch 和 generation 各约束哪类旧状态
+
+offset 描述日志位置与消费进度，epoch 区分 leader 或 producer 会话，generation 区分消费者组分配版本。吞吐来自 partition 并行、批次、顺序追加和页缓存；可靠性则由 ISR/HW、幂等序列、事务标记和 group offset 共同决定。
+
+回答任何“是否丢、是否重复、是否可见”问题时，都要先指定写入、复制、事务读取和消费提交中的哪一个边界。`acks=all` 不是端到端 exactly-once，低 JVM heap 也不代表没有缓存压力，group 成员数量不变同样可能因协调状态变化发生重平衡。
 
 ## 高频题
 

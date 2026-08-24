@@ -4,14 +4,22 @@ description: grpc-go 源码级面试题、设计取舍和连接、流控、重�
 category: Backend
 tags: [Source Reading, gRPC, Go, Interview]
 order: 48
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 48
 ---
+
+<!-- more -->
+
+## 先给答案：grpc-go 源码级面试题、设计取舍和连接、流控、重试排障清单
+
+grpc-go 源码级面试题、设计取舍和连接、流控、重试排障清单。 正文沿“核心问题 -> 排障清单 -> 设计评价”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“RPC 一直等待、channel 反复 TransientFailure、单连接吞吐低”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 核心问题
 

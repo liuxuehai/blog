@@ -4,10 +4,10 @@ description: serde_core、serde、serde_derive 的边界，以及数据结构与
 category: Backend
 tags: [Source Reading, Serde, Rust, Architecture]
 order: 50
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 50
@@ -16,6 +16,12 @@ sidebar:
 Serde 的关键架构是把 N 种 Rust 类型与 M 种数据格式从 N×M 个直接适配，拆成两组 trait 实现。类型只认识数据模型，格式也只认识数据模型。
 
 <!-- more -->
+
+## 先给答案：Serde 的关键架构是把 N 种 Rust 类型与 M 种数据格式从 N×M 个直接适配，拆成两组 tr…
+
+Serde 的关键架构是把 N 种 Rust 类型与 M 种数据格式从 N×M 个直接适配，拆成两组 trait 实现。类型只认识数据模型，格式也只认识数据模型。 正文沿“组件地图 -> 双分派 -> N + M 而不是 N × M”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“把 Serde 当 JSON 库、依赖 serde::private、自定义格式只实现 deserializeany”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 组件地图
 

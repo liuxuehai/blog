@@ -4,10 +4,10 @@ description: Kratos 根包、transport、middleware、registry 与基础设施�
 category: Backend
 tags: [Source Reading, Kratos, Go, Architecture]
 order: 30
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 30
@@ -16,6 +16,12 @@ sidebar:
 Kratos 的核心不是一个大型运行时，而是一组围绕统一接口拼装的基础模块。根包只负责应用生命周期，具体协议交给 transport，治理能力通过 registry、selector 和 middleware 注入。
 
 <!-- more -->
+
+## 先给答案：Kratos 的核心不是一个大型运行时，而是一组围绕统一接口拼装的基础模块
+
+Kratos 的核心不是一个大型运行时，而是一组围绕统一接口拼装的基础模块。根包只负责应用生命周期，具体协议交给 transport，治理能力通过 registry、selector 和 middleware 注入。 正文沿“主链路 -> 依赖方向 -> 关键取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“未提供 Endpoint、server 启动失败、自定义 registry”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主链路
 

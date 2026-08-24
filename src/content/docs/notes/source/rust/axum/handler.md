@@ -4,10 +4,10 @@ description: async 函数如何通过 Handler trait、tuple extractor、宏展�
 category: Backend
 tags: [Source Reading, Axum, Handler, Generics]
 order: 23
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 23
@@ -16,6 +16,12 @@ sidebar:
 Axum 允许普通 `async fn` 直接成为 handler，但 Rust 函数没有统一的参数列表反射。框架用泛型 trait 与宏，为不同参数数量生成实现。
 
 <!-- more -->
+
+## 先给答案：Axum 允许普通 async fn 直接成为 handler，但 Rust 函数没有统一的参数列表反射
+
+Axum 允许普通 async fn 直接成为 handler，但 Rust 函数没有统一的参数列表反射。框架用泛型 trait 与宏，为不同参数数量生成实现。 正文沿“从函数到响应 -> 泛型参数 T 的作用 -> HandlerService”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Future 非 Send、返回分支类型不同、参数过多”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 从函数到响应
 

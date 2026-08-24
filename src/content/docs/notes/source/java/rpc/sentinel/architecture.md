@@ -4,15 +4,21 @@ description: Sentinel 的入口、Slot 链、统计节点、规则管理和集�
 category: Backend
 tags: [Source Reading, Sentinel, Architecture]
 order: 41
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 41 }
 ---
 
-Sentinel 的核心架构可以压缩为一条调用管线和一组旁路状态：调用管线负责逐 Slot 检查，统计节点负责记录事实，RuleManager 负责提供规则，Property/SPI 负责替换实现。
+<!-- more -->
+
+## 先给答案：Sentinel 的入口、Slot 链、统计节点、规则管理和集群扩展的源码地图
+
+Sentinel 的入口、Slot 链、统计节点、规则管理和集群扩展的源码地图。 正文沿“模块地图 -> 核心边界 -> 读码路径”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“CtSph 不直接实现所有规则，它只负责 Context、Entry 和按资源缓存 Slot 链；DefaultSlotChainBuilder 再通过 SPI 找到有序 Slot”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模块地图
 

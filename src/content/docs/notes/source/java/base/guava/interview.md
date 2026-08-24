@@ -4,10 +4,10 @@ description: Guava 不可变集合、LocalCache、EventBus 与 RateLimiter 的�
 category: Backend
 tags: [Source Reading, Guava, Interview]
 order: 69
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 69
@@ -16,6 +16,12 @@ sidebar:
 Guava 面试题的区分度在于：能否说出数据结构、状态边界和失效场景，而不只是复述 API 名称。
 
 <!-- more -->
+
+## 先给答案：Guava 面试题的区分度在于：能否说出数据结构、状态边界和失效场景，而不只是复述 API 名称
+
+Guava 面试题的区分度在于：能否说出数据结构、状态边界和失效场景，而不只是复述 API 名称。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“本地缓存命中率高但延迟抖动，怎么排查、EventBus 线上丢事件怎么办”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

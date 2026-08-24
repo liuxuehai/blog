@@ -4,10 +4,10 @@ description: FromRequest tuple、Payload 所有权、Handler 宏、Responder 与
 category: Backend
 tags: [Source Reading, Actix Web, Extractor, Handler]
 order: 43
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 43
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 用 `FromRequest` 把请求转换为 handler 参数，用 `Handler<Args>` 适配函数，用 `Responder` 把返回值转换为响应。与 Axum 不同，它没有公开拆成 parts/body 两个 extractor trait。
 
 <!-- more -->
+
+## 先给答案：Actix Web 用 FromRequest 把请求转换为 handler 参数，用 Handler<A…
+
+Actix Web 用 FromRequest 把请求转换为 handler 参数，用 Handler<Args 适配函数，用 Responder 把返回值转换为响应。与 Axum 不同，它没有公开拆成 parts/body 两个 extractor trait。 正文沿“参数管线 -> Payload 所有权 -> Data<T”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“多个 extractor 读取 body、Data<T 找不到、body limit 只在业务校验”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 参数管线
 

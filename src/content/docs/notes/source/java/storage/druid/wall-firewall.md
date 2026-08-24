@@ -4,10 +4,10 @@ description: WallFilter 与 WallProvider 如何基于 SQL AST 执行黑白名单
 category: Backend
 tags: [Source Reading, Druid, Security]
 order: 36
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 36
@@ -17,14 +17,11 @@ Wall 的核心不是简单禁用某个字符串，而是把 SQL 解析成 AST �
 
 <!-- more -->
 
-```text
-JDBC execute
-  -> WallFilter.check
-  -> WallProvider.check
-  -> parse SQL
-  -> deny comment / multi-statement / visitor violation
-  -> allow or SQLException
-```
+## 先给答案：Wall 的核心不是简单禁用某个字符串，而是把 SQL 解析成 AST 后，根据配置和 Visitor 结…
+
+Wall 的核心不是简单禁用某个字符串，而是把 SQL 解析成 AST 后，根据配置和 Visitor 结果判断语句是否违反策略。 正文沿“调用路径 -> 检查层次 -> 为什么基于 AST 做安全检查”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“替代方案：维护一组正则表达式，匹配 drop、union、注释等文本”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用路径
 

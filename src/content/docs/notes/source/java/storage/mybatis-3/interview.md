@@ -4,10 +4,10 @@ description: MyBatis 高频面试题、高难追问、缓存与结果映射故�
 category: Backend
 tags: [Source Reading, MyBatis, Interview]
 order: 19
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -16,6 +16,12 @@ sidebar:
 MyBatis 面试的分水岭不是能否说出“半自动 ORM”，而是能否把一次 Mapper 调用追到 `MappedStatement`、`Executor` 和 `ResultSetHandler`，并说明缓存与事务边界。
 
 <!-- more -->
+
+## 先给答案：代理只负责定位，执行器才拥有会话状态
+
+一次 Mapper 调用先由代理把接口方法解析为 `MappedStatement`，再交给 `Executor` 组织事务、一级缓存和 Statement 执行，最终由 `ResultSetHandler` 把 JDBC 结果映射回对象。接口代理是入口适配层，不是 SQL 执行核心。
+
+故障边界也沿分层展开：插件会包裹指定执行点，二级缓存以 namespace 和事务提交为边界，动态 SQL 与结果映射决定最终 SQL 和对象形状。把代理、缓存或插件当成全局透明能力，最容易误判事务可见性和数据一致性。
 
 ## 高频题
 

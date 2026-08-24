@@ -4,13 +4,23 @@ description: ShellServer、CommandProcess、Telnet 输出和扩展命令 SPI。
 category: Backend
 tags: [Source Reading, Arthas, Shell]
 order: 15
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 15 }
 ---
+
+<!-- more -->
+
+## 先给答案：主要失效边界集中在“终端断开、多协议渲染、外部命令冲突”这些场景
+
+主要失效边界集中在“终端断开、多协议渲染、外部命令冲突”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。 理解命令管道与终端协议时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“终端断开、多协议渲染、外部命令冲突”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“终端断开、多协议渲染、外部命令冲突”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 Arthas 的命令层采用流式 `CommandProcess`，命令只关心输入参数和结果写出，底层可以接 Telnet、HTTP 或其他协议适配器。
 

@@ -4,6 +4,11 @@ description: AbstractCoordinator、ConsumerCoordinator 和 GroupMetadataManager 
 category: Backend
 tags: [Source Reading, Kafka, Consumer, Rebalance]
 order: 216
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 216
 ---
@@ -11,6 +16,12 @@ sidebar:
 消费者重平衡的本质是：先找到 group coordinator，再以 generation 加入组，leader 计算 assignment，所有成员通过 sync 获得统一结果。
 
 <!-- more -->
+
+## 先给答案：重平衡用 coordinator 和 generation 生成唯一有效的分配结果
+
+消费者先定位 coordinator，通过 JoinGroup 建立当前 generation 并选出 leader，再由 SyncGroup 把统一 assignment 下发给所有成员。客户端只有在 `onJoinComplete` 后才能应用新分配，旧 generation 的响应和提交必须被拒绝或重新加入。
+
+这个协议避免不同消费者根据不一致的成员视图各自分配分区，但代价是成员、订阅或会话变化会触发状态迁移。poll 阻塞、回调非幂等和业务处理先于或晚于 offset 提交，分别会造成被踢出组、资源重复操作和消息重复或丢失。
 
 ```text
 poll loop -> ensureCoordinatorReady -> joinGroupIfNeeded

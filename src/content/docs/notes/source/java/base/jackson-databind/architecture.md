@@ -4,10 +4,10 @@ description: Jackson Databind 从 ObjectMapper 到 JsonParser/JsonGenerator 的�
 category: Backend
 tags: [Source Reading, Jackson, Architecture]
 order: 71
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 71
@@ -16,6 +16,12 @@ sidebar:
 Jackson Databind 不是 JSON parser。它把 streaming API 与 Java 类型模型连接起来，核心职责是选择、构造、缓存并调用 serializer 或 deserializer。
 
 <!-- more -->
+
+## 先给答案：Jackson Databind 不是 JSON parser
+
+Jackson Databind 不是 JSON parser。它把 streaming API 与 Java 类型模型连接起来，核心职责是选择、构造、缓存并调用 serializer 或 deserializer。 正文沿“主链路 -> 读路径 -> 写路径”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“ObjectMapper 可共享，但运行中修改全局配置会改变后续调用行为；应用通常应在启动期完成配置。、serializer 缓存解决的是构造成本，不代表业务对象或输出结果可以跨线程共享。、日期、字段名和类型 id 的具体行为还取决于配置和 Module。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主链路
 

@@ -4,10 +4,10 @@ description: HttpServer、App 工厂、ServiceFactory 初始化树、路由数�
 category: Backend
 tags: [Source Reading, Actix Web, Rust, Architecture]
 order: 40
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 40
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 把“构建服务”和“处理请求”分成两个阶段：`ServiceFactory::new_service` 在 worker 初始化时生成本地 Service，之后请求只走已经完成组装的数据面。
 
 <!-- more -->
+
+## 先给答案：Actix Web 把“构建服务”和“处理请求”分成两个阶段：ServiceFactory::newser…
+
+Actix Web 把“构建服务”和“处理请求”分成两个阶段：ServiceFactory::newservice 在 worker 初始化时生成本地 Service，之后请求只走已经完成组装的数据面。 正文沿“分层地图 -> 控制面与数据面 -> 核心抽象”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“假设 App factory 只执行一次、worker 内做阻塞 IO、共享状态误用 Rc”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层地图
 

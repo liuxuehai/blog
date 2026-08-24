@@ -4,10 +4,10 @@ description: SingleFlight、资源管理、锁边界和同 key 请求合并的�
 category: Backend
 tags: [Source Reading, go-zero, Go, Concurrency]
 order: 24
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 24
@@ -16,6 +16,12 @@ sidebar:
 `syncx` 的价值在于把容易写错的并发生命周期封装起来，其中 `SingleFlight` 是缓存回源和重复计算合并的关键原语。
 
 <!-- more -->
+
+## 先给答案：syncx 的价值在于把容易写错的并发生命周期封装起来，其中 SingleFlight 是缓存回源和重复计…
+
+syncx 的价值在于把容易写错的并发生命周期封装起来，其中 SingleFlight 是缓存回源和重复计算合并的关键原语。 正文沿“SingleFlight 流程 -> 它解决什么问题 -> 锁边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“关键原则是“持锁只做状态转移，不执行用户函数””这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## SingleFlight 流程
 

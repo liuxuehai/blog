@@ -4,6 +4,11 @@ description: Kafka producer epoch、事务可见性、消费位点和 group meta
 category: Backend
 tags: [Source Reading, Kafka, Transactions, Offset]
 order: 217
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 217
 ---
@@ -11,6 +16,12 @@ sidebar:
 Kafka 的 exactly-once 不是一个 API，而是 producer 幂等序列、事务状态、consumer isolation 和 offset 提交共同组成的协议。
 
 <!-- more -->
+
+## 先给答案：Kafka exactly-once 是生产序列、事务可见性和输入位点的联合提交
+
+幂等 producer 用 producer id、epoch 和 sequence 识别重试批次；事务 marker 决定批次是否对 `read_committed` 可见；consumer offset 则记录某个 group 的输入进度。只有把消费位点与输出写入放进同一事务边界，Kafka 内部链路才能避免“输出已写但输入又重放”。
+
+这不自动覆盖数据库、HTTP 等外部副作用，跨系统仍需业务幂等、outbox 或补偿。长事务会压低可见水位，处理前提交 offset 会造成丢失窗口，处理后普通提交则保留至少一次重复窗口。
 
 ```text
 producer id + epoch + sequence -> idempotent append

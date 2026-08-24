@@ -4,10 +4,10 @@ description: 从分布式对象方法到 Redis 命令、编解码、Future 和�
 category: Backend
 tags: [Source Reading, Redisson, Async, Netty]
 order: 42
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 42
@@ -16,6 +16,12 @@ sidebar:
 Redisson 的“异步”不是把同步方法包进线程池，而是让命令从编码到网络回调都沿着 `RFuture`/`CompletionStage` 传播。
 
 <!-- more -->
+
+## 先给答案：Redisson 的“异步”不是把同步方法包进线程池，而是让命令从编码到网络回调都沿着 RFuture/C…
+
+Redisson 的“异步”不是把同步方法包进线程池，而是让命令从编码到网络回调都沿着 RFuture/CompletionStage 传播。 正文沿“调用链 -> 关键数据 -> 为什么不直接暴露 Netty Future”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“decoder 不匹配、Future 回调阻塞、批处理误当事务”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用链
 

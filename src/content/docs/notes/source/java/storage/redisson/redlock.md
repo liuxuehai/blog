@@ -4,10 +4,10 @@ description: Redisson 多锁组合、RedLock 工厂和分布式锁安全边界�
 category: Backend
 tags: [Source Reading, Redisson, RedLock, Distributed Systems]
 order: 45
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 45
@@ -16,6 +16,12 @@ sidebar:
 Redisson 同时提供 `MultiLock` 和 `RedLock` API。源码上，RedLock 是在多个独立 `RLock` 上建立组合策略；它不是把单实例锁 magically 变成共识系统，工程上仍需明确 Redis 节点故障模型和业务可接受风险。
 
 <!-- more -->
+
+## 先给答案：Redisson 同时提供 MultiLock 和 RedLock API
+
+Redisson 同时提供 MultiLock 和 RedLock API。源码上，RedLock 是在多个独立 RLock 上建立组合策略；它不是把单实例锁 magically 变成共识系统，工程上仍需明确 Redis 节点故障模型和业务可接受风险。 正文沿“组合结构 -> MultiLock 与 RedLock 的区别 -> 为什么不是简单 AND”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“RedLock 的争议核心不是 API 能否工作，而是它是否满足特定故障模型下的互斥保证”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 组合结构
 

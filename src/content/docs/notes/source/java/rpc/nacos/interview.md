@@ -4,10 +4,10 @@ description: Nacos 的 Distro、JRaft、配置长轮询、服务发现与健康�
 category: Backend
 tags: [Source Reading, Nacos, Interview]
 order: 37
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 37 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 37 }
 Nacos 面试的核心不是背“AP/CP”标签，而是能根据数据语义说明成员发现、协议选择、缓存更新和故障收敛如何串成闭环。
 
 <!-- more -->
+
+## 先给答案：Nacos 面试的核心不是背“AP/CP”标签，而是能根据数据语义说明成员发现、协议选择、缓存更新和故障收…
+
+Nacos 面试的核心不是背“AP/CP”标签，而是能根据数据语义说明成员发现、协议选择、缓存更新和故障收敛如何串成闭环。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“集群扩容后部分服务发现结果不一致，如何排查、配置发布后客户端迟迟不生效，如何定位、临时实例频繁上下线，应该先调大超时时间吗”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

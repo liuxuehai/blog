@@ -4,31 +4,21 @@ description: Arthas 从 Attach 到命令输出的完整源码链路。
 category: Backend
 tags: [Source Reading, Arthas, Architecture]
 order: 11
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 11 }
 ---
 
-Arthas 将“进入目标 JVM”和“诊断目标类”分成两个阶段：前者只负责注入和启动服务，后者由命令按需创建增强器。
+<!-- more -->
 
-```text
-arthas-boot / Attach
-  -> ArthasAgent.agentmain
-  -> AgentBootstrap
-  -> ArthasBootstrap
-  -> ShellServerImpl
-  -> CommandResolver -> CommandProcess
-  -> Enhancer -> Instrumentation.retransformClasses
-```
+## 先给答案：Arthas 从 Attach 到命令输出的完整源码链路
 
-```text
-Telnet/HTTP/MCP client -> session -> command
-                       -> ResultModel -> ResultView
-                       -> terminal stream
-```
+Arthas 从 Attach 到命令输出的完整源码链路。 正文沿“核心坐标 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“目标 JVM 不可 Attach、命令退出未回滚、输出阻塞”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 核心坐标
 

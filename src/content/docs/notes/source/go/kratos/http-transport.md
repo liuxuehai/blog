@@ -4,10 +4,10 @@ description: Kratos HTTP server、Context、路由、编解码和服务发现客
 category: Backend
 tags: [Source Reading, Kratos, Go, HTTP]
 order: 32
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 32
@@ -16,6 +16,12 @@ sidebar:
 Kratos 的 HTTP 层在标准库 `http.Server` 外包了一层路由、请求绑定、响应编码、operation middleware 和 discovery client。它保留 net/http 的可组合性，同时提供 RPC 风格的统一上下文。
 
 <!-- more -->
+
+## 先给答案：Kratos 的 HTTP 层在标准库 http.Server 外包了一层路由、请求绑定、响应编码、ope…
+
+Kratos 的 HTTP 层在标准库 http.Server 外包了一层路由、请求绑定、响应编码、operation middleware 和 discovery client。它保留 net/http 的可组合性，同时提供 RPC 风格的统一上下文。 正文沿“Server 组装 -> Context 边界 -> Client 与 discovery”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“HTTP Context 统一了 Vars、Query、Form、Bind、Returns 和多种响应方法：transport/http/context.go:20-42”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Server 组装
 

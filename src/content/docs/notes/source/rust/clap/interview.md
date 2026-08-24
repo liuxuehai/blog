@@ -4,10 +4,10 @@ description: 围绕 Clap 的统一命令模型、解析歧义、derive、类型�
 category: Backend
 tags: [Source Reading, Clap, Rust, Interview]
 order: 66
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 66
@@ -16,6 +16,12 @@ sidebar:
 这组题不考 API 记忆，而是考察命令行 DSL 如何统一声明、解析、类型转换、诊断与工具生成。
 
 <!-- more -->
+
+## 先给答案：这组题不考 API 记忆，而是考察命令行 DSL 如何统一声明、解析、类型转换、诊断与工具生成
+
+这组题不考 API 记忆，而是考察命令行 DSL 如何统一声明、解析、类型转换、诊断与工具生成。 正文沿“1. Clap 的运行时核心是什么 -> 2. 为什么 derive 与 builder 不会形成两套解析语义 -> 3. Command::build() 为什么重要”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“不同 Arg 的结果类型不同，所以容器内部需要类型擦除；声明时 parser 确定实际类型，读取时 getone::<T() 用泛型恢复并检查类型”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. Clap 的运行时核心是什么
 

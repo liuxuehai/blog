@@ -4,10 +4,10 @@ description: Spring Boot 的启动编排、自动配置、绑定基础设施与�
 category: Backend
 tags: [Source Reading, Spring Boot, Architecture]
 order: 21
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 21
@@ -16,6 +16,12 @@ sidebar:
 Spring Boot 位于应用代码与 Spring Framework 之间，主要职责是把选择组件、创建时机和外部配置变成可覆盖的启动流程。
 
 <!-- more -->
+
+## 先给答案：Boot 编排选择，Framework 完成容器刷新
+
+Spring Boot 在 `SpringApplication` 中准备环境、监听器、配置源和上下文类型，通过自动配置与条件系统选择候选 Bean，随后仍委托 Spring Framework 的 `refresh()` 完成 BeanFactory 和单例生命周期。它增加的是约定与启动编排，不是另一套容器。
+
+可覆盖性是这套设计的核心边界：用户 Bean、属性、排除项和条件结果都能改变默认选择。启动失败应按环境准备、配置绑定、条件装配、Bean 创建和 WebServer 启动分阶段定位，而不是把所有异常都归为“自动配置失败”。
 
 ## 分层
 

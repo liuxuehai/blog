@@ -4,15 +4,21 @@ description: DegradeSlot、三态熔断器、SystemSlot、热点参数和 Author
 category: Backend
 tags: [Source Reading, Sentinel, Circuit Breaker, System Protection]
 order: 45
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 45 }
 ---
 
-Sentinel 把“资源自身失败”交给 DegradeSlot，把“系统整体过载”交给 SystemSlot，把“调用方是否有权限”交给 AuthoritySlot。三者都能阻断，但触发事实、统计来源和恢复方式不同。
+<!-- more -->
+
+## 先给答案：DegradeSlot、三态熔断器、SystemSlot、热点参数和 AuthoritySlot 的源码实…
+
+DegradeSlot、三态熔断器、SystemSlot、热点参数和 AuthoritySlot 的源码实现边界。 正文沿“三类检查 -> 熔断状态机 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“熔断器只在请求完成后得到 RT/异常结果；入口被 Flow 或 Authority 阻断不会贡献资源失败样本。、HALFOPEN 是探测窗口，不是“半数流量放行”。、系统规则使用全局入口 Node，不能用单个资源 Node 的 QPS 替代。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 三类检查
 

@@ -4,10 +4,10 @@ description: Axum 如何在 Tokio、Hyper 与 Tower 之上组织 Router、Handle
 category: Backend
 tags: [Source Reading, Axum, Rust, Architecture]
 order: 20
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 20
@@ -16,6 +16,12 @@ sidebar:
 Axum 的架构重点不是“自己实现 HTTP”，而是把已有底座通过稳定 trait 拼接起来。理解每层负责什么，比记住路由 API 更重要。
 
 <!-- more -->
+
+## 先给答案：Axum 的架构重点不是“自己实现 HTTP”，而是把已有底座通过稳定 trait 拼接起来
+
+Axum 的架构重点不是“自己实现 HTTP”，而是把已有底座通过稳定 trait 拼接起来。理解每层负责什么，比记住路由 API 更重要。 正文沿“分层地图 -> 请求数据面 -> 核心抽象”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Handler 中做长 CPU 计算、把 Axum 当完整网络栈、盲目堆 Layer”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层地图
 

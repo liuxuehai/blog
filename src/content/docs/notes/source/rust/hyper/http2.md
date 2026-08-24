@@ -4,10 +4,10 @@ description: Hyper 如何适配 h2 crate，管理多 stream、流控、执行器
 category: Backend
 tags: [Source Reading, Hyper, HTTP2, Flow Control]
 order: 32
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 32
@@ -16,6 +16,12 @@ sidebar:
 Hyper 不重复实现 HTTP/2 frame codec，而是在 `h2` crate 之上完成 HTTP 类型、Body、Service 与运行时的适配。核心变化是：一个连接上同时存在多个独立 stream。
 
 <!-- more -->
+
+## 先给答案：Hyper 不重复实现 HTTP/2 frame codec，而是在 h2 crate 之上完成 HTTP…
+
+Hyper 不重复实现 HTTP/2 frame codec，而是在 h2 crate 之上完成 HTTP 类型、Body、Service 与运行时的适配。核心变化是：一个连接上同时存在多个独立 stream。 正文沿“连接与 stream -> 客户端分派 -> 服务端分派”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Executor 不再调度响应 Future、大 body 忽视流控、把 GOAWAY 当全部失败”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 连接与 stream
 

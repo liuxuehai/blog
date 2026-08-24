@@ -4,10 +4,10 @@ description: Spring Cloud Gateway 的自动装配、路由匹配、过滤器链�
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Architecture]
 order: 51
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 51
@@ -16,6 +16,12 @@ sidebar:
 Gateway 的核心是一个“先选路由、再执行有序过滤器、最后代理”的 WebFlux `WebHandler`。路由对象和请求状态都通过 `ServerWebExchange` 属性连接起来。
 
 <!-- more -->
+
+## 先给答案：路由先确定状态，过滤器再按序推进代理
+
+Gateway 先把 RouteDefinition 编译为 Route，由 predicate 选择第一条匹配路由并写入 exchange 属性；随后合并全局与路由过滤器、统一排序，最终由路由过滤器改写目标地址并交给 Netty 代理。
+
+`ServerWebExchange` 是整条链的共享状态载体，filter order 则决定前置和回程逻辑的嵌套关系。阻塞 EventLoop、错误缓存请求体、重试非幂等请求或让 fallback 再次命中原路由，都可能把正常过滤链变成资源泄漏或调用环。
 
 ## 分层
 

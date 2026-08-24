@@ -4,10 +4,10 @@ description: Redisson 集合、Map、Semaphore 与对象工厂的 key 布局和�
 category: Backend
 tags: [Source Reading, Redisson, Distributed Objects]
 order: 46
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 46
@@ -16,6 +16,12 @@ sidebar:
 Redisson 的对象体系不是把 Java 集合序列化成一个 value，而是按对象语义映射到 Hash、List、Set、ZSet、Stream 或多个辅助 key，再用 Lua 保证跨 key 的状态转换。
 
 <!-- more -->
+
+## 先给答案：Redisson 的对象体系不是把 Java 集合序列化成一个 value，而是按对象语义映射到 Hash…
+
+Redisson 的对象体系不是把 Java 集合序列化成一个 value，而是按对象语义映射到 Hash、List、Set、ZSet、Stream 或多个辅助 key，再用 Lua 保证跨 key 的状态转换。 正文沿“对象工厂 -> 数据布局 -> 为什么不统一成一个序列化 value”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“key 数量膨胀、大集合扫描、codec 不一致”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 对象工厂
 

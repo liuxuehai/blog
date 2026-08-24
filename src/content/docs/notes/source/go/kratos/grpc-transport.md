@@ -4,10 +4,10 @@ description: Kratos gRPC server/client 的拦截器、健康检查、反射和�
 category: Backend
 tags: [Source Reading, Kratos, Go, gRPC]
 order: 33
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 33
@@ -16,6 +16,12 @@ sidebar:
 Kratos gRPC 层尽量复用 grpc-go 的生命周期和拦截器模型，只在外层补充 transport context、按 operation 的 middleware、健康检查、反射和 registry resolver。
 
 <!-- more -->
+
+## 先给答案：Kratos gRPC 层尽量复用 grpc-go 的生命周期和拦截器模型，只在外层补充 transpor…
+
+Kratos gRPC 层尽量复用 grpc-go 的生命周期和拦截器模型，只在外层补充 transport context、按 operation 的 middleware、健康检查、反射和 registry resolver。 正文沿“Server 组装 -> Middleware 注入 -> Client 与 resolver”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“GracefulStop 卡住、关闭 health 太早、stream middleware”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Server 组装
 

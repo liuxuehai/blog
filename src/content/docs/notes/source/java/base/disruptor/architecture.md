@@ -8,10 +8,10 @@ tags:
   - Architecture
   - Concurrency
 order: 11
-updatedDate: 2026-08-14
+updatedDate: 2026-08-23
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-14
+lastReviewed: 2026-08-23
 draft: false
 sidebar:
   order: 11
@@ -20,6 +20,12 @@ sidebar:
 Disruptor 的架构可以用一句话概括：**用一组互相「看得见」的原子序号，取代队列里的锁和指针**。理解它只需要盯住一件事——每个参与者手里那个 `Sequence` 分别代表什么，以及谁在等谁。
 
 <!-- more -->
+
+## 先给答案：Disruptor 的架构是一组互相看得见的序号，不是一个更快的队列
+
+五层抽象各只做一件事：`RingBuffer` 提供预分配的槽位，写入时就地改写对象而不新建；`Sequencer` 负责发号并判断"这一格能不能写"；`SequenceBarrier` 决定消费者能看到哪个序号为止；`EventProcessor` 驱动消费循环；DSL 把消费者之间的先后依赖翻译成 gating 关系。所有协作都靠"每个参与者只写自己的序号、只读别人的序号"完成，没有共享的计数器，也就没有互斥。
+
+因此读这一册的正确姿势不是记类名，而是随时能回答"此刻谁在等谁的序号"。这个模型的代价同样藏在序号里：只要有一个消费者停止推进自己的 `Sequence`，生产者迟早会在覆盖判定处停下——它不会抛"队列已满"，只会安静地等下去。低延迟和这种沉默的背压是同一个设计的两面。
 
 ## 分层
 

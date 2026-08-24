@@ -4,10 +4,10 @@ description: Hyper 1.x handshake、SendRequest、Connection driver、HTTP/1 独�
 category: Backend
 tags: [Source Reading, Hyper, Client, Connection Pool]
 order: 34
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 34
@@ -16,6 +16,12 @@ sidebar:
 Hyper 1.x 核心 client API 面向单条已建立连接。DNS、TCP/TLS 连接、按 origin 选连接和空闲池淘汰属于更高层职责，通常由 `hyper-util` 实现。
 
 <!-- more -->
+
+## 先给答案：Hyper 1.x 核心 client API 面向单条已建立连接
+
+Hyper 1.x 核心 client API 面向单条已建立连接。DNS、TCP/TLS 连接、按 origin 选连接和空闲池淘汰属于更高层职责，通常由 hyper-util 实现。 正文沿“HTTP/1 handshake -> HTTP/2 handshake -> HTTP/1 与 HTTP/2 复用差异”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Connection Future 未 spawn、未先 ready() 就发送、HTTP/1 body 未消费就回池”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## HTTP/1 handshake
 

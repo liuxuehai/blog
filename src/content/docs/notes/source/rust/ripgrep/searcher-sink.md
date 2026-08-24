@@ -4,10 +4,10 @@ description: Searcher 如何按 buffer/line 读取输入，并通过 Sink 抽象
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Searcher]
 order: 84
-updatedDate: 2026-08-18
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 84
@@ -16,6 +16,12 @@ sidebar:
 `Searcher` 负责读取字节流、识别行边界、调用 matcher 并处理 context/multiline；`Sink` 负责消费事件。二者分离让相同搜索逻辑可连接普通文本、JSON printer、统计器或测试 sink。
 
 <!-- more -->
+
+## 先给答案：Searcher 负责发现匹配，Sink 负责把匹配变成用户可读输出
+
+Searcher 读取文件、处理行边界和 matcher 结果，把匹配事件交给 Sink；Sink 再决定是否输出行号、颜色、上下文、JSON 或排序。解耦后，核心扫描路径不需要为每种格式复制一套匹配逻辑。
+
+输出端也会影响吞吐：终端写入慢、上下文需要缓存、并行结果需要合并顺序。排查性能时要区分 matcher 慢、文件读取慢和输出阻塞，不能只看总耗时。
 
 ## 调用链
 

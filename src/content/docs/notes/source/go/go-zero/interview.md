@@ -4,10 +4,10 @@ description: go-zero 高频面试题、高难追问和源码级排障回答。
 category: Backend
 tags: [Source Reading, go-zero, Go, Interview]
 order: 29
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 29
@@ -16,6 +16,12 @@ sidebar:
 go-zero 面试的重点不是背“熔断、限流、缓存”四个名词，而是能说清统计窗口、失败边界、降级路径和运行时装配。
 
 <!-- more -->
+
+## 先给答案：go-zero 面试的重点不是背“熔断、限流、缓存”四个名词，而是能说清统计窗口、失败边界、降级路径和运行…
+
+go-zero 面试的重点不是背“熔断、限流、缓存”四个名词，而是能说清统计窗口、失败边界、降级路径和运行时装配。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“数据库连接数突然打满，怎么沿源码排查、服务发布后旧实例仍收到请求，怎么判断”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

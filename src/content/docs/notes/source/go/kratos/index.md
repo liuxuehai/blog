@@ -4,10 +4,10 @@ description: Kratos 源码解析总览：应用生命周期、传输层、中间
 category: Backend
 tags: [Source Reading, Kratos, Go, Microservices]
 order: 4
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 4
@@ -16,6 +16,16 @@ sidebar:
 Kratos 是一个把应用生命周期、HTTP/gRPC 传输、中间件、服务注册发现、配置和日志组合起来的 Go 微服务框架。本册沿着“应用启动、服务器运行、请求进入、客户端发现、配置变更、优雅退出”的主线阅读源码。
 
 <!-- more -->
+
+## 本册问题地图
+
+Kratos 适合按“应用生命周期包住请求生命周期”来读：
+
+1. **App 启动时谁先准备？** 配置、日志、注册中心和服务器需要在 Run 前完成初始化，组件之间通过生命周期接口统一启动和停止。
+2. **HTTP 与 gRPC 为什么共享中间件思想？** 请求都可被包装成前后置链，认证、日志、恢复和元数据处理可以复用，但协议错误模型不同。
+3. **服务发现返回的地址如何变成一次调用？** Resolver 更新节点，Selector 选择节点，客户端连接管理负责复用和重连；发现到调用之间存在缓存和状态机。
+4. **配置热更新的边界是什么？** 新配置可以通知监听者，但已经创建的连接、线程池和 handler 不一定自动重建。
+5. **优雅退出解决什么？** 先停止接收新请求，再等待在途请求和注销实例，避免进程消失后注册中心仍认为它可用。
 
 ## 版本快照
 

@@ -4,10 +4,10 @@ description: SmoothBursty、SmoothWarmingUp 与 stored permits 时间模型。
 category: Backend
 tags: [Source Reading, Guava, RateLimiter, Concurrency]
 order: 65
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 65
@@ -17,11 +17,11 @@ Guava `RateLimiter` 不是固定窗口计数器，而是把许可看成可随时
 
 <!-- more -->
 
-```text
-时间流逝 -> storedPermits 增加，最多 maxPermits
-请求 n 个许可 -> 先消费存量 -> 不足部分安排未来时间
-                 -> nextFreeTicketMicros 推进 -> acquire 等待
-```
+## 先给答案：Guava RateLimiter 不是固定窗口计数器，而是把许可看成可随时间生成、随请求消耗的债务
+
+Guava RateLimiter 不是固定窗口计数器，而是把许可看成可随时间生成、随请求消耗的债务。它允许短时突发，同时让后续请求等待以偿还突发成本。 正文沿“实现拆解 -> 两种平滑策略”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“把 acquire 当并发上限、调高 rate 后立即无等待、多实例各自限流”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 实现拆解
 

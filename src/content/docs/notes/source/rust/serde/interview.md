@@ -4,10 +4,10 @@ description: Serde 数据模型、Serializer/Deserializer、Visitor、derive、�
 category: Backend
 tags: [Source Reading, Serde, Rust, Interview]
 order: 59
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 59
@@ -16,6 +16,12 @@ sidebar:
 Serde 面试的核心不是会写 `#[derive]`，而是能否说明类型侧、格式侧、数据模型和生命周期如何解耦。
 
 <!-- more -->
+
+## 先给答案：Serde 面试的核心不是会写 [derive]，而是能否说明类型侧、格式侧、数据模型和生命周期如何解耦
+
+Serde 面试的核心不是会写 [derive]，而是能否说明类型侧、格式侧、数据模型和生命周期如何解耦。 正文沿“1. Serde 为什么不是 JSON 库 -> 2. 为什么适配复杂度是 N+M -> 3. 序列化和反序列化为什么方向相反”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“untagged enum 为什么慢且错误信息差、借用反序列化失败怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. Serde 为什么不是 JSON 库
 

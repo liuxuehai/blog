@@ -4,13 +4,21 @@ description: SkyWalking 高频面试题与源码级回答。
 category: Backend
 tags: [Source Reading, SkyWalking, Interview]
 order: 29
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 29 }
 ---
+
+<!-- more -->
+
+## 先给答案：SkyWalking 高频面试题与源码级回答
+
+SkyWalking 高频面试题与源码级回答。 正文沿“高频题 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“OAP 接收延迟持续升高怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

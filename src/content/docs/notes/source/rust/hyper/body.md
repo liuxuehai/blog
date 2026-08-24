@@ -4,10 +4,10 @@ description: http-body Frame 协议、Incoming 多来源实现、size hint、cha
 category: Backend
 tags: [Source Reading, Hyper, Body, Backpressure]
 order: 33
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 33
@@ -16,6 +16,12 @@ sidebar:
 HTTP body 不是必然存在的一块 `Vec<u8>`，而是异步产生的 frame 序列。Hyper 使用 `http_body::Body` 统一 HTTP/1、HTTP/2、channel 和空 body。
 
 <!-- more -->
+
+## 先给答案：HTTP body 不是必然存在的一块 Vec<u8，而是异步产生的 frame 序列
+
+HTTP body 不是必然存在的一块 Vec<u8，而是异步产生的 frame 序列。Hyper 使用 httpbody::Body 统一 HTTP/1、HTTP/2、channel 和空 body。 正文沿“Frame 模型 -> Incoming::pollframe -> 发送侧 channel”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“collect 超大 body、自定义 sizehint 错误、忽略 trailer”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Frame 模型
 

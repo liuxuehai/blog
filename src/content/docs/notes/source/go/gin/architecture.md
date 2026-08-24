@@ -7,10 +7,10 @@ tags:
   - Gin
   - Architecture
 order: 11
-updatedDate: 2026-08-15
+updatedDate: 2026-08-23
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-23
 draft: false
 sidebar:
   order: 11
@@ -19,6 +19,12 @@ sidebar:
 Gin 的核心不是某一个路由算法，而是把路由索引、请求状态和 handler 执行链压缩成一条短路径。
 
 <!-- more -->
+
+## 先给答案：Gin 是在 net/http 上加了一层索引和一次对象复用，没有自己的并发模型
+
+`Engine` 本身就是一个 `http.Handler`，请求进来只做三件事：从 `sync.Pool` 取一个 `Context`、在注册期建好的 Radix 树上按"方法 + 路径"定位 handler 链、顺序执行这条链。路由树只在注册期写、请求期只读，因此匹配过程无锁；`Context` 把参数、中间件状态和响应写入器收在一个对象里，请求结束后归还池子。
+
+因此 Gin 的性能来源是"每请求少分配 + 匹配更快"，连接与 goroutine 的调度仍然由 `net/http` 提供，它并没有重写服务器。代价也正落在复用上：`*gin.Context` 的生命周期严格等于一次请求，任何把它带进后台 goroutine 或缓存起来的写法，读到的都可能是另一个请求的数据——这是 Gin 最高频的线上事故形态。
 
 ## 分层
 

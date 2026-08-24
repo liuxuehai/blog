@@ -4,10 +4,10 @@ description: Fastjson2 ASM、Lambda 和反射回退的对象访问优化。
 category: Backend
 tags: [Source Reading, Fastjson2, ASM, Performance]
 order: 85
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 85
@@ -16,6 +16,12 @@ sidebar:
 Fastjson2 的代码生成不是单一的“全部 ASM”。它通常根据类型形状、访问权限、JDK 环境和配置，在 ASM、Lambda/方法句柄与反射之间选择可用路径。
 
 <!-- more -->
+
+## 先给答案：代码生成优化的是稳定类型的热路径，不是所有 JSON 都适合生成代码
+
+框架先根据类型和配置构造对象读写逻辑，满足条件时用 ASM 或 Lambda 生成更直接的字段访问；类型不稳定、结构复杂或生成失败时回退到反射。这个双路径设计把启动成本和运行成本做了交换：首次生成可能变慢，稳态调用减少反射和分派。
+
+评估时必须同时看首次调用、缓存命中、生成失败回退、类加载数量和真实数据分布。为了少一次反射而生成大量短生命周期类，可能反过来增加元空间和启动压力。
 
 ## 创建策略
 

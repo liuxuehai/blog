@@ -4,10 +4,10 @@ description: Hyper HTTP/1 的解析、读写状态、Dispatcher、Body framing�
 category: Backend
 tags: [Source Reading, Hyper, HTTP1, State Machine]
 order: 31
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 31
@@ -16,6 +16,12 @@ sidebar:
 HTTP/1 看似是文本协议，生产实现却要同时处理增量解析、半包、body framing、Expect、upgrade、流水线、keep-alive 和半关闭。Hyper 把这些状态集中在 `Conn` 与 `Dispatcher`。
 
 <!-- more -->
+
+## 先给答案：HTTP/1 解析器用状态机守住连接上的消息边界
+
+解析器依次处理请求/响应行、headers、body 和 keep-alive；每一步都根据当前状态判断还需要多少字节、下一段是否合法，以及 body 结束后连接能否复用。Content-Length、chunked、升级和连接关闭会把状态推进到不同终态。
+
+状态机的价值是防止一次消息的 body 被误当成下一次请求，也能在协议错误时及时关闭连接。排查挂起或串包问题，要看当前 framing 选择、已消费字节和连接复用条件。
 
 ## 状态关系
 

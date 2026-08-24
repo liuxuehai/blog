@@ -4,10 +4,10 @@ description: Nacos CP 数据如何通过 JRaft 多组、异步提交、读写超
 category: Backend
 tags: [Source Reading, Nacos, JRaft, CP]
 order: 34
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 34 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 34 }
 Nacos 的 CP 路径不是把所有数据塞进一个 Raft 日志，而是由协议抽象、多个 Raft Group 和领域请求处理器组合完成。这样既保留顺序提交，又能按资源隔离故障域。
 
 <!-- more -->
+
+## 先给答案：Nacos 的 CP 路径不是把所有数据塞进一个 Raft 日志，而是由协议抽象、多个 Raft Grou…
+
+Nacos 的 CP 路径不是把所有数据塞进一个 Raft 日志，而是由协议抽象、多个 Raft Group 和领域请求处理器组合完成。这样既保留顺序提交，又能按资源隔离故障域。 正文沿“写入链路 -> 实现拆解 -> 为什么使用多个 Raft Group”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“非 Leader 写入、Future 超时、Group 配置错误”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 写入链路
 

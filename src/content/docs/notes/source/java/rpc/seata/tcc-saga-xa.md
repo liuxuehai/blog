@@ -4,15 +4,21 @@ description: Seata 三种非 AT 资源模式的拦截、状态机、二阶段和
 category: Backend
 tags: [Source Reading, Seata, TCC, Saga, XA]
 order: 54
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 54 }
 ---
 
-TCC、Saga、XA 都复用 TC 的全局协调，但对资源的要求不同：TCC 要求业务显式提供 Try/Confirm/Cancel，Saga 把动作编排成可重试和可补偿状态机，XA 则把二阶段交给数据库/XA resource。
+<!-- more -->
+
+## 先给答案：Seata 三种非 AT 资源模式的拦截、状态机、二阶段和适用边界
+
+Seata 三种非 AT 资源模式的拦截、状态机、二阶段和适用边界。 正文沿“模式对照 -> TCC 拦截器 -> Saga 状态机”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“TCC 的 Confirm/Cancel 必须幂等，且要能处理空 Try、重复调用和网络超时。、Saga 补偿不是数据库回滚；中间状态可能对外可见，业务必须接受或隔离这种语义。、XA 的 prepare 持锁时间与连接占用是主要风险，失败恢复还受数据库驱动行为影响。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模式对照
 

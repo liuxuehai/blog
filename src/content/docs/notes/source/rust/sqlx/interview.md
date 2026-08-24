@@ -4,14 +4,22 @@ description: 围绕 SQLx 编译期检查、异步执行、连接池、driver 与
 category: Backend
 tags: [Source Reading, SQLx, Rust, Interview]
 order: 76
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 76
 ---
+
+<!-- more -->
+
+## 先给答案：围绕 SQLx 编译期检查、异步执行、连接池、driver 与类型映射的源码级问答
+
+围绕 SQLx 编译期检查、异步执行、连接池、driver 与类型映射的源码级问答。 正文沿“1. SQLx 的 compile-time checked 到底检查什么 -> 2. offline 模式为什么可靠性取决于 CI -> 3. Query、Executor、Connection、Pool 如何分工”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“SQLx 不需要数据库、query! 防止全部 SQL 注入、Pool size 越大越快”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. SQLx 的 compile-time checked 到底检查什么
 

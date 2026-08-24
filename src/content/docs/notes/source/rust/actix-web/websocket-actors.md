@@ -4,10 +4,10 @@ description: Actix Web 的 HTTP 升级、WebSocket codec、WebsocketContext、St
 category: Backend
 tags: [Source Reading, Actix Web, Actor, WebSocket]
 order: 45
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 45
@@ -16,6 +16,12 @@ sidebar:
 Actor 模型在 Actix Web 中最典型的落点是 WebSocket：HTTP 负责握手升级，`actix-http` 负责 frame codec，`actix-web-actors` 把入站 frame stream 和 Actor context 连接起来。
 
 <!-- more -->
+
+## 先给答案：Actor 模型在 Actix Web 中最典型的落点是 WebSocket：HTTP 负责握手升级，ac…
+
+Actor 模型在 Actix Web 中最典型的落点是 WebSocket：HTTP 负责握手升级，actix-http 负责 frame codec，actix-web-actors 把入站 frame stream 和 Actor context 连接起来。 正文沿“升级链路 -> Actor 解决什么 -> StreamHandler”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“heartbeat 不处理 Pong、Actor handler 阻塞、无界广播到慢客户端”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 升级链路
 

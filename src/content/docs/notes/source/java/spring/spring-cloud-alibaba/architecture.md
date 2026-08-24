@@ -4,10 +4,10 @@ description: Spring Cloud Alibaba 如何通过自动配置和标准接口接入 
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Architecture]
 order: 81
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 81
@@ -16,6 +16,12 @@ sidebar:
 核心设计是适配器：Spring 负责生命周期和配置，底层客户端负责网络协议与一致性语义。
 
 <!-- more -->
+
+## 先给答案：Spring 统一契约，客户端保留分布式语义
+
+Spring Cloud Alibaba 通过自动配置和适配器把 Nacos、Sentinel、RocketMQ 接入 Config Data、DiscoveryClient、ServiceRegistry、CircuitBreaker 与 Stream Binder 等 Spring 契约；底层客户端仍负责协议、连接、缓存和一致性算法。
+
+因此不能把适配层理解成语义抹平：启动期配置加载与运行期刷新是两条链，发现缓存可能以新鲜度换可用性，限流和消息确认也保留各自客户端边界。排障要同时观察 Spring 生命周期和第三方客户端状态。
 
 ## 分层
 

@@ -4,10 +4,10 @@ description: Jackson Databind 类型系统、缓存、属性发现、Module 与�
 category: Backend
 tags: [Source Reading, Jackson, Interview]
 order: 77
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 77
@@ -16,6 +16,12 @@ sidebar:
 Jackson 面试题的区分度不在 API 记忆，而在能否说清“类型信息在哪里保存、元数据在哪里构造、缓存在哪里复用、上下文在哪里覆盖”。
 
 <!-- more -->
+
+## 先给答案：Jackson 面试题的区分度不在 API 记忆，而在能否说清“类型信息在哪里保存、元数据在哪里构造、缓存…
+
+Jackson 面试题的区分度不在 API 记忆，而在能否说清“类型信息在哪里保存、元数据在哪里构造、缓存在哪里复用、上下文在哪里覆盖”。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“线上反序列化延迟突然升高，怎么排查、自定义 serializer 没有生效怎么办、多态反序列化如何做安全审查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

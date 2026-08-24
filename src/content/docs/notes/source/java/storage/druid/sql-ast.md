@@ -4,10 +4,10 @@ description: Druid SQL AST 的节点组织、Visitor 遍历和动态条件注入
 category: Backend
 tags: [Source Reading, Druid, AST]
 order: 35
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 35
@@ -17,17 +17,11 @@ AST 是 Druid 把 SQL 从文本提升到语义对象的关键。节点负责保�
 
 <!-- more -->
 
-```text
-SQLSelect
-  -> SQLSelectQueryBlock
-       -> selectList
-       -> from
-       -> where
-       -> groupBy / orderBy
-              |
-              v
-       SQLASTVisitor.accept
-```
+## 先给答案：AST 是 Druid 把 SQL 从文本提升到语义对象的关键
+
+AST 是 Druid 把 SQL 从文本提升到语义对象的关键。节点负责保存结构，Visitor 负责把格式化、参数化、安全检查和改写等行为从节点模型中分离出来。 正文沿“关键节点 -> Visitor 的价值 -> 为什么把动态条件注入放在 AST 层”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Visitor 漏节点、修改原树、Union 条件”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 关键节点
 

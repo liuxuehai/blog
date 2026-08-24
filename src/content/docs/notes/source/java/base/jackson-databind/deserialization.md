@@ -4,10 +4,10 @@ description: DeserializationContext、DeserializerCache、BeanDeserializer 与�
 category: Backend
 tags: [Source Reading, Jackson, Deserialization]
 order: 74
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 74
@@ -16,6 +16,12 @@ sidebar:
 反序列化不是“按字段顺序调用 setter”。它必须先确定目标类型，再选择 creator、属性和子 deserializer，并处理 token 顺序、缺失值、未知字段和上下文配置。
 
 <!-- more -->
+
+## 先给答案：反序列化不是“按字段顺序调用 setter”
+
+反序列化不是“按字段顺序调用 setter”。它必须先确定目标类型，再选择 creator、属性和子 deserializer，并处理 token 顺序、缺失值、未知字段和上下文配置。 正文沿“主流程 -> POJO 构造 -> 上下文解析”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“缺失字段、显式 null 和默认值是三种不同状态。、未知字段处理由配置和 @JsonAnySetter 等机制共同决定，不应在业务层简单吞掉异常。、多态反序列化必须校验类型 id 来源和允许的子类型，不能把客户端输入直接当作任意类名。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主流程
 

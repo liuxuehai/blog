@@ -4,10 +4,10 @@ description: RocketMQ 如何用定长消费索引和关键词索引把逻辑位�
 category: Backend
 tags: [Source Reading, RocketMQ, ConsumeQueue, IndexFile]
 order: 13
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 13
@@ -16,6 +16,12 @@ sidebar:
 RocketMQ 将“按队列顺序消费”和“按关键词查找”拆成两种索引：前者紧凑顺序，后者服务过滤与定位。
 
 <!-- more -->
+
+## 先给答案：ConsumeQueue 管顺序消费，IndexFile 管按键定位，事实仍只在 CommitLog
+
+ConsumeQueue 用定长条目保存物理 offset、消息大小和时间戳，适合按 Topic/Queue 的逻辑位点顺序扫描；IndexFile 用哈希槽和冲突链支持业务 key 查询。两者都只保存定位信息，不复制完整消息。
+
+索引由 Reput 异步派生，所以索引落后表现为暂时不可消费或不可查询，而不是 CommitLog 数据已经丢失。恢复和截断时必须以物理日志边界校正索引；哈希冲突影响查询成本，但只要继续遍历并校验 key，就不改变正确性。
 
 ## 数据结构
 

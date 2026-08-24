@@ -4,10 +4,10 @@ description: ExtensionLoader 如何加载目录、创建包装器、自适应扩
 category: Backend
 tags: [Source Reading, Dubbo, SPI, Extension]
 order: 22
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 22 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 22 }
 Dubbo SPI 在 Java `ServiceLoader` 之上增加了命名扩展、包装器、自适应类、依赖注入和多级 ScopeModel。它解决的不是“找到一个实现”，而是让实现可以被配置、组合和按作用域管理。
 
 <!-- more -->
+
+## 先给答案：Dubbo SPI 在 Java ServiceLoader 之上增加了命名扩展、包装器、自适应类、依赖注…
+
+Dubbo SPI 在 Java ServiceLoader 之上增加了命名扩展、包装器、自适应类、依赖注入和多级 ScopeModel。它解决的不是“找到一个实现”，而是让实现可以被配置、组合和按作用域管理。 正文沿“设计概览 -> 实现拆解 -> 关键取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“扩展名拼写错误、setter 注入形成环、Wrapper 顺序不符合预期”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 设计概览
 

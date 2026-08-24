@@ -4,10 +4,10 @@ description: go-zero breaker 的滚动窗口、概率丢弃、探测放行与 Pr
 category: Backend
 tags: [Source Reading, go-zero, Go, Circuit Breaker]
 order: 22
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 22
@@ -16,6 +16,12 @@ sidebar:
 go-zero 的 breaker 不是简单的 OPEN/CLOSED 状态机，而是用滚动窗口估算失败压力，再以概率丢弃请求，并保留少量探测流量观察下游是否恢复。
 
 <!-- more -->
+
+## 先给答案：自适应熔断用近期反馈决定是否继续把流量送给下游
+
+每次调用都会产生成功、失败和延迟反馈，熔断器在滑动时间窗口中聚合这些信号。当错误或慢调用达到阈值，后续请求被快速拒绝；经过冷却后进入探测状态，少量请求成功才逐步恢复。它保护的是故障传播路径，不是把下游修好。
+
+自适应的关键是阈值随样本量和负载变化，而不是固定一个“失败 50% 就熔断”。样本太少、窗口过短或把业务拒绝也算成下游错误，都会造成误判；排障要同时看请求量、错误分类、延迟分布和状态转换。
 
 ## 调用协议
 

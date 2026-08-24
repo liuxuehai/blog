@@ -4,10 +4,10 @@ description: Druid Web 监控、资源服务、请求统计和 JMX 管理对象�
 category: Backend
 tags: [Source Reading, Druid, Monitoring]
 order: 38
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 38
@@ -17,17 +17,11 @@ Druid 的 Web 层是统计对象的展示和管理适配器。它不应重新实
 
 <!-- more -->
 
-```text
-HTTP request
-  -> StatViewServlet / ResourceServlet
-  -> datasource stat manager
-  -> JSON / HTML resource
+## 先给答案：Druid 的 Web 层是统计对象的展示和管理适配器
 
-business request
-  -> WebStatFilter
-  -> URI / session / SQL context
-  -> web statistics
-```
+Druid 的 Web 层是统计对象的展示和管理适配器。它不应重新实现连接池状态，而是读取 StatManager、DataSourceStat 和 WebStatFilter 已经收集的结果。 正文沿“组件边界 -> 数据流 -> 为什么把 Web 层放在 support 模块”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“StatViewServlet、ResourceServlet、WebStatFilter”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 组件边界
 

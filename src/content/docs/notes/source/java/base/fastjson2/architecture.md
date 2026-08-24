@@ -4,10 +4,10 @@ description: Fastjson2 从 JSON 高层 API 到 reader、writer 和对象适配�
 category: Backend
 tags: [Source Reading, Fastjson2, Architecture]
 order: 81
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 81
@@ -16,6 +16,12 @@ sidebar:
 Fastjson2 的核心分层是“格式 reader/writer + 类型级 object reader/writer + 字段访问器”。格式层只负责 token 和基础值，类型层负责把 token 组装成 Java 对象。
 
 <!-- more -->
+
+## 先给答案：Fastjson2 的核心分层是“格式 reader/writer + 类型级 object reader…
+
+Fastjson2 的核心分层是“格式 reader/writer + 类型级 object reader/writer + 字段访问器”。格式层只负责 token 和基础值，类型层负责把 token 组装成 Java 对象。 正文沿“主链路 -> 读写状态放在哪里 -> 为什么不是一个万能 Serializer”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“JSON 文本和 JSONB 不是同一套 token 成本模型；不要用文本路径的基准推断 JSONB。、ASM/Lambda 只是访问路径优化，复杂构造器、私有成员或特殊注解仍可能回退到反射。、全局 provider 缓存不应承载请求级状态；自定义 reader/writer 需要明确线程安全边界。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主链路
 

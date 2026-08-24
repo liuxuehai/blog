@@ -4,10 +4,10 @@ description: Kratos handler 链、operation selector、HTTP/gRPC 上下文和中
 category: Backend
 tags: [Source Reading, Kratos, Go, Middleware]
 order: 34
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 34
@@ -16,6 +16,12 @@ sidebar:
 Kratos middleware 的核心是一个极小的函数类型：`Middleware func(Handler) Handler`。复杂能力来自组合顺序、transport context 和 operation selector，而不是来自一个庞大的基类体系。
 
 <!-- more -->
+
+## 先给答案：Kratos middleware 的核心是一个极小的函数类型：Middleware func(Handl…
+
+Kratos middleware 的核心是一个极小的函数类型：Middleware func(Handler) Handler。复杂能力来自组合顺序、transport context 和 operation selector，而不是来自一个庞大的基类体系。 正文沿“Chain 顺序 -> Selector -> 为什么需要 operation”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“chain 顺序写反、selector 编译 regex 失败、缺少 Transporter”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Chain 顺序
 

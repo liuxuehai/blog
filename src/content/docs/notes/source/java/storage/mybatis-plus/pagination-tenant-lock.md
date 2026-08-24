@@ -4,7 +4,8 @@ description: PaginationInnerInterceptor、租户条件和 OptimisticLockerInnerI
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Pagination, Tenant, Lock]
 order: 66
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 66
 ---
@@ -13,15 +14,11 @@ sidebar:
 
 <!-- more -->
 
-```text
-SELECT ...
-  ├─► count SQL ─► total
-  └─► dialect pagination SQL ─► page records
+## 先给答案：这些插件都不是业务层手写 SQL，而是在 MyBatis 执行边界检查 statement、解析或改写 S…
 
-UPDATE ... WHERE id = ?
-  └─► WHERE id = ? AND version = old
-       SET version = new
-```
+这些插件都不是业务层手写 SQL，而是在 MyBatis 执行边界检查 statement、解析或改写 SQL，并补充参数或版本条件。 正文沿“分页 -> 租户与数据权限 -> 乐观锁”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“count SQL 复杂、租户表未排除、version 为 null”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分页
 

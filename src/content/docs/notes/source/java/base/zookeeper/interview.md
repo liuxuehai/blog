@@ -4,13 +4,21 @@ description: ZooKeeper 高频面试题、高难追问与源码级回答。
 category: Backend
 tags: [Source Reading, ZooKeeper, Interview]
 order: 49
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 49 }
 ---
+
+<!-- more -->
+
+## 先给答案：ZooKeeper 高频面试题、高难追问与源码级回答
+
+ZooKeeper 高频面试题、高难追问与源码级回答。 正文沿“高频题 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“频繁 SessionExpired 怎么排查、Watcher 大量堆积怎么办”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

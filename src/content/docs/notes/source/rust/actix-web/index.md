@@ -4,10 +4,10 @@ description: Actix Web 源码解析总览：HttpServer worker、ServiceFactory�
 category: Backend
 tags: [Source Reading, Actix Web, Rust, Web]
 order: 4
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 4
@@ -16,6 +16,16 @@ sidebar:
 Actix Web 以 `actix-service` 的 `ServiceFactory` / `Service` 为骨架：应用工厂为每个 worker 构建一棵本地服务树，请求经过资源匹配、guard、extractor 和 middleware 后进入 handler。Actor 并不是普通 HTTP 请求的必经核心，而是通过 `actix-web-actors` 为 WebSocket 等长连接提供可选集成。
 
 <!-- more -->
+
+## 本册问题地图
+
+Actix-web 要从 worker、ServiceFactory 和请求消息三层理解：
+
+1. **Worker 为什么是核心并发单位？** 每个 worker 有自己的服务实例和事件循环，连接请求被分发到 worker；共享状态因此要显式使用同步或消息传递。
+2. **ServiceFactory 与 Service 如何分工？** Factory 创建可运行的服务，Service 处理具体请求；中间件可以在构造期捕获配置，在请求期维护状态。
+3. **Extractor 和 Handler 如何协作？** Extractor 从请求消息中消费并校验数据，Handler 只接收已转换参数；失败会在进入业务前变成响应。
+4. **Actor WebSocket 适合什么？** 它把连接状态封装进 actor 消息循环，适合有状态长连接；跨 actor 共享数据需要遵守 mailbox 和停止语义。
+5. **与 Axum 的取舍是什么？** Actix 更强调 actor/worker 模型，Axum 更强调 Tower 和类型组合；两者都需处理背压、取消和共享状态。
 
 ## 版本快照
 

@@ -4,15 +4,21 @@ description: Seata TM、TC、RM、事务模式和模块边界的源码地图。
 category: Backend
 tags: [Source Reading, Seata, Architecture]
 order: 51
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 51 }
 ---
 
-Seata 把分布式事务拆成三个角色：TM 决定全局事务，RM 管理本地资源，TC 保存全局状态并驱动二阶段。核心设计是把事务协议和资源实现分开，`BranchType` 决定同一套协调入口之后走 AT、TCC、Saga 或 XA。
+<!-- more -->
+
+## 先给答案：Seata TM、TC、RM、事务模式和模块边界的源码地图
+
+Seata TM、TC、RM、事务模式和模块边界的源码地图。 正文沿“角色与调用图 -> 模块边界 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“tm 只负责发送全局事务请求，不保存完整分支列表；rm 只负责资源注册、分支报告和本地资源操作；server 的 GlobalSession/BranchSession 才是协调事实”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 角色与调用图
 

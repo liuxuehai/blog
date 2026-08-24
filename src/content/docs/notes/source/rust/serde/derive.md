@@ -4,10 +4,10 @@ description: serde_derive 从 syn AST 到 Container 模型、属性校验、泛�
 category: Backend
 tags: [Source Reading, Serde, Proc Macro, Code Generation]
 order: 54
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 54
@@ -16,6 +16,12 @@ sidebar:
 `#[derive(Serialize, Deserialize)]` 不是运行时反射开关，而是编译期代码生成器。宏读取 Rust AST 和 `#[serde(...)]` 属性，校验组合，再生成普通 trait impl。
 
 <!-- more -->
+
+## 先给答案：[derive(Serialize, Deserialize)] 不是运行时反射开关，而是编译期代码生成器
+
+[derive(Serialize, Deserialize)] 不是运行时反射开关，而是编译期代码生成器。宏读取 Rust AST 和 [serde(...)] 属性，校验组合，再生成普通 trait impl。 正文沿“展开管线 -> 属性解析与校验 -> 泛型 bound 推导”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“盲目加 bound、rename/alias 演进混乱、flatten + denyunknownfields”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 展开管线
 

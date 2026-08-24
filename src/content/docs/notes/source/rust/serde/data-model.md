@@ -4,10 +4,10 @@ description: Primitive、option、newtype、sequence、map、struct 与 enum 如
 category: Backend
 tags: [Source Reading, Serde, Data Model, Serialization]
 order: 51
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 51
@@ -16,6 +16,12 @@ sidebar:
 Serde 数据模型是一组语义操作，而不是内存中的统一 Value。它既能表达 JSON 的动态结构，也能表达二进制格式关注的 tuple、newtype 与 enum variant。
 
 <!-- more -->
+
+## 先给答案：Serde 的数据模型是格式无关的中间契约
+
+`Serialize` 不直接写 JSON 字符串，而是向 serializer 描述“这是 struct、seq、map 还是 enum”；`Deserialize` 也不直接读取某一种格式，而是请求 deserializer 提供所需的数据访问。格式实现只需对接这套契约，就能复用大量类型代码。
+
+因此某格式不支持 borrowed string、tuple 或 enum 标签时，失败原因可能是数据模型能力不匹配，而不是 derive 代码错误。读源码应先确认模型调用，再看格式如何实现这些访问接口。
 
 ## 模型分类
 

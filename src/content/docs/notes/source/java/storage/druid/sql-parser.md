@@ -4,10 +4,10 @@ description: Druid 从 SQL 字符串创建方言 Parser、解析多语句并产�
 category: Backend
 tags: [Source Reading, Druid, SQL Parser]
 order: 34
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 34
@@ -17,14 +17,11 @@ Druid 的 SQL 解析先选择数据库方言，再由 Parser 将 token 组织成
 
 <!-- more -->
 
-```text
-SQL text
-  -> SQLUtils.parseStatements
-  -> DbType / parser factory
-  -> SQLStatementParser
-  -> statement list + EOF check
-  -> SQL AST
-```
+## 先给答案：Druid 的 SQL 解析先选择数据库方言，再由 Parser 将 token 组织成 AST
+
+Druid 的 SQL 解析先选择数据库方言，再由 Parser 将 token 组织成 AST。后续 Wall、格式化、参数化和统计都消费同一棵结构化树，而不是重复扫描字符串。 正文沿“入口 -> 方言分层 -> 为什么先产出 token/AST 而不是直接正则匹配”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“方言选错、多语句、注释 Hint”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 入口
 

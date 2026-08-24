@@ -4,10 +4,10 @@ description: Command 元数据如何驱动 help、usage、结构化错误、静�
 category: Backend
 tags: [Source Reading, Clap, Rust, Completion]
 order: 65
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 65
@@ -16,6 +16,12 @@ sidebar:
 Clap 的输出系统不是解析失败后的附属字符串拼接，而是 `Command` 模型的第二组消费者：help、usage、error 和 completion 都读取同一套参数语义，因此新增参数后能同步更新。
 
 <!-- more -->
+
+## 先给答案：Clap 的输出系统不是解析失败后的附属字符串拼接，而是 Command 模型的第二组消费者：help、u…
+
+Clap 的输出系统不是解析失败后的附属字符串拼接，而是 Command 模型的第二组消费者：help、usage、error 和 completion 都读取同一套参数语义，因此新增参数后能同步更新。 正文沿“Help 调用链 -> 错误不是单个字符串 -> 两类补全”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“生成补全前未 build 完命令、自定义 help template 漏 placeholder、只断言 ErrorKind”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Help 调用链
 

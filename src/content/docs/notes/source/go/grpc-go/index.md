@@ -4,10 +4,10 @@ description: grpc-go 源码解析总览：ClientConn、HTTP/2 transport、stream
 category: Backend
 tags: [Source Reading, gRPC, Go, RPC]
 order: 5
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 5
@@ -16,6 +16,16 @@ sidebar:
 grpc-go 把生成代码暴露的 RPC 调用，落实为名字解析、负载均衡、连接状态机、HTTP/2 多路复用、流控和状态传播。本册沿着“创建 channel、选取 SubConn、建立 transport、创建 stream、收发消息、关闭连接”的主线阅读源码。
 
 <!-- more -->
+
+## 本册问题地图
+
+grpc-go 要把一次 RPC 拆成“名字解析、子连接选择、HTTP/2 stream、消息收发、状态返回”五段：
+
+1. **ClientConn 为什么不是一条连接？** 它是面向逻辑目标的连接管理器，下面可以有多个 SubConn 和 transport，地址变化时无需让业务重新创建客户端。
+2. **Resolver 与 Balancer 如何协作？** Resolver 提供地址和服务配置，Balancer 把地址转成可用 SubConn 并选择一次请求的 Pick 结果。
+3. **一次 RPC 为什么落到 stream？** HTTP/2 用 stream 在同一连接上多路复用请求，headers、message、status 分阶段传输。
+4. **流控影响什么？** 发送窗口和接收窗口共同限制在途数据，应用不消费或不读取会反向阻塞发送方。
+5. **重试何时危险？** 连接失败前请求可能已经到达服务端，自动重试必须结合幂等、hedging 和服务端重复执行风险。
 
 ## 版本快照
 

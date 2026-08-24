@@ -4,10 +4,10 @@ description: WalkBuilder、gitignore 规则、目录裁剪和 worker 遍历模�
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Ignore, Parallelism]
 order: 82
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 82
@@ -16,6 +16,12 @@ sidebar:
 ripgrep 的“递归搜索”首先是一个策略化文件遍历器：它同时理解 gitignore、hidden、遵循 symlink、glob、文件类型和权限错误，再把合格的 `DirEntry` 交给搜索层。
 
 <!-- more -->
+
+## 先给答案：ripgrep 的“递归搜索”首先是一个策略化文件遍历器：它同时理解 gitignore、hidden、遵…
+
+ripgrep 的“递归搜索”首先是一个策略化文件遍历器：它同时理解 gitignore、hidden、遵循 symlink、glob、文件类型和权限错误，再把合格的 DirEntry 交给搜索层。 正文沿“Walker 结构 -> 规则优先级 -> 并行 ownership”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“--no-ignore 仍漏文件、白名单规则不生效、follow symlink 后循环”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Walker 结构
 

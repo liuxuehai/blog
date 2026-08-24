@@ -4,10 +4,10 @@ description: Spring Security 的 core、web、config 分层，以及启动和请
 category: Backend
 tags: [Source Reading, Spring Security, Architecture]
 order: 41
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 41
@@ -16,6 +16,12 @@ sidebar:
 Spring Security 将安全策略声明与请求时执行分开：`HttpSecurity` 构建链，`FilterChainProxy` 执行链。
 
 <!-- more -->
+
+## 先给答案：配置期生成链，请求期只执行首条匹配链
+
+Spring Security 在配置阶段由 `HttpSecurity` 把 DSL 组装为一个或多个 `DefaultSecurityFilterChain`；请求到来后，`FilterChainProxy` 按 matcher 选择第一条链，依次完成上下文加载、认证、授权和进入原 Servlet 链。
+
+安全语义依赖顺序与清理：链的先后决定匹配结果，认证只负责建立 Authentication，授权再基于它作决策，请求结束必须清除 SecurityContext。错误共享上下文、绕过代理链或把认证与授权混为一谈都会留下越权边界。
 
 ## 分层
 

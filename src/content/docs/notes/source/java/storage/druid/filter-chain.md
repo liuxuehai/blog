@@ -4,10 +4,10 @@ description: Druid 如何包装 Connection、Statement 和 ResultSet，并以 Fi
 category: Backend
 tags: [Source Reading, Druid, JDBC]
 order: 33
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 33
@@ -17,17 +17,11 @@ Druid 的过滤器不是 Servlet 式的请求拦截器，而是按 JDBC 方法�
 
 <!-- more -->
 
-```text
-ConnectionProxyImpl
-      |
-      v
-FilterChainImpl(pos=0)
-      |
-  WallFilter -> StatFilter -> custom Filter
-      |
-      v
-raw Connection / Statement / ResultSet
-```
+## 先给答案：Druid 的过滤器不是 Servlet 式的请求拦截器，而是按 JDBC 方法分别实现的责任链
+
+Druid 的过滤器不是 Servlet 式的请求拦截器，而是按 JDBC 方法分别实现的责任链。每个链方法都有明确的末端行为，因此能覆盖连接、语句和结果集的不同生命周期。 正文沿“代理层 -> 链推进 -> 为什么让每个 JDBC 事件拥有独立链方法”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“忘记继续链、重复执行、只拦 execute”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 代理层
 

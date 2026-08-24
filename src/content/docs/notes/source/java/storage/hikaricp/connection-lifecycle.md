@@ -4,10 +4,10 @@ description: HikariPool 从 borrow 到代理返回、回收、补充和关闭的
 category: Backend
 tags: [Source Reading, HikariCP, Connection Pool]
 order: 44
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 44
@@ -17,16 +17,11 @@ HikariCP 的连接生命周期围绕 `PoolEntry` 展开：物理连接只由池�
 
 <!-- more -->
 
-```text
-create PoolEntry
-      |
-      v
-NOT_IN_USE --borrow--> IN_USE
-      ^                    |
-      |                    +--> close/recycle
-      +---- requite <------+       |
-                              reset or evict
-```
+## 先给答案：HikariCP 的连接生命周期围绕 PoolEntry 展开：物理连接只由池创建和销毁，业务拿到的是带生…
+
+HikariCP 的连接生命周期围绕 PoolEntry 展开：物理连接只由池创建和销毁，业务拿到的是带生命周期回调的代理连接。 正文沿“借出 -> 归还 -> 创建与补充”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“借出超时、归还失败、minIdle 不足”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 借出
 

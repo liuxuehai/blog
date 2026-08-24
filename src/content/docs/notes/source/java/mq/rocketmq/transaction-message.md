@@ -4,10 +4,10 @@ description: RocketMQ 如何用半消息、提交回滚和回查把本地事务�
 category: Backend
 tags: [Source Reading, RocketMQ, Transaction Message]
 order: 15
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 15
@@ -16,6 +16,12 @@ sidebar:
 事务消息处理的是“本地事务完成”和“消息对消费者可见”之间的竞态。RocketMQ 先保存不可见的半消息，再根据生产者结果提交、回滚或回查。
 
 <!-- more -->
+
+## 先给答案：事务消息推迟消息可见性，但不接管业务数据库事务
+
+Broker 先保存消费者不可见的半消息，生产者执行本地事务后再提交或回滚；最终状态丢失时，Broker 通过回查询问生产者。它解决的是“本地事务已结束，但最终消息指令未可靠到达”这一不确定窗口。
+
+这是一种最终一致性协议，不是跨数据库与 Broker 的强一致提交。生产者事务监听器必须能幂等回答回查，Broker 要限制检查次数和半消息停留时间，消费者仍要应对提交重试或恢复造成的重复投递。
 
 ## 状态机
 

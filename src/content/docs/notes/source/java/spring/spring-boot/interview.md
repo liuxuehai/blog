@@ -4,10 +4,10 @@ description: Spring Boot 高频面试题、高难追问与源码级加分回答�
 category: Backend
 tags: [Source Reading, Spring Boot, Interview]
 order: 29
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 29
@@ -16,6 +16,12 @@ sidebar:
 Spring Boot 面试的重点不是背 starter，而是说明启动阶段如何做选择、如何保留覆盖点，以及如何解释失败原因。
 
 <!-- more -->
+
+## 先给答案：自动配置是可解释的候选方案
+
+Spring Boot 先准备 Environment 和 ApplicationContext，再加载自动配置候选、执行排序与条件判断，最后进入 Framework 的 `refresh()`。starter 负责依赖组合，自动配置负责提供默认 Bean，条件与用户配置共同决定哪些默认项真正生效。
+
+回答故障题时要给出启动阶段：属性是否绑定成功、条件为何匹配、Bean 在何处创建失败、WebServer 是否已经启动。条件评估报告和异常链比背注解更重要，且用户覆盖默认 Bean 时必须同时考虑名称、类型和装配顺序。
 
 ## 高频题
 

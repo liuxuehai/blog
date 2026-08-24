@@ -4,7 +4,11 @@ description: MybatisPlusInterceptor 如何编排 InnerInterceptor 并在 query�
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Interceptor]
 order: 65
-updatedDate: 2026-08-20
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 65
 ---

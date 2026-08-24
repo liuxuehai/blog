@@ -4,10 +4,10 @@ description: Actix Web 与 Axum 在运行时、Service、状态、提取器、�
 category: Backend
 tags: [Source Reading, Actix Web, Axum, Architecture]
 order: 46
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 46
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 与 Axum 都使用 trait 和异步 Future，但抽象中心不同：Axum 围绕 Tower `Service` 与 Hyper 生态组合；Actix Web 围绕 per-worker `ServiceFactory` 初始化树和本地 Service。
 
 <!-- more -->
+
+## 先给答案：Actix Web 与 Axum 都使用 trait 和异步 Future，但抽象中心不同：Axum 围绕…
+
+Actix Web 与 Axum 都使用 trait 和异步 Future，但抽象中心不同：Axum 围绕 Tower Service 与 Hyper 生态组合；Actix Web 围绕 per-worker ServiceFactory 初始化树和本地 Service。 正文沿“核心对照 -> 源码证据 -> 状态取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Actix Web 每请求一个 Actor、Axum 没有初始化成本、non-Send 一定更快”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 核心对照
 

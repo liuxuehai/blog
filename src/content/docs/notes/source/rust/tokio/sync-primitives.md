@@ -4,10 +4,10 @@ description: Tokio Semaphore、Mutex、Notify、mpsc 与 watch 的等待队列�
 category: Backend
 tags: [Source Reading, Tokio, Rust, Sync, Channel]
 order: 70
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 70
@@ -16,6 +16,12 @@ sidebar:
 异步同步原语不能让 worker 阻塞在操作系统锁上。Tokio 的共同做法是：快速路径用原子状态尝试完成，失败后把当前任务的 Waker 放入等待队列，资源释放时再唤醒符合条件的 waiter。
 
 <!-- more -->
+
+## 先给答案：异步同步原语不能让 worker 阻塞在操作系统锁上
+
+异步同步原语不能让 worker 阻塞在操作系统锁上。Tokio 的共同做法是：快速路径用原子状态尝试完成，失败后把当前任务的 Waker 放入等待队列，资源释放时再唤醒符合条件的 waiter。 正文沿“语义地图 -> Semaphore 公平队列 -> Mutex 建立在 Semaphore 上”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“用 Notify 传递事件数量、bounded channel 配成无限大效果、async Mutex 包住纯 CPU 大临界区”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 语义地图
 

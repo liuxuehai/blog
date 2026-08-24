@@ -4,10 +4,10 @@ description: Hyper 的协议驱动、Service、Body、运行时接口以及 HTTP
 category: Backend
 tags: [Source Reading, Hyper, Rust, Architecture]
 order: 30
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 30
@@ -16,6 +16,12 @@ sidebar:
 Hyper 的核心是“协议状态机 + 异步 IO 抽象”，不是 Web 框架。它既不认识路由，也不要求底层必须是 Tokio socket。
 
 <!-- more -->
+
+## 先给答案：Hyper 的核心是“协议状态机 + 异步 IO 抽象”，不是 Web 框架
+
+Hyper 的核心是“协议状态机 + 异步 IO 抽象”，不是 Web 框架。它既不认识路由，也不要求底层必须是 Tokio socket。 正文沿“模块地图 -> 协议分层 -> 一次服务端请求”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“只保留 SendRequest 不驱动 Connection、不消费 response body、把应用错误直接返回连接层”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模块地图
 

@@ -4,10 +4,10 @@ description: zrpc 的 gRPC 装配、拦截器、健康检查、服务发现与�
 category: Backend
 tags: [Source Reading, go-zero, Go, RPC]
 order: 26
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 26
@@ -16,6 +16,12 @@ sidebar:
 `zrpc` 对 gRPC 的主要增量不是重新实现传输协议，而是把默认治理能力变成可配置的 server/client 装配流程。
 
 <!-- more -->
+
+## 先给答案：zrpc 对 gRPC 的主要增量不是重新实现传输协议，而是把默认治理能力变成可配置的 server/cl…
+
+zrpc 对 gRPC 的主要增量不是重新实现传输协议，而是把默认治理能力变成可配置的 server/client 装配流程。 正文沿“服务端链路 -> 健康与停机 -> 客户端”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“默认 blocking dial、只配 server breaker、健康探针未接入 LB”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 服务端链路
 

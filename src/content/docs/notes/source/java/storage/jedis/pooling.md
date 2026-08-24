@@ -4,7 +4,8 @@ description: ConnectionFactory、Commons Pool 和 JedisPool 如何创建、验�
 category: Backend
 tags: [Source Reading, Jedis, Pool]
 order: 54
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 54
 ---
@@ -13,14 +14,11 @@ Jedis 的传统池化实现把连接对象生命周期委托给 Apache Commons P
 
 <!-- more -->
 
-```text
-borrowObject
-   └─► ConnectionFactory#makeObject
-        └─► Connection.Builder#build
-             └─► initialize
-returnObject ──► validate/passivate
-                       └─► destroy on failure
-```
+## 先给答案：Jedis 的传统池化实现把连接对象生命周期委托给 Apache Commons Pool；Jedis 自…
+
+Jedis 的传统池化实现把连接对象生命周期委托给 Apache Commons Pool；Jedis 自己实现 PooledObjectFactory，负责连接级初始化、验证和销毁。 正文沿“工厂职责 -> 验证策略 -> 为什么不在每次命令后重置所有连接状态”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“transaction 连接归还过早、pub/sub 放回普通池、maxTotal 太小”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 工厂职责
 

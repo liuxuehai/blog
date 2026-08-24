@@ -4,6 +4,11 @@ description: Kafka Broker、分区日志、副本复制、KRaft 控制器与消�
 category: Backend
 tags: [Source Reading, Kafka, Architecture]
 order: 211
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 211
 ---
@@ -11,6 +16,12 @@ sidebar:
 Kafka 不是一个单一的大队列，而是多个按 partition 划分的复制日志，以及围绕这些日志运行的元数据和消费状态机。
 
 <!-- more -->
+
+## 先给答案：Kafka 用三类可重放日志隔离数据面、控制面和消费状态
+
+业务消息按 partition 追加到分段日志，副本协议用 ISR 与提交边界决定何时可见；KRaft 复制 metadata log 并驱动控制器状态机；consumer group 的成员与 offset 又由独立内部日志恢复。三类状态使用相似的日志思想，但吞吐、保留和故障域不同。
+
+因此 leader 本地追加、ISR 提交、事务可见和 group offset 提交不能混为一个“成功”。排障要先确认问题属于分区日志、副本、控制器还是消费者协调，再沿各自的 epoch、offset 和 generation 判断旧状态是否仍有效。
 
 ## 分层
 

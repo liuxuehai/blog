@@ -4,10 +4,10 @@ description: Tower Layer、from_fn、Next、Infallible 约束与 HandleError 的
 category: Backend
 tags: [Source Reading, Axum, Middleware, Error Handling]
 order: 25
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 25
@@ -16,6 +16,12 @@ sidebar:
 Axum 中间件遵循 Tower 的 `Layer<Service>` 模型。请求错误必须在到达 Hyper 之前变成响应，因此框架把“业务拒绝”和“Service 故障”分成两条错误通道。
 
 <!-- more -->
+
+## 先给答案：Axum 中间件遵循 Tower 的 Layer<Service 模型
+
+Axum 中间件遵循 Tower 的 Layer<Service 模型。请求错误必须在到达 Hyper 之前变成响应，因此框架把“业务拒绝”和“Service 故障”分成两条错误通道。 正文沿“洋葱模型 -> 两类失败 -> Layer 顺序”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“timeout 没配错误映射、middleware 持锁跨 next.run().await、layer 顺序写反”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 洋葱模型
 

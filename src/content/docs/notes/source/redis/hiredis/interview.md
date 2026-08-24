@@ -7,10 +7,10 @@ tags:
   - hiredis
   - Interview
 order: 49
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 49
@@ -19,6 +19,12 @@ sidebar:
 hiredis 面试的关键不是记住几个 C 函数，而是说清楚四个边界：socket 与协议、输出缓冲与 reply、同步驱动与异步驱动、核心状态与事件库适配。
 
 <!-- more -->
+
+## 先给答案：hiredis 的回答框架是缓冲、解析、驱动、回调四层
+
+命令先进入输出缓冲，socket 读写允许部分完成，RESP reader 跨多次读取保存解析进度，完整 reply 才交给同步调用者或异步 callback。pipeline 只是把 append 与取 reply 解耦，并没有绕过协议状态机。
+
+异步 API 不创建线程，它依赖外部事件循环调用 read/write handler；adapter 若漏注册写事件、过早清理或重复驱动，同样会让请求停住或回调错配。context 应由一个执行序列独占，跨线程共享需要调用方自行串行化。
 
 ## 高频题
 
@@ -80,4 +86,3 @@ write 需要保留输出缓冲偏移，直到缓冲清空；read 只需把新字
 - [RESP Reader 状态机](/notes/source/redis/hiredis/resp-reader/)
 - [异步 API 与回调队列](/notes/source/redis/hiredis/async-api/)
 - [事件循环适配层](/notes/source/redis/hiredis/event-adapters/)
-

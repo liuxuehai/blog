@@ -4,10 +4,10 @@ description: Hyper 的 Read、Write、Executor、Timer、Sleep 与 upgrade 所�
 category: Backend
 tags: [Source Reading, Hyper, Runtime, IO]
 order: 35
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 35
@@ -16,6 +16,12 @@ sidebar:
 Hyper 自己不提供 reactor 和 scheduler。它定义最小运行时接口，让 Tokio、自定义 runtime、测试 IO 与 FFI 都能驱动同一协议状态机。
 
 <!-- more -->
+
+## 先给答案：Hyper 自己不提供 reactor 和 scheduler
+
+Hyper 自己不提供 reactor 和 scheduler。它定义最小运行时接口，让 Tokio、自定义 runtime、测试 IO 与 FFI 都能驱动同一协议状态机。 正文沿“四个最小能力 -> 为什么不是标准 AsyncRead -> Vectored write”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Timer 返回 Pin<Box<dyn Sleep，还支持 reset（rt/timer.rs:70-88）”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 四个最小能力
 

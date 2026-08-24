@@ -8,10 +8,10 @@ tags:
   - Architecture
   - RESP
 order: 41
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 41
@@ -20,6 +20,12 @@ sidebar:
 hiredis 的架构价值在于复用：同步 API 和异步 API 不各自实现一套协议，而是共享连接状态、输出缓冲和 RESP reader；差异只体现在“谁驱动 socket”和“reply 何时交给调用者”。
 
 <!-- more -->
+
+## 先给答案：hiredis 复用同一协议状态机，只替换驱动 socket 的方式
+
+同步与异步 API 都围绕 `redisContext`、输出缓冲和持久化 `redisReader` 工作。同步层主动阻塞推进读写，异步层保存 callback，并通过 adapter 把读、写和定时器兴趣交给外部事件循环。
+
+因此半包、粘包和 partial write 都由共享状态机处理，而不是由调用者猜测一次系统调用是否完成。主要边界是 context 非线程安全、异步 adapter 必须正确维护事件兴趣、非阻塞 connect 完成前不能把连接当作可用。
 
 ## 分层
 
@@ -110,4 +116,3 @@ command format/argv
 - [同步命令链](/notes/source/redis/hiredis/sync-command/)
 - [异步 API 与回调队列](/notes/source/redis/hiredis/async-api/)
 - [事件循环适配层](/notes/source/redis/hiredis/event-adapters/)
-

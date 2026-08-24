@@ -4,10 +4,10 @@ description: go-zero 源码解析总览：自适应熔断、限流、并发抑�
 category: Backend
 tags: [Source Reading, go-zero, Go, Service Governance]
 order: 2
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 2
@@ -16,6 +16,16 @@ sidebar:
 go-zero 是一套把工程脚手架、RPC/HTTP 运行时和服务治理组件放在同一条生产链路上的 Go 微服务工具箱。本册沿着“请求进入系统后如何被保护、合并、缓存、传输和生成”的顺序读源码。
 
 <!-- more -->
+
+## 本册问题地图
+
+go-zero 的主线是“请求在高并发和下游不稳定时如何保持可控”：
+
+1. **自适应熔断依据什么变化？** 它观察近期请求成功率、延迟或错误，把保护阈值随流量变化调整，而不是永远使用一个固定比例。
+2. **限流与熔断有什么区别？** 限流限制进入速度，熔断限制对已不健康下游的继续调用；前者保护自身容量，后者隔离故障传播。
+3. **SingleFlight/SharedCalls 合并了什么？** 它们合并同一 key 的并发计算，减少缓存击穿时的重复查询，但不能替代缓存过期和失败回退策略。
+4. **缓存一致性为什么要单独设计？** 删除、更新、空值和重建的时间顺序可能让旧值重新出现，延迟双删只是缓解窗口，不是强一致保证。
+5. **zrpc 和 goctl 如何衔接？** goctl 生成约定结构，zrpc 在运行时提供连接、拦截器和治理；生成代码减少样板，但不能替代运行时排障。
 
 ## 版本快照
 

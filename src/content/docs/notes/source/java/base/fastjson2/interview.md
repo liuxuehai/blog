@@ -4,10 +4,10 @@ description: Fastjson2 JSONReader/Writer、对象适配器、字节码生成与�
 category: Backend
 tags: [Source Reading, Fastjson2, Interview]
 order: 87
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 87
@@ -16,6 +16,12 @@ sidebar:
 Fastjson2 面试题的重点不是“比 Jackson 快多少”，而是能否解释格式层、对象层、字段层和生成器之间的边界，以及性能和安全如何同时成立。
 
 <!-- more -->
+
+## 先给答案：Fastjson2 面试题的重点不是“比 Jackson 快多少”，而是能否解释格式层、对象层、字段层和生…
+
+Fastjson2 面试题的重点不是“比 Jackson 快多少”，而是能否解释格式层、对象层、字段层和生成器之间的边界，以及性能和安全如何同时成立。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“序列化性能下降，如何排查、反序列化出现类型转换异常，怎么定位、如何审查一个开启多态的服务”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

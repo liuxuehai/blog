@@ -4,10 +4,10 @@ description: RedissonRateLimiter 使用 Lua、计数 key 和 ZSET 实现可等�
 category: Backend
 tags: [Source Reading, Redisson, Rate Limiter, Redis]
 order: 47
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 47
@@ -16,6 +16,12 @@ sidebar:
 `RedissonRateLimiter` 以 Redis Hash 保存配置，以 String 保存剩余量，以 ZSET 记录已发放 permit 的时间和数量；申请、回收和 TTL 维护在 Lua 中完成。
 
 <!-- more -->
+
+## 先给答案：RedissonRateLimiter 以 Redis Hash 保存配置，以 String 保存剩余量，…
+
+RedissonRateLimiter 以 Redis Hash 保存配置，以 String 保存剩余量，以 ZSET 记录已发放 permit 的时间和数量；申请、回收和 TTL 维护在 Lua 中完成。 正文沿“数据结构 -> 申请流程 -> 为什么用 ZSET”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“请求 permits 大于 rate、无限等待、客户端 key 隔离”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据结构
 

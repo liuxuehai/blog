@@ -4,6 +4,11 @@ description: ReplicaManager、ReplicaFetcherThread、ISR 收缩与 high watermar
 category: Backend
 tags: [Source Reading, Kafka, Replication, Consistency]
 order: 213
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 213
 ---

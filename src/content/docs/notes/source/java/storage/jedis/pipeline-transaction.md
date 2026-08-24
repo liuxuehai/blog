@@ -4,7 +4,8 @@ description: Jedis 如何批量写命令、集中读响应，并把 MULTI/EXEC �
 category: Backend
 tags: [Source Reading, Jedis, Pipeline, Transaction]
 order: 55
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 55
 ---
@@ -12,6 +13,14 @@ sidebar:
 Pipeline 解决网络往返，Transaction 解决 Redis 服务端的事务队列；两者都要求连接在整个批处理期间保持独占。
 
 <!-- more -->
+
+## 先给答案：Pipeline 解决网络往返，Transaction 解决 Redis 服务端的事务队列；两者都要求连接…
+
+Pipeline 解决网络往返，Transaction 解决 Redis 服务端的事务队列；两者都要求连接在整个批处理期间保持独占。 理解Pipeline 与事务时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“Pipeline 未 sync、Pipeline 跨节点、事务异常未 discard”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“Pipeline 未 sync、Pipeline 跨节点、事务异常未 discard”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 pipeline command 1 ─┐

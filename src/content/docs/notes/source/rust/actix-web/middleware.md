@@ -4,10 +4,10 @@ description: Transform 初始化、Service 调用、from_fn、Next、Logger 与�
 category: Backend
 tags: [Source Reading, Actix Web, Middleware, Service]
 order: 44
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 44
@@ -16,6 +16,12 @@ sidebar:
 Actix Web 中间件有两阶段：`Transform` 在 worker 初始化时包裹内层 Service，生成真正处理请求的 middleware Service；热路径只调用后者。
 
 <!-- more -->
+
+## 先给答案：Actix Web 中间件有两阶段：Transform 在 worker 初始化时包裹内层 Service…
+
+Actix Web 中间件有两阶段：Transform 在 worker 初始化时包裹内层 Service，生成真正处理请求的 middleware Service；热路径只调用后者。 正文沿“两阶段模型 -> Logger 示例 -> fromfn”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“wrap 顺序误判、分支 body 类型不同、持 RefCell borrow 跨 await”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 两阶段模型
 

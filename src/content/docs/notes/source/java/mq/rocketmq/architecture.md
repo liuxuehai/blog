@@ -4,10 +4,10 @@ description: RocketMQ 的 Store、Broker、Client 与 DLedger 分层，以及生
 category: Backend
 tags: [Source Reading, RocketMQ, Architecture]
 order: 11
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 11
@@ -16,6 +16,12 @@ sidebar:
 RocketMQ 将物理写入、逻辑索引、协议处理和客户端调度拆成可独立演进的层。
 
 <!-- more -->
+
+## 先给答案：RocketMQ 先写唯一事实日志，再异步派生消费视图
+
+生产请求先追加到 CommitLog，ConsumeQueue 和 IndexFile 由 Reput 后续构建；消费则先用逻辑索引定位物理 offset，再回到 CommitLog 读取消息。这把多 Topic 的随机写收敛为顺序追加，也让索引可以在故障后重建。
+
+代价是“写入成功”和“消费可见”存在阶段差：CommitLog 已完成不代表 ConsumeQueue 已追平，复制成功也不等于客户端一定收到响应。排障必须分别观察物理写入、派生索引、复制提交和客户端重试，不能用单一 offset 推断全链路状态。
 
 ## 分层
 

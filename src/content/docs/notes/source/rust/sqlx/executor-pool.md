@@ -4,10 +4,10 @@ description: Query 如何通过 Executor 执行，以及 Pool 的信号量、连
 category: Backend
 tags: [Source Reading, SQLx, Rust, Async, Pool]
 order: 72
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 72
@@ -16,6 +16,12 @@ sidebar:
 SQLx 把“要执行什么”与“在哪里执行”拆开：`Query` 保存 SQL 和 arguments，`Executor` 提供执行/fetch 能力，`Pool` 通过可复用连接把异步任务接入具体 driver。
 
 <!-- more -->
+
+## 先给答案：SQLx 把“要执行什么”与“在哪里执行”拆开：Query 保存 SQL 和 arguments，Exec…
+
+SQLx 把“要执行什么”与“在哪里执行”拆开：Query 保存 SQL 和 arguments，Executor 提供执行/fetch 能力，Pool 通过可复用连接把异步任务接入具体 driver。 正文沿“执行链 -> Pool 的并发模型 -> Executor 的抽象价值”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“在事务内再用 pool 执行、pool size 太小、持有 PoolConnection 跨大量 await”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 执行链
 

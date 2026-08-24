@@ -4,10 +4,10 @@ description: ShardingSphere 高频面试题：SQL 生命周期、路由改写、
 category: Backend
 tags: [Source Reading, ShardingSphere, Interview, Database]
 order: 29
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 29
@@ -16,6 +16,12 @@ sidebar:
 ShardingSphere 面试题的关键不是背“分库分表”，而是能说明逻辑 SQL 如何变成物理执行单元，以及每个阶段为什么保持独立。
 
 <!-- more -->
+
+## 先给答案：ShardingSphere 面试题的关键不是背“分库分表”，而是能说明逻辑 SQL 如何变成物理执行单元…
+
+ShardingSphere 面试题的关键不是背“分库分表”，而是能说明逻辑 SQL 如何变成物理执行单元，以及每个阶段为什么保持独立。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“线上出现跨库查询变慢，怎么排查、跨分片写入部分成功怎么办”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

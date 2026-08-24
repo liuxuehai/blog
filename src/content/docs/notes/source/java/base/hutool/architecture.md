@@ -4,10 +4,10 @@ description: Hutool 多模块工具箱的依赖层次、门面入口和可选扩
 category: Backend
 tags: [Source Reading, Hutool, Architecture]
 order: 91
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 91
@@ -17,17 +17,11 @@ Hutool 的主线不是一个大型运行时，而是“核心工具 + 可选模�
 
 <!-- more -->
 
-```text
-                         hutool
-                            |
-        +-------------------+-------------------+
-        |                   |                   |
-   hutool-core       setting / http       json / crypto / poi
-        |                   |                   |
-  util / convert      Setting / Request   third-party adapters
-        |
- BeanUtil / ReflectUtil / DateUtil
-```
+## 先给答案：Hutool 的主线不是一个大型运行时，而是“核心工具 + 可选模块 + 门面类”的组合
+
+Hutool 的主线不是一个大型运行时，而是“核心工具 + 可选模块 + 门面类”的组合。源码阅读应先看 Maven 模块，再看每个模块如何把静态入口委托给可复用对象。 正文沿“模块边界 -> 一次调用的典型路径 -> 设计手法”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“基础层、配置与网络、数据格式”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模块边界
 

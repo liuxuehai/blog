@@ -4,15 +4,21 @@ description: StatisticSlot、StatisticNode、DefaultNode、ClusterNode 与 LeapA
 category: Backend
 tags: [Source Reading, Sentinel, Sliding Window, Metrics]
 order: 43
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 43 }
 ---
 
-Sentinel 的规则检查依赖事实统计。`StatisticSlot` 负责把一次请求的通过、阻断、异常、线程和 RT 写入节点；`StatisticNode` 用秒级和分钟级滚动数组提供不同时间尺度的查询。
+<!-- more -->
+
+## 先给答案：StatisticSlot、StatisticNode、DefaultNode、ClusterNode 与…
+
+StatisticSlot、StatisticNode、DefaultNode、ClusterNode 与 LeapArray 如何形成 Sentinel 的实时指标。 正文沿“节点关系 -> 滑动窗口 -> 计数路径”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“QPS 是有效窗口内的聚合，不等于当前瞬时计数；窗口大小由属性和采样桶共同决定。、RT 统计通常基于成功完成请求；被阻断请求没有业务完成 RT。、线程数必须在 exit 路径减少，跨线程、异常退出或错误 Entry 配对会造成虚高。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 节点关系
 

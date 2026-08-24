@@ -4,10 +4,10 @@ description: Guava 源码解析总览：不可变集合、本地缓存、EventBu
 category: Backend
 tags: [Source Reading, Guava, Java, Collections]
 order: 6
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 6
@@ -16,6 +16,16 @@ sidebar:
 Guava 是 Google 维护的 Java 基础库集合，覆盖不可变数据结构、并发缓存、事件分派和限流算法。
 
 <!-- more -->
+
+## 本册问题地图
+
+Guava 不是一组孤立工具，而是一套“用更强语义减少调用方错误”的基础设施：
+
+1. **不可变集合为什么值得单独设计？** 它把构造完成后的状态冻结，使共享、缓存和并发读取不再需要防御性同步；代价是更新必须创建新对象。
+2. **Guava Cache 与 Caffeine 的差别看什么？** 不要只比较 API，要比较维护模型、驱逐策略、并发读写路径和现代版本的性能取舍。
+3. **EventBus 隐藏了什么？** 发布者只关心事件类型，订阅者由反射或注册表匹配；解耦带来的代价是调用链不显式、异常和线程模型容易被忽略。
+4. **RateLimiter 限制的是什么？** 它平滑的是许可发放时间，不等于并发数限制；等待许可的线程仍可能长期占用线程资源。
+5. **工具类的共同边界是什么？** 便利 API 只能减少样板，不能替调用方决定生命周期、异常传播和业务幂等。
 
 ## 版本快照
 

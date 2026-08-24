@@ -4,15 +4,21 @@ description: Sentinel 集群 Token Client/Server、状态切换、规则动态�
 category: Backend
 tags: [Source Reading, Sentinel, Cluster Flow Control, Interview]
 order: 46
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 46 }
 ---
 
-集群流控把“本地是否通过”提升为“向统一 Token 服务申请配额”。Sentinel core 只定义 Client、Server 和状态管理接口，具体网络实现通过 SPI 或模块提供，因此集群能力不是把本地 FlowSlot 替换成远程 RPC，而是在 `FlowRuleChecker` 的 cluster 分支插入令牌申请。
+<!-- more -->
+
+## 先给答案：Sentinel 集群 Token Client/Server、状态切换、规则动态加载和源码面试题
+
+Sentinel 集群 Token Client/Server、状态切换、规则动态加载和源码面试题。 正文沿“集群路径 -> Client / Server 边界 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“ClusterTokenClient 只表达当前 Token Server、启动停止和状态，ClusterTokenServer 只表达服务生命周期；协议、编码、请求处理器放在默认实现模块”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 集群路径
 

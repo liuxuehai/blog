@@ -4,6 +4,11 @@ description: KafkaRaftClient 的选举与复制，以及 QuorumController 如何
 category: Backend
 tags: [Source Reading, Kafka, KRaft, Raft]
 order: 215
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 215
 ---
@@ -11,6 +16,12 @@ sidebar:
 KRaft 把控制器选举、元数据存储和传播变成 Kafka 自己维护的 Raft quorum；控制器只应用已经提交的 metadata record。
 
 <!-- more -->
+
+## 先给答案：KRaft 先复制元数据事实，再由控制器应用已提交记录
+
+`KafkaRaftClient` 负责 term/epoch、投票、日志复制、high watermark 和 snapshot；`QuorumController` 消费 committed metadata records，确定性地更新 Topic、Partition、配置和节点状态。控制器不能把 leader 本地尚未提交的记录当作集群事实。
+
+这样选主、恢复和元数据传播共享同一个提交边界，但也要求 offset 与 epoch 一起校验，snapshot 安装必须原子衔接后续日志。网络分区时宁可暂停无 quorum 的修改，也不能让两个控制器基于不同历史同时对外生效。
 
 ```text
 Voters -> KafkaRaftClient -> election / fetch / high watermark

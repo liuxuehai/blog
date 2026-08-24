@@ -4,7 +4,11 @@ description: ClusterConnectionProvider 如何计算 slot、选择节点、处理
 category: Backend
 tags: [Source Reading, Jedis, Redis Cluster]
 order: 56
-updatedDate: 2026-08-20
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 56
 ---

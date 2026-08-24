@@ -4,10 +4,10 @@ description: Fastjson2 对象读写器、字段访问器和类型级缓存的源
 category: Backend
 tags: [Source Reading, Fastjson2, ObjectReader, ObjectWriter]
 order: 84
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 84
@@ -16,6 +16,12 @@ sidebar:
 `ObjectReader` 和 `ObjectWriter` 是 Fastjson2 的类型级策略对象：前者把 token 组装成 Java 值，后者把 Java 值拆成输出字段。它们把格式细节和对象结构分离开。
 
 <!-- more -->
+
+## 先给答案：ObjectReader 和 ObjectWriter 是 Fastjson2 的类型级策略对象：前者把 …
+
+ObjectReader 和 ObjectWriter 是 Fastjson2 的类型级策略对象：前者把 token 组装成 Java 值，后者把 Java 值拆成输出字段。它们把格式细节和对象结构分离开。 正文沿“类型查找 -> Bean 读写 -> 字段访问器的价值”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“provider 缓存的是类型策略，不是对象实例；请求数据不能写入共享 reader/writer。、字段名冲突、别名、大小写不敏感和扩展字段会改变匹配路径。、自定义 reader/writer 必须明确支持的 Type、特性和 null 行为，不能只覆盖最简单样例。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 类型查找
 

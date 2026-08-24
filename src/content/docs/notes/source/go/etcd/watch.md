@@ -4,10 +4,10 @@ description: etcd watchable store 的 watcher 分组、事件批处理、背压�
 category: Backend
 tags: [Source Reading, etcd, Go, Watch]
 order: 35
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 35
@@ -16,6 +16,12 @@ sidebar:
 Watch 不是对 backend 的轮询，而是 MVCC 写事务提交后，将事件按 key 范围分发给长连接 watcher。etcd 为已追上当前 revision 的 watcher 和尚未追上的 watcher 分开管理。
 
 <!-- more -->
+
+## 先给答案：Watch 不是对 backend 的轮询，而是 MVCC 写事务提交后，将事件按 key 范围分发给长连…
+
+Watch 不是对 backend 的轮询，而是 MVCC 写事务提交后，将事件按 key 范围分发给长连接 watcher。etcd 为已追上当前 revision 的 watcher 和尚未追上的 watcher 分开管理。 正文沿“watcher 状态 -> 事件产生路径 -> 背压与 victims”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“如果 watcher 的 start revision 已经 compact，服务端无法重放完整历史，会返回 compacted 错误”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## watcher 状态
 

@@ -4,10 +4,10 @@ description: 反序列化控制反转、Visitor、SeqAccess/MapAccess、Seed、�
 category: Backend
 tags: [Source Reading, Serde, Deserializer, Visitor]
 order: 53
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 53
@@ -16,6 +16,12 @@ sidebar:
 反序列化不能由目标类型直接读取任意格式字节。目标类型先声明期待的语义形状，格式 Deserializer 解析输入，再通过 Visitor 和 Access 接口逐步交付值。
 
 <!-- more -->
+
+## 先给答案：反序列化不能由目标类型直接读取任意格式字节
+
+反序列化不能由目标类型直接读取任意格式字节。目标类型先声明期待的语义形状，格式 Deserializer 解析输入，再通过 Visitor 和 Access 接口逐步交付值。 正文沿“控制反转 -> Visitor 的三种字符串入口 -> Seed：带上下文构造”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“&str 反序列化失败、deserializeany 用于二进制、MapAccess 未消费 value”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 控制反转
 

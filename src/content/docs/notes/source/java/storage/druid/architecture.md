@@ -4,10 +4,10 @@ description: Druid 从连接池到 JDBC 代理、过滤器链、SQL 安全和统
 category: Backend
 tags: [Source Reading, Druid, Architecture]
 order: 31
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 31
@@ -16,6 +16,12 @@ sidebar:
 Druid 的关键设计是把“获得连接”和“使用连接”分开：池管理物理连接生命周期，代理对象承载 JDBC 行为，过滤器链把安全、统计和自定义逻辑插入调用路径。
 
 <!-- more -->
+
+## 先给答案：Druid 的关键设计是把“获得连接”和“使用连接”分开：池管理物理连接生命周期，代理对象承载 JDBC …
+
+Druid 的关键设计是把“获得连接”和“使用连接”分开：池管理物理连接生命周期，代理对象承载 JDBC 行为，过滤器链把安全、统计和自定义逻辑插入调用路径。 正文沿“分层 -> 主流程：一次查询 -> 核心边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“DruidDataSource 管理物理连接，DruidPooledConnection 管理一次租借。、FilterChain 管理横切逻辑顺序，WallProvider 管理 SQL 策略。、Web 层只读取 DruidDataSourceStatManager，不直接操作池内队列。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

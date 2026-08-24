@@ -4,15 +4,21 @@ description: Seata 全局开始、分支注册、提交回滚、状态转换与�
 category: Backend
 tags: [Source Reading, Seata, Transaction Lifecycle]
 order: 52
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 52 }
 ---
 
-Seata 的一次全局事务可分成四段：TM 开始并取得 XID，RM 注册分支并执行本地一阶段，TM 请求二阶段，TC 根据分支状态完成、重试或进入失败终态。
+<!-- more -->
+
+## 先给答案：Seata 全局开始、分支注册、提交回滚、状态转换与客户端报告的源码路径
+
+Seata 全局开始、分支注册、提交回滚、状态转换与客户端报告的源码路径。 正文沿“主流程 -> 分支注册与关闭 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“业务方法返回成功后 commit RPC 仍可能返回 retry 状态，调用方不能把“请求已发送”当作最终提交完成。、分支 report 是状态同步，不是新的本地提交；本地提交已由 RM 的资源代理执行。、超时回滚与显式回滚会进入不同状态，监控和告警应按状态分类。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主流程
 

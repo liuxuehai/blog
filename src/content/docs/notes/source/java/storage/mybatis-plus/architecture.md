@@ -4,7 +4,8 @@ description: MyBatis-Plus 从实体扫描、Mapper 注册、SQL 注入到 Execut
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Architecture]
 order: 61
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 61
 ---
@@ -13,21 +14,11 @@ MyBatis-Plus 的核心设计是“编译式准备、运行时执行”：启动�
 
 <!-- more -->
 
-```text
-Entity + annotations
-        │
-        ▼
-TableInfoHelper ─► TableInfo / fields / key / logic-delete
-        │
-        ▼
-Mapper registration ─► SQL Injector ─► MappedStatement
-        │                                      │
-        ▼                                      ▼
-BaseMapper / Wrapper ───────────────► MyBatis Executor
-                                               │
-                                               ▼
-                                  MybatisPlusInterceptor chain
-```
+## 先给答案：MyBatis-Plus 的核心设计是“编译式准备、运行时执行”：启动阶段准备实体元数据和通用 SQL，查…
+
+MyBatis-Plus 的核心设计是“编译式准备、运行时执行”：启动阶段准备实体元数据和通用 SQL，查询阶段只组合参数并进入 MyBatis 原生执行器。 正文沿“分层 -> 主流程一：启动 -> 主流程二：查询”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Mapper 泛型缺失、插件顺序错误、XML 与注入同名”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

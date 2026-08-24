@@ -4,10 +4,10 @@ description: etcd revision、tree index、事务、历史版本、backend 提交
 category: Backend
 tags: [Source Reading, etcd, Go, MVCC]
 order: 34
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 34
@@ -16,6 +16,12 @@ sidebar:
 etcd 的 MVCC 把“同一个 key 的历史版本”和“整个集群的逻辑时间”统一起来。请求在状态机中按 revision 应用，索引负责从用户 key 找到对应的内部版本，再由 backend 批量提交。
 
 <!-- more -->
+
+## 先给答案：etcd 的 MVCC 把“同一个 key 的历史版本”和“整个集群的逻辑时间”统一起来
+
+etcd 的 MVCC 把“同一个 key 的历史版本”和“整个集群的逻辑时间”统一起来。请求在状态机中按 revision 应用，索引负责从用户 key 找到对应的内部版本，再由 backend 批量提交。 正文沿“数据路径 -> revision 语义 -> key index 与 backend 分工”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“读 compact 前 revision、revision 当 wall clock、单操作单 commit”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据路径
 

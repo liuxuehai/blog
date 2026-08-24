@@ -4,7 +4,8 @@ description: AbstractWrapper 如何维护表达式片段、参数映射、实体
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Wrapper]
 order: 64
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 64
 ---
@@ -12,6 +13,14 @@ sidebar:
 Wrapper 把链式条件 API 编译成 SQL 片段和参数映射，调用方写的是领域条件，注入 SQL 时仍使用预编译参数而不是字符串拼接值。
 
 <!-- more -->
+
+## 先给答案：Wrapper 把链式条件 API 编译成 SQL 片段和参数映射，调用方写的是领域条件，注入 SQL 时…
+
+Wrapper 把链式条件 API 编译成 SQL 片段和参数映射，调用方写的是领域条件，注入 SQL 时仍使用预编译参数而不是字符串拼接值。 理解Wrapper 条件构造时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“Wrapper 跨线程复用、in 传空集合、apply 直接拼接”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“Wrapper 跨线程复用、in 传空集合、apply 直接拼接”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 eq("status", 1).like("name", "A")

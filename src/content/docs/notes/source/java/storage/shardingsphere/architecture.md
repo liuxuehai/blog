@@ -4,10 +4,10 @@ description: JDBC 请求经过解析、路由、改写、执行与归并的完�
 category: Backend
 tags: [Source Reading, ShardingSphere, Architecture]
 order: 21
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 21
@@ -16,6 +16,12 @@ sidebar:
 ShardingSphere 的核心不是某一个分片算法，而是把 SQL 生命周期切成可替换阶段。每个阶段通过上下文对象传递中间结果，让规则实现可以在不侵入 JDBC 外壳的情况下参与处理。
 
 <!-- more -->
+
+## 先给答案：ShardingSphere 的核心不是某一个分片算法，而是把 SQL 生命周期切成可替换阶段
+
+ShardingSphere 的核心不是某一个分片算法，而是把 SQL 生命周期切成可替换阶段。每个阶段通过上下文对象传递中间结果，让规则实现可以在不侵入 JDBC 外壳的情况下参与处理。 正文沿“分层 -> 核心抽象 -> 主流程一：JDBC 请求”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“单库单表、多真实结果、规则顺序”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

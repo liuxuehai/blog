@@ -4,10 +4,10 @@ description: FromRequestParts、FromRequest、tuple 展开、拒绝类型与请�
 category: Backend
 tags: [Source Reading, Axum, Extractor, Type System]
 order: 22
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 22
@@ -16,6 +16,12 @@ sidebar:
 Extractor 把“从请求中取值并验证”编码进 handler 参数类型。它不是运行时参数名绑定，而是一条由 trait 和 tuple 宏在编译期拼出的提取管线。
 
 <!-- more -->
+
+## 先给答案：Extractor 是在进入 Handler 前逐步消费并验证请求
+
+路由匹配先确定 Handler，随后 extractor 按参数顺序从 URI、path、headers、extensions 和 body 中取数据。每个 extractor 要么返回转换后的类型，要么提前生成拒绝响应；body 通常只能消费一次，所以 `Json<T>`、`Bytes` 等 extractor 的组合顺序会影响结果。
+
+这套设计把解析和业务分开，并让错误在类型层被看见。排查提取失败时应先看路由是否匹配，再看 extractor 的来源、顺序、Content-Type 和错误转换，而不是直接进入 handler 逻辑。
 
 ## 两阶段模型
 

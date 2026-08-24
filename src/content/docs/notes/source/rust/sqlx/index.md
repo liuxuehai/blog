@@ -4,10 +4,10 @@ description: SQLx 源码解析总览：编译期 SQL 检查、异步执行器、
 category: Backend
 tags: [Source Reading, SQLx, Rust, Database]
 order: 7
-updatedDate: 2026-08-18
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 7
@@ -16,6 +16,16 @@ sidebar:
 SQLx 的核心取舍是“不引入数据库 DSL”，而是在编译期把真实 SQL 交给数据库驱动 describe，生成参数和结果类型检查代码；运行时则保留轻量的异步连接、执行器、连接池与类型编码层。
 
 <!-- more -->
+
+## 本册问题地图
+
+SQLx 的关键是把编译期 SQL 检查和运行时异步执行接在一起：
+
+1. **query 宏检查什么？** 它连接数据库元数据或使用离线缓存，验证 SQL、参数和结果列类型；这减少运行时拼写错误，但依赖 schema 快照的一致性。
+2. **Executor、Pool、Connection 如何分工？** Executor 定义执行能力，Pool 管理并发连接，具体 Connection 承担协议和事务状态。
+3. **类型映射发生在哪里？** Rust 类型通过 Encode/Decode 与数据库列类型互转，错误可能来自 SQL schema、driver 或业务类型实现。
+4. **事务边界如何保证？** begin/commit/rollback 需要在连接生命周期内完成；连接归还池前必须结束事务，否则状态会污染下一次请求。
+5. **异步不等于无阻塞？** driver 的网络读写可异步，但查询、解码和池等待仍会消耗任务时间，取消还要考虑数据库端请求是否已执行。
 
 ## 版本快照
 

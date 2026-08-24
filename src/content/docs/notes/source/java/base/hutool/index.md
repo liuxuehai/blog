@@ -4,10 +4,10 @@ description: Hutool 源码解析：模块化工具箱、命名重载、转换配
 category: Backend
 tags: [Source Reading, Hutool, Java, Utility]
 order: 9
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 9
@@ -16,6 +16,16 @@ sidebar:
 Hutool 是一个按能力拆分的 Java 工具箱。它的源码价值不只在于“工具多”，更在于如何把字符串、日期、反射、转换、HTTP 和配置能力组织成低门槛 API，同时保留模块边界和可替换实现。
 
 <!-- more -->
+
+## 本册问题地图
+
+Hutool 的价值在于 API 设计和模块边界，而不是某一个工具类：
+
+1. **为什么要拆成多个 Maven 模块？** 常用字符串和集合工具不应强制依赖 HTTP、JSON、POI 等重量模块；模块化把便利性和依赖体积分开。
+2. **命名与重载如何降低学习成本？** 同一概念保持一致命名，重载覆盖常见输入形态；但重载过多会让 `null`、可变参数和类型推断产生歧义。
+3. **转换工具为什么要有 Setting？** 日期、数字、Bean 和字符串转换都存在默认格式与失败策略，集中配置能避免每个调用点各自解释。
+4. **工具类如何处理异常？** 将受检异常转成统一异常能缩短调用代码，但也可能掩盖恢复条件；调用方仍需区分参数错误、网络失败和数据格式错误。
+5. **“方便”边界在哪里？** 工具箱适合降低重复劳动，不应替业务决定连接关闭、事务提交、密钥管理和线程生命周期。
 
 ## 版本范围
 

@@ -4,10 +4,10 @@ description: Nacos 如何调度心跳、HTTP/TCP/MySQL 探活、更新健康状�
 category: Backend
 tags: [Source Reading, Nacos, Health Check, Heartbeat]
 order: 36
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 36 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 36 }
 健康检查把“实例存在”与“实例可用”分开。Nacos 通过统一调度器、处理器委托、心跳任务和状态字段，把不同检查方式接入同一套服务状态模型。
 
 <!-- more -->
+
+## 先给答案：健康检查把“实例存在”与“实例可用”分开
+
+健康检查把“实例存在”与“实例可用”分开。Nacos 通过统一调度器、处理器委托、心跳任务和状态字段，把不同检查方式接入同一套服务状态模型。 正文沿“调度链 -> 实现拆解 -> 为什么采用处理器委托而不是在 Reactor 中写 if/else”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“检查超时、重复调度、连续失败抖动”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调度链
 

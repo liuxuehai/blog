@@ -4,6 +4,11 @@ description: FileRecords、MemoryRecords、文件映射和传输路径如何降�
 category: Backend
 tags: [Source Reading, Kafka, Performance, IO]
 order: 214
+updatedDate: 2026-08-24
+difficulty: advanced
+status: stable
+lastReviewed: 2026-08-24
+draft: false
 sidebar:
   order: 214
 ---
@@ -11,6 +16,12 @@ sidebar:
 Kafka 的性能来自两层复用：写入时把 batch 尽量交给文件页缓存，读取时让内核尽量把文件页直接交给 socket。
 
 <!-- more -->
+
+## 先给答案：Kafka 把缓存和文件搬运尽量交给内核，但并非所有读取都能零拷贝
+
+生产端以 batch 组织记录并顺序追加到文件页缓存，消费端在条件允许时从 `FileRecords` 走文件到 socket 的 transfer 路径，减少用户态复制和堆对象。`MemoryRecords` 负责必须在内存构造或解释的批次，`FileRecords` 负责文件范围与传输。
+
+TLS、解压、过滤和事务隔离需要用户态检查时会削弱或绕开 zero-copy；page cache 也位于 JVM heap 之外。因此容量与性能判断必须同时看主机缓存、磁盘 IO、网络加密和批次延迟，不能只看 GC 或堆占用。
 
 ```text
 +Producer batch+ -> MemoryRecords -> FileRecords -> page cache

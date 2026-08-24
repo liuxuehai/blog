@@ -4,10 +4,10 @@ description: SerializerProvider、SerializerCache 与 BeanSerializer 构造和�
 category: Backend
 tags: [Source Reading, Jackson, Serialization, Cache]
 order: 73
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 73
@@ -16,6 +16,12 @@ sidebar:
 序列化器的难点不在调用 `serialize`，而在如何根据类型、属性、注解和 Module 构造出正确的 serializer，并让后续调用复用它。
 
 <!-- more -->
+
+## 先给答案：序列化器的难点不在调用 serialize，而在如何根据类型、属性、注解和 Module 构造出正确的 s…
+
+序列化器的难点不在调用 serialize，而在如何根据类型、属性、注解和 Module 构造出正确的 serializer，并让后续调用复用它。 正文沿“查找路径 -> Bean serializer -> 为什么缓存放在 provider/cache 层”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“serializer 缓存命中不等于输出无状态；自定义 serializer 不应把请求级数据写进长期共享实例。、修改 mapper 的 Module 或配置后，已有缓存可能仍保留旧决策，因此 mapper 应在使用前完成配置。、JsonSerializer 的 null 值路径由 provider 统一处理，不能假设所有业务 serializer 都会收到 null。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 查找路径
 

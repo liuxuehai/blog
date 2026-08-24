@@ -7,10 +7,10 @@ tags:
   - Valkey
   - Event Loop
 order: 31
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 31
@@ -19,6 +19,12 @@ sidebar:
 Valkey 的架构核心是“数据状态单线程化，外围工作并行化”。读码时要把 IO worker、BIO 和 fork child 分成三种不同的并发模型，不能笼统称作后台线程。
 
 <!-- more -->
+
+## 先给答案：Valkey 并行化网络搬运，但不拆散数据状态的单一所有权
+
+Valkey 的 IO worker 可以并行 accept、poll、socket read/write，命令解析后的核心数据修改仍回到主线程。这样把网络瓶颈从命令执行路径剥离，同时避免为 dict、quicklist 和 zset 引入跨线程锁协议。
+
+IO worker、BIO 与 fork child 是三种不同边界：前者协作推进客户端 IO，BIO 延后文件或释放任务，fork child 隔离持久化计算。CPU 重命令仍会阻塞主线程，worker 队列积压和 fork COW 则是另外两类故障，不能用“多线程”一词混在一起判断。
 
 ## 分层图
 

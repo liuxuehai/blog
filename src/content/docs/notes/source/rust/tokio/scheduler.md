@@ -4,10 +4,10 @@ description: Tokio current-thread 与 multi-thread 调度器的本地队列、�
 category: Backend
 tags: [Source Reading, Tokio, Rust, Scheduler]
 order: 40
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 40
@@ -16,6 +16,12 @@ sidebar:
 Tokio 调度的目标不是严格 FIFO，而是在低延迟、吞吐、公平性和跨线程协调成本之间取平衡。多线程调度器优先消费当前 worker 的热任务，必要时才访问全局队列或窃取其他 worker 的工作。
 
 <!-- more -->
+
+## 先给答案：Tokio 调度的目标不是严格 FIFO，而是在低延迟、吞吐、公平性和跨线程协调成本之间取平衡
+
+Tokio 调度的目标不是严格 FIFO，而是在低延迟、吞吐、公平性和跨线程协调成本之间取平衡。多线程调度器优先消费当前 worker 的热任务，必要时才访问全局队列或窃取其他 worker 的工作。 正文沿“两类调度器 -> 多线程取任务顺序 -> LIFO slot”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“单次 poll 做大量 CPU 计算、假设严格 FIFO、远程大量 spawn”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 两类调度器
 

@@ -4,15 +4,21 @@ description: Seata AT 模式的数据源代理、前后镜像、undo_log、全�
 category: Backend
 tags: [Source Reading, Seata, AT Mode, JDBC]
 order: 53
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 53 }
 ---
 
-AT 模式把业务 SQL 包在 JDBC 代理里：执行 DML 前读 before image，执行后读 after image，提交前写 undo log 并注册分支，二阶段提交主要释放锁，二阶段回滚则依据镜像生成反向 SQL。
+<!-- more -->
+
+## 先给答案：Seata AT 模式的数据源代理、前后镜像、undolog、全局锁与脏写检测
+
+Seata AT 模式的数据源代理、前后镜像、undolog、全局锁与脏写检测。 正文沿“一阶段与二阶段 -> 自动提交的特殊路径 -> 回滚验证”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“不是所有 SQL 都适合 AT；复杂存储过程、非标准数据库类型和无主键表会削弱镜像与逆向能力。、undo log 表必须和业务表位于同一资源事务边界，否则一阶段可能只提交一半。、dirty record 不是普通网络重试错误，盲目重试可能扩大数据损坏。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 一阶段与二阶段
 

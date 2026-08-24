@@ -4,10 +4,10 @@ description: grpc-go client/server unary/stream 拦截器的签名、组装顺�
 category: Backend
 tags: [Source Reading, gRPC, Go, Interceptor]
 order: 45
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 45
@@ -16,6 +16,12 @@ sidebar:
 grpc-go 提供 client/server 与 unary/stream 的四类拦截器。它们共享洋葱式组合思想，但观测边界不同：unary 包住一次请求响应，stream 拦截器默认只包住 stream 的创建和 handler，逐条消息需要包装 `ClientStream` 或 `ServerStream`。
 
 <!-- more -->
+
+## 先给答案：grpc-go 提供 client/server 与 unary/stream 的四类拦截器
+
+grpc-go 提供 client/server 与 unary/stream 的四类拦截器。它们共享洋葱式组合思想，但观测边界不同：unary 包住一次请求响应，stream 拦截器默认只包住 stream 的创建和 handler，逐条消息需要包装 ClientStream 或 ServerStream。 正文沿“四类签名 -> 组装与顺序 -> Stream 的特殊边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“stream interceptor 返回时，RPC 往往尚未结束”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 四类签名
 

@@ -4,10 +4,10 @@ description: Guava 集合、缓存、事件分派与限流组件的源码入口�
 category: Backend
 tags: [Source Reading, Guava, Architecture]
 order: 61
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 61
@@ -17,22 +17,11 @@ Guava 是一组围绕“约束状态、封装并发、隐藏样板代码”的�
 
 <!-- more -->
 
-```text
-                 Guava
-     +-------------+--------------+
-     |             |              |
- Collections     Cache        Concurrency
-     |             |              |
- immutable     LocalCache     EventBus / RateLimiter
- arrays+table   segments       dispatch / time state
-```
+## 先给答案：Guava 是一组围绕“约束状态、封装并发、隐藏样板代码”的基础设施，阅读时应按数据结构、状态协调和时间模…
 
-| 子系统 | 核心入口 | 内部状态 |
-| --- | --- | --- |
-| 集合 | `ImmutableList.copyOf`、`ImmutableMap.Builder` | 数组、开放寻址表、专用空对象 |
-| 缓存 | `CacheBuilder#build` | `LocalCache`、`Segment`、加载占位 |
-| 事件 | `EventBus#post` | `SubscriberRegistry`、`Dispatcher` |
-| 限流 | `RateLimiter#acquire` | `storedPermits`、`nextFreeTicketMicros` |
+Guava 是一组围绕“约束状态、封装并发、隐藏样板代码”的基础设施，阅读时应按数据结构、状态协调和时间模型三条线展开。 正文沿“主流程一：不可变集合 -> 主流程二：缓存加载 -> 主流程三：事件与限流”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“EventBus 订阅者抛异常、Cache 只配过期、RateLimiter 被当作并发隔离”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主流程一：不可变集合
 

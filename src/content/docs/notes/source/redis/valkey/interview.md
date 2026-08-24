@@ -7,10 +7,10 @@ tags:
   - Valkey
   - Interview
 order: 39
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 39
@@ -19,6 +19,12 @@ sidebar:
 Valkey 面试不要只回答“Redis 是单线程、Valkey 是多线程”。更准确的回答必须指出并行边界、队列拓扑、主线程数据所有权，以及 BIO 和 fork 的不同成本模型。
 
 <!-- more -->
+
+## 先给答案：Valkey 面试的主线是并行边界，而不是线程数量
+
+先说明主线程仍是数据状态 owner，再按生产者和消费者数量解释 SPSC、SPMC、MPSC 队列为何各有用途，最后区分 IO worker、BIO 和 fork child 的生命周期与成本。这样才能回答“哪些工作并行、结果如何回到主线程、失败时积压在哪里”。
+
+性能问题也要按边界定位：命令 CPU 高看主线程，响应不返回看 inbox/outbox 与 sleep hook，后台释放慢看 BIO，RSS 峰值看 fork COW。网络 IO 多线程并不承诺命令执行并行，也不消除单 owner 的延迟上限。
 
 ## 1. Valkey 的多线程做了什么
 

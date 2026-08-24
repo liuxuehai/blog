@@ -4,7 +4,8 @@ description: CommandArguments、CommandObject 和 Protocol 如何把 Java 调用
 category: Backend
 tags: [Source Reading, Jedis, Redis, Protocol]
 order: 52
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 52
 ---
@@ -12,6 +13,12 @@ sidebar:
 Jedis 把协议细节压到 `Protocol`，把业务参数放进 `CommandArguments`，再用 `Builder<T>` 把原始响应恢复为 API 类型。
 
 <!-- more -->
+
+## 先给答案：Jedis 把协议细节压到 Protocol，把业务参数放进 CommandArguments，再用 Bu…
+
+Jedis 把协议细节压到 Protocol，把业务参数放进 CommandArguments，再用 Builder<T 把原始响应恢复为 API 类型。 正文沿“设计概览 -> 实现拆解 -> 为什么用 Builder 而不是让 API 自己强转”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“bulk string 为 null、二进制 key 当文本处理、未标记 blocking”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 设计概览
 

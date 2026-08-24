@@ -4,10 +4,10 @@ description: MyBatis 配置、Mapper 绑定、SqlSession、Executor、StatementH
 category: Backend
 tags: [Source Reading, MyBatis, Architecture]
 order: 11
-updatedDate: 2026-08-15
+updatedDate: 2026-08-23
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-23
 draft: false
 sidebar:
   order: 11
@@ -16,6 +16,12 @@ sidebar:
 MyBatis 的架构可以压缩成一句话：启动期把 SQL 解析成元数据，运行期把接口调用翻译成 JDBC 操作，再把结果集按 `ResultMap` 组装回对象。
 
 <!-- more -->
+
+## 先给答案：MyBatis 做的是两次翻译，不是对象关系映射
+
+第一次翻译发生在启动期：XML 与注解被解析成 `Configuration` 中的 `MappedStatement`，SQL 文本、参数类型、结果映射规则此时就已经定型。第二次翻译发生在运行期：Mapper 接口的方法调用经动态代理找到对应的 `MappedStatement`，交给 `SqlSession` → `Executor` → `StatementHandler` 落到 JDBC，返回的结果集再由 `ResultSetHandler` 按 `ResultMap` 组装回对象。SQL 始终由使用者书写，MyBatis 接管的是它两端的样板代码。
+
+因此这条链的位置感决定了大多数问题的答案：缓存挂在 `Executor` 上，所以"二级缓存为什么没生效"要看会话是否提交、是否跨命名空间；插件拦截的是链上四个固定角色，所以"插件为什么没触发"要看目标方法是否落在这四个角色的签名里。理解架构，就是能把任意一个现象放回这条链的某一段。
 
 ## 分层
 

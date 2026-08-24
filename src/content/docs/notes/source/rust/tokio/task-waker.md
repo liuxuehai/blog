@@ -4,10 +4,10 @@ description: Tokio 如何把 Future 封装为 Task，通过状态机、虚表和
 category: Backend
 tags: [Source Reading, Tokio, Rust, Future, Waker]
 order: 30
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 30
@@ -16,6 +16,12 @@ sidebar:
 Future 只是一个可被 poll 的状态机。Tokio 必须额外保存任务状态、调度器引用、Join 结果和引用计数，并把类型擦除后的任务交给统一队列，这就是 `Task` / `RawTask` 层存在的原因。
 
 <!-- more -->
+
+## 先给答案：Waker 只是重新安排 poll 的通知，不是把 Future 直接执行完
+
+Future 在 poll 时如果暂时没有结果，会返回 Pending，并把自己的 Waker 注册到资源或队列中。IO driver、timer 或 channel 状态变化后调用 wake，executor 再把任务放回可运行队列，下一次 poll 才继续推进状态机。
+
+因此丢唤醒通常来自注册顺序、状态检查和并发修改没有形成正确协议；重复唤醒则通常是可接受的额外调度成本。理解 Waker 要同时看 Future 状态、资源状态和 executor 队列，不能把它当成普通回调。
 
 ## 对象关系
 

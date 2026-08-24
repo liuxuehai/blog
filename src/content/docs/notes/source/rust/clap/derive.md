@@ -4,10 +4,10 @@ description: Parser、Args、Subcommand 与 ValueEnum derive 如何生成 Comman
 category: Backend
 tags: [Source Reading, Clap, Rust, Proc Macro]
 order: 64
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 64
@@ -16,6 +16,12 @@ sidebar:
 `#[derive(Parser)]` 并未生成独立解析器。它生成两组胶水：一组把类型结构投影为 `Command` / `Arg`，另一组把运行时 `ArgMatches` 投影回用户类型。
 
 <!-- more -->
+
+## 先给答案：[derive(Parser)] 并未生成独立解析器
+
+[derive(Parser)] 并未生成独立解析器。它生成两组胶水：一组把类型结构投影为 Command / Arg，另一组把运行时 ArgMatches 投影回用户类型。 正文沿“宏入口与生成目标 -> 两个方向 -> 属性为何分 magic 与 raw”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“字段类型与显式 action 冲突、多处 subcommand、flatten Option<T 无 group”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 宏入口与生成目标
 

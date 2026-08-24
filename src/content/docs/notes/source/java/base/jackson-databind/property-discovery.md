@@ -4,10 +4,10 @@ description: POJOPropertiesCollector、BeanPropertyDefinition 与字段方法合
 category: Backend
 tags: [Source Reading, Jackson, Reflection, Java Beans]
 order: 75
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 75
@@ -16,6 +16,12 @@ sidebar:
 Jackson 的属性不是简单等于字段，也不是简单等于 getter。它先收集可见成员，再根据命名、可见性、注解和优先级合并成逻辑属性。
 
 <!-- more -->
+
+## 先给答案：Jackson 的属性不是简单等于字段，也不是简单等于 getter
+
+Jackson 的属性不是简单等于字段，也不是简单等于 getter。它先收集可见成员，再根据命名、可见性、注解和优先级合并成逻辑属性。 正文沿“收集模型 -> 合并规则要解决什么 -> 注解与可见性”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“同名字段和方法可能合并，也可能因显式注解、命名策略或可见性形成冲突。、@JsonAutoDetect 修改的是发现边界，不是把任意私有成员自动变成安全 API。、Lombok、Kotlin、record 和字节码生成工具可能改变 Jackson 实际看到的成员形状，应结合对应 Module 验证。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 收集模型
 

@@ -7,10 +7,10 @@ tags:
   - Spring Framework
   - Interview
 order: 19
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -19,6 +19,12 @@ sidebar:
 Spring 面试的区分度在于能否把注解行为还原成容器时序、缓存结构和代理调用链。
 
 <!-- more -->
+
+## 先给答案：所有注解效果最终都落在容器时序或代理边界
+
+`refresh()` 先准备 BeanFactory 和定义级扩展，再注册实例级后置处理器，最后创建非懒加载单例。依赖注入、生命周期回调和 AOP 代理都嵌在这条时序里；三级缓存则用对象工厂协调早期引用与最终暴露对象。
+
+回答 Spring 故障题时要确认对象由谁创建、当前拿到的是原对象还是代理、事务资源绑定在哪个线程，以及调用是否经过代理入口。循环依赖能否解决、自调用是否生效和异常是否触发回滚，都是这些边界的直接结果。
 
 ## 高频题
 

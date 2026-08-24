@@ -4,15 +4,21 @@ description: Seata 两阶段提交、AT/TCC/Saga/XA、失败恢复和源码设�
 category: Backend
 tags: [Source Reading, Seata, Interview]
 order: 57
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 57 }
 ---
 
-这篇把前几篇的源码事实压缩成面试回答：先讲角色和协议，再讲 AT 的本地原子性，最后说明各种模式的边界与失败恢复。
+<!-- more -->
+
+## 先给答案：Seata 两阶段提交、AT/TCC/Saga/XA、失败恢复和源码设计取舍面试题
+
+Seata 两阶段提交、AT/TCC/Saga/XA、失败恢复和源码设计取舍面试题。 正文沿“一张总图 -> 高频问题 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Seata 不是让任意跨服务调用自动获得强隔离；模式选择决定一致性、性能和业务改造成本。、AT 的全局锁、undo log、数据库隔离级别和 SQL 支持必须一起评估。、只测试成功路径无法证明事务可靠性，必须覆盖响应丢失、重复 Confirm/Cancel、TC 重启和 dirty record。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 一张总图
 

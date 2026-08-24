@@ -4,10 +4,10 @@ description: future 去重、refreshAfterWrite、异常传播与线程池边界�
 category: Backend
 tags: [Source Reading, Caffeine, Async, LoadingCache]
 order: 56
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 56
@@ -17,18 +17,11 @@ sidebar:
 
 <!-- more -->
 
-```text
-get -> future exists? -> yes: same future
-                     -> no: asyncLoad -> put in-flight -> publish/fail
-```
+## 先给答案：异步缓存把正在加载的 CompletableFuture 也建模成缓存值，相同 key 的请求复用一个 f…
 
-`Caffeine#buildAsync` 在 `Caffeine.java:1160`、`1193`；`LocalAsyncLoadingCache#get` 在 `LocalAsyncLoadingCache.java:113`。
+异步缓存把正在加载的 CompletableFuture 也建模成缓存值，相同 key 的请求复用一个 future。 正文沿“refreshAfterWrite -> 线程池边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
 
-### 为什么不先查再加载再 put
-
-**替代方案**：miss 后直接 loader，完成再写回。
-**为什么不行**：并发线程会同时 miss，重复请求后端。
-**证据**：future 作为节点值，通过原子竞争选择唯一创建者。
+主要失效边界集中在“异步 API 只负责 future 编排，不保证 loader 非阻塞”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## refreshAfterWrite
 

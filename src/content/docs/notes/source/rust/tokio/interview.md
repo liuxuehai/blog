@@ -4,10 +4,10 @@ description: Tokio Future/Waker、调度器、IO readiness、时间轮、同步�
 category: Backend
 tags: [Source Reading, Tokio, Rust, Interview]
 order: 90
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 90
@@ -16,6 +16,12 @@ sidebar:
 Tokio 面试题常从“async 怎么用”迅速深入到 poll/wake 竞态、调度公平性、readiness 消费和关闭边界。回答时要把语言协议、运行时实现和业务约束分开。
 
 <!-- more -->
+
+## 先给答案：Tokio 面试题常从“async 怎么用”迅速深入到 poll/wake 竞态、调度公平性、readin…
+
+Tokio 面试题常从“async 怎么用”迅速深入到 poll/wake 竞态、调度公平性、readiness 消费和关闭边界。回答时要把语言协议、运行时实现和业务约束分开。 正文沿“1. Future 为什么是惰性的 -> 2. Pending 前为什么必须保存 Waker -> 3. wake 是否等于任务立即执行”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界是检查状态与注册 Waker 的顺序错误造成丢失唤醒、同步阻塞或无协作让出长期占用 worker，以及 abort 只在下一次 poll 边界执行取消清理。排查时应把任务状态、资源 readiness、运行队列和 cooperative budget 放在同一条时间线上，而不是把 wake 当成立即执行。
 
 ## 1. Future 为什么是惰性的
 
@@ -109,4 +115,3 @@ Tokio 用类型擦除 Task 承载 Future，用原子状态机协调 poll 与 wak
 - [Tokio 整体架构](/notes/source/rust/tokio/architecture/)
 - [调度器与工作窃取](/notes/source/rust/tokio/scheduler/)
 - [阻塞、取消与关闭](/notes/source/rust/tokio/blocking-cancellation/)
-

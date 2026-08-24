@@ -4,10 +4,10 @@ description: Dubbo SPI、Invoker、服务导出引用、集群容错和协议栈
 category: Backend
 tags: [Source Reading, Dubbo, Interview]
 order: 29
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 29 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 29 }
 Dubbo 面试的分水岭是能否把配置、Invoker、Cluster、Protocol 和 Remoting 串成一条证据链。
 
 <!-- more -->
+
+## 先给答案：Dubbo 面试的分水岭是能否把配置、Invoker、Cluster、Protocol 和 Remotin…
+
+Dubbo 面试的分水岭是能否把配置、Invoker、Cluster、Protocol 和 Remoting 串成一条证据链。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“线上延迟突然升高，如何定位、线上出现重复扣款，先查哪里”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

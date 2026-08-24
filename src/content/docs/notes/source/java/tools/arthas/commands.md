@@ -4,13 +4,23 @@ description: Arthas 观测命令从参数解析到 AdviceListener 的源码链�
 category: Backend
 tags: [Source Reading, Arthas, Diagnostics]
 order: 14
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 14 }
 ---
+
+<!-- more -->
+
+## 先给答案：主要失效边界集中在“高频方法 watch、OGNL 复杂表达式、异常路径”这些场景
+
+主要失效边界集中在“高频方法 watch、OGNL 复杂表达式、异常路径”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。 理解watch 与 trace 命令时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“高频方法 watch、OGNL 复杂表达式、异常路径”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“高频方法 watch、OGNL 复杂表达式、异常路径”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 `watch` 关注方法入参、返回值和异常，`trace` 关注调用树和耗时；两者共享增强入口，差异主要在 AdviceListener 和结果模型。
 

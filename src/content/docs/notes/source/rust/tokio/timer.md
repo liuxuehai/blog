@@ -4,10 +4,10 @@ description: Tokio Sleep、TimerEntry、分层时间轮、到期处理与 driver
 category: Backend
 tags: [Source Reading, Tokio, Rust, Timer]
 order: 60
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 60
@@ -16,6 +16,12 @@ sidebar:
 定时器的难点不只是“到时间 wake”，而是大量 deadline 的插入、重置、取消，以及如何让 runtime 既不忙轮询，也不会睡过最近到期时间。Tokio 用分层时间轮管理条目，并让 time driver 包裹底层 park。
 
 <!-- more -->
+
+## 先给答案：定时器的难点不只是“到时间 wake”，而是大量 deadline 的插入、重置、取消，以及如何让 run…
+
+定时器的难点不只是“到时间 wake”，而是大量 deadline 的插入、重置、取消，以及如何让 runtime 既不忙轮询，也不会睡过最近到期时间。Tokio 用分层时间轮管理条目，并让 time driver 包裹底层 park。 正文沿“Sleep 调用链 -> 分层时间轮 -> time driver 如何控制 park”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“未启用 time driver 就创建 Sleep、把 sleep 当精确定时、interval 任务处理过慢”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Sleep 调用链
 

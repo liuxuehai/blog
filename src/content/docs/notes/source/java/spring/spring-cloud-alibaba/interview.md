@@ -4,10 +4,10 @@ description: Spring Cloud Alibaba 源码级面试题：自动装配、Nacos、Se
 category: Backend
 tags: [Source Reading, Spring Cloud Alibaba, Interview]
 order: 89
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 89
@@ -16,6 +16,12 @@ sidebar:
 回答这套源码时，先说清 Spring 负责生命周期和平台契约，第三方客户端负责协议与核心算法。
 
 <!-- more -->
+
+## 先给答案：先说适配链，再说底层一致性
+
+这套组件的共同结构是“自动配置发现客户端 -> 属性和条件决定实例 -> 适配为 Spring 标准接口 -> 生命周期回调驱动运行”。Nacos、Sentinel 和 RocketMQ 的差异不在装配外壳，而在配置、发现、保护和消息各自的协议状态机。
+
+高难追问通常落在语义边界：bootstrap 配置与运行期刷新是否一致，服务发现失败时缓存是否可接受，Sentinel 规则何时生效，消息发送成功与业务完成是否等价。Spring 负责接线，不会自动消除陈旧数据、重试和幂等问题。
 
 ## 高频题
 

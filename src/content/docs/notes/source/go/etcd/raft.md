@@ -4,10 +4,10 @@ description: etcd Proposal、Ready、消息传输、提交 index 与状态机应
 category: Backend
 tags: [Source Reading, etcd, Go, Raft]
 order: 32
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 32
@@ -16,6 +16,12 @@ sidebar:
 etcd 把 Raft 当作排序和复制层，把 KV 语义放在 apply 层。`raftNode` 的主循环负责把 Raft 的 `Ready` 拆成网络消息、磁盘写入和已提交 entry 三条路径。
 
 <!-- more -->
+
+## 先给答案：etcd 的 Raft 把“顺序、持久化、应用”拆成三个必须对齐的边界
+
+Leader 为请求分配日志位置并复制给多数节点；多数派确认后推进 commit index，状态机再按顺序 apply。WAL 负责在节点崩溃后恢复任期、投票和日志，snapshot 则压缩已经应用的历史。任何一层落后，都会出现“日志有了但读不到”或“节点看似在线但无法投票”的现象。
+
+Raft 保证的是一致顺序，不自动保证业务操作幂等。客户端在响应丢失后重试，可能让同一写请求提交两次，因此 etcd 的 revision、事务条件和调用方 request id 仍然重要。
 
 ## Ready 处理链
 

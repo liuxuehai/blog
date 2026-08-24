@@ -4,30 +4,21 @@ description: SkyWalking Agent、协议、OAP 接收与分析存储的源码地�
 category: Backend
 tags: [Source Reading, SkyWalking, Architecture]
 order: 21
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 21 }
 ---
 
-SkyWalking 把观测逻辑放在 Agent，把聚合和查询放在 OAP；两者通过稳定的数据协议连接，插件和存储实现都可以替换。
+<!-- more -->
 
-```text
-业务调用 -> Agent plugin -> ContextManager -> TraceSegment
-                                      -> gRPC/HTTP report
-                                      -> OAP receiver
-                                      -> dispatcher/analyzer -> storage
-```
+## 先给答案：SkyWalking Agent、协议、OAP 接收与分析存储的源码地图
 
-```text
-ModuleManager
-  -> receiver modules -> SourceReceiver
-  -> analyzer modules -> DispatcherManager / TraceAnalyzer
-  -> storage module -> DAO implementations
-  -> query/export/alarm modules
-```
+SkyWalking Agent、协议、OAP 接收与分析存储的源码地图。 正文沿“主流程 -> 核心坐标 -> 为什么 Agent 和 OAP 分离”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Agent 与 OAP 版本不兼容、OAP 节点不均衡、分析器阻塞”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 主流程
 

@@ -4,16 +4,22 @@ description: Tomcat 生命周期、NIO、请求路由、Valve、类加载与性�
 category: Backend
 tags: [Source Reading, Tomcat, Interview]
 order: 39
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 sidebar: { order: 39 }
 ---
 
 Tomcat 面试要能说明连接器、协议层、容器树和应用类加载器之间的边界。
 
 <!-- more -->
+
+## 先给答案：先区分连接器、容器与应用生命周期
+
+Tomcat 用 Connector/Coyote 接收并解析网络请求，用 Mapper 和容器 Pipeline 把请求送到目标 Servlet；组件启动则由统一 Lifecycle 沿 Server、Service、Engine 等层级传播。一次请求慢，要先判断耗时发生在接入、协议、Valve 还是应用代码。
+
+类加载和关闭问题属于另一条所有权链：每个 Web 应用需要依赖隔离，停止时还必须清理应用创建的线程、ThreadLocal、JDBC 驱动等引用。连接数、工作线程数和应用并发不是同一个概念，调参前必须确认真正饱和的层。
 
 ## 高频题
 

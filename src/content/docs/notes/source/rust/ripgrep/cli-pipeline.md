@@ -4,10 +4,10 @@ description: rg 参数、搜索模式、串行/并行分支和核心组件组装
 category: Backend
 tags: [Source Reading, ripgrep, Rust, CLI]
 order: 81
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 81
@@ -16,6 +16,12 @@ sidebar:
 `rg` 的主函数不直接“搜索一个文件”，而是先把 flag 组合压缩成 `HiArgs` 和 `SearchMode`，再构造 matcher、searcher、printer、walker，最后选择串行或并行执行。
 
 <!-- more -->
+
+## 先给答案：rg 的主函数不直接“搜索一个文件”，而是先把 flag 组合压缩成 HiArgs 和 SearchMod…
+
+rg 的主函数不直接“搜索一个文件”，而是先把 flag 组合压缩成 HiArgs 和 SearchMode，再构造 matcher、searcher、printer、walker，最后选择串行或并行执行。 正文沿“流水线 -> SearchMode 的价值 -> 串行与并行”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“stdin 与 path 参数混用、开启 PCRE2 后结果差异、并行输出顺序变化”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 流水线
 

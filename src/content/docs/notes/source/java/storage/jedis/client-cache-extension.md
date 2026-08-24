@@ -4,7 +4,8 @@ description: CacheConnection、Push consumer、Builder 和 Connection.Builder �
 category: Backend
 tags: [Source Reading, Jedis, Client Cache]
 order: 57
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 57
 ---
@@ -12,6 +13,14 @@ sidebar:
 Jedis 的扩展点集中在连接创建、命令前 hook、响应 builder 和 push 消息处理，因此客户端缓存可以复用普通命令执行管线。
 
 <!-- more -->
+
+## 先给答案：Jedis 的扩展点集中在连接创建、命令前 hook、响应 builder 和 push 消息处理，因此客…
+
+Jedis 的扩展点集中在连接创建、命令前 hook、响应 builder 和 push 消息处理，因此客户端缓存可以复用普通命令执行管线。 理解客户端缓存与扩展时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“自定义 eviction 非线程安全、RESP2 使用 push 特性、缓存 key 未含参数”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“自定义 eviction 非线程安全、RESP2 使用 push 特性、缓存 key 未含参数”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 command

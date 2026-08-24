@@ -4,10 +4,10 @@ description: Netty 4.2 高频面试题、高难追问、场景排查与源码级
 category: Backend
 tags: [Source Reading, Netty, Interview]
 order: 29
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 29
@@ -16,6 +16,12 @@ sidebar:
 Netty 面试的区分度不在于背出“主从 Reactor”，而在于能解释线程归属、引用计数、Pipeline 方向和失败路径。
 
 <!-- more -->
+
+## 先给答案：先判断线程归属，再判断事件方向
+
+Netty 问题可以先沿两条线定位：Channel 的 I/O 和任务是否仍在绑定的 EventLoop 上有序执行，事件是否按 Pipeline 的入站或出站方向经过了预期 Handler。线程归属保证局部串行，链表方向决定编解码、业务处理和写回顺序。
+
+线上高频故障集中在三个边界：业务阻塞 EventLoop、ByteBuf 引用计数失配、Handler 顺序或传播调用错误。排查时只看“Reactor 模型”不够，还要核对任务队列、`fire*`/`write*` 起点和数据最终由谁释放。
 
 ## 高频题
 

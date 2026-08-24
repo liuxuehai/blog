@@ -4,10 +4,10 @@ description: grpc-go 从生成代码到 ClientConn、transport、Server 和业�
 category: Backend
 tags: [Source Reading, gRPC, Go, Architecture]
 order: 40
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 40
@@ -16,6 +16,12 @@ sidebar:
 grpc-go 的核心不是“远程函数调用”这一层语法糖，而是把服务描述、连接治理和 HTTP/2 流状态机分开。生成代码只负责类型安全入口，运行时负责把一次调用送到可用连接并维护跨进程语义。
 
 <!-- more -->
+
+## 先给答案：grpc-go 的核心不是“远程函数调用”这一层语法糖，而是把服务描述、连接治理和 HTTP/2 流状态机…
+
+grpc-go 的核心不是“远程函数调用”这一层语法糖，而是把服务描述、连接治理和 HTTP/2 流状态机分开。生成代码只负责类型安全入口，运行时负责把一次调用送到可用连接并维护跨进程语义。 正文沿“模块地图 -> 分层边界 -> 关键取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“生成代码、ClientConn、balancer”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模块地图
 

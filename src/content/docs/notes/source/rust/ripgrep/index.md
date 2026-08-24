@@ -4,10 +4,10 @@ description: ripgrep 源码解析总览：crate 分层、ignore 遍历、正则�
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Search]
 order: 8
-updatedDate: 2026-08-18
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 8
@@ -16,6 +16,16 @@ sidebar:
 ripgrep 的性能不是单一正则优化的结果，而是 CLI、ignore-aware 遍历、预过滤、正则 matcher、字节搜索器、并行 worker 与 printer 的协同：尽可能少读文件、少做 UTF-8 转换、少在线程间传递大对象。
 
 <!-- more -->
+
+## 本册问题地图
+
+ripgrep 要沿着“发现文件 → 过滤路径 → 选择 matcher → 扫描文本 → 输出结果”来读：
+
+1. **ignore-aware 遍历为何重要？** 搜索速度和结果正确性都取决于是否跳过 `.gitignore`、隐藏文件和二进制文件，遍历不是简单递归目录。
+2. **literal prefilter 解决什么？** 正则匹配前先找固定字面量，能快速排除大量不可能命中的行；没有字面量时才退回更通用 matcher。
+3. **Searcher 与 Sink 如何解耦？** Searcher 负责扫描和匹配，Sink 负责行号、颜色、上下文和写出格式，同一搜索结果可服务不同输出模式。
+4. **并行为什么不能只开更多线程？** 文件粒度并行需要协调输出顺序、错误传播和共享终端，过度并行还会被磁盘和 stdout 反压。
+5. **结果为空如何排查？** 先确认遍历过滤，再确认编码/二进制判断，最后看 matcher 选型和输出过滤，避免把“没搜到”误判成正则错误。
 
 ## 版本快照
 

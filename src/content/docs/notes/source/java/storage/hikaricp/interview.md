@@ -4,10 +4,10 @@ description: HikariCP 配置、ConcurrentBag、连接代理、状态重置、驱
 category: Backend
 tags: [Source Reading, HikariCP, Interview]
 order: 48
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 48
@@ -17,13 +17,11 @@ HikariCP 面试题的主线是性能与正确性如何同时成立：借还要�
 
 <!-- more -->
 
-```text
-config -> validate/seal -> borrow -> proxy -> close/reset -> requite
-                         |
-                 timeout / metrics / leak
-                         |
-             housekeeping / lifetime / keepalive
-```
+## 先给答案：HikariCP 面试题的主线是性能与正确性如何同时成立：借还要快，连接状态不能泄漏，故障检测不能阻塞业务…
+
+HikariCP 面试题的主线是性能与正确性如何同时成立：借还要快，连接状态不能泄漏，故障检测不能阻塞业务，指标还要可解释。 正文沿“高频问题 -> 故障分析题 -> 设计题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“获取连接超时、连接状态串线、数据库连接周期性尖峰”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频问题
 

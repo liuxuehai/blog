@@ -4,10 +4,10 @@ description: Fastjson2 JSONReader 的输入介质、文本与 JSONB 分派和特
 category: Backend
 tags: [Source Reading, Fastjson2, JSONReader, Parsing]
 order: 82
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 82
@@ -16,6 +16,12 @@ sidebar:
 `JSONReader` 把“从哪里读”和“读出什么类型”分开：reader 负责 token、编码和基础值，`ObjectReader` 负责目标 Java 类型。
 
 <!-- more -->
+
+## 先给答案：JSONReader 把“从哪里读”和“读出什么类型”分开：reader 负责 token、编码和基础值，…
+
+JSONReader 把“从哪里读”和“读出什么类型”分开：reader 负责 token、编码和基础值，ObjectReader 负责目标 Java 类型。 正文沿“创建与分派 -> 特性位 -> 对象读取边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Bean 读取通常先确认 object/array 起始 token，再由 ObjectReader 按字段名定位 FieldReader”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 创建与分派
 

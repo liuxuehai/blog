@@ -4,10 +4,10 @@ description: grpc-go Server 的服务注册、Accept 循环、HTTP/2 握手、RP
 category: Backend
 tags: [Source Reading, gRPC, Go, Server]
 order: 41
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 41
@@ -16,6 +16,12 @@ sidebar:
 `grpc.Server` 负责把静态服务描述和动态网络连接接起来。它先注册 `ServiceDesc`，再在 `Serve` 中接收连接、完成 HTTP/2 transport 初始化，最后按 method 路由到生成代码提供的 handler。
 
 <!-- more -->
+
+## 先给答案：grpc.Server 负责把静态服务描述和动态网络连接接起来
+
+grpc.Server 负责把静态服务描述和动态网络连接接起来。它先注册 ServiceDesc，再在 Serve 中接收连接、完成 HTTP/2 transport 初始化，最后按 method 路由到生成代码提供的 handler。 正文沿“启动链路 -> 从连接到 RPC -> 优雅停止”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Serve 后注册服务、只调用 GracefulStop、Accept 临时错误”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 启动链路
 

@@ -4,10 +4,10 @@ description: Redis 源码级高频题、高难追问和故障排查话术。
 category: Database
 tags: [Source Reading, Redis, Interview]
 order: 19
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -16,6 +16,12 @@ sidebar:
 本篇把 Redis 这册的源码证据压缩成面试回答路径：先讲机制，再讲取舍，最后落到当前 8.10 快照的实现坐标。
 
 <!-- more -->
+
+## 先给答案：回答 Redis 问题要同时交代所有权、预算和持久化边界
+
+源码级回答不能停在“单线程所以快”。完整结论应是：主线程顺序拥有核心状态，事件循环把 IO 与维护任务按预算推进，对象编码和批处理减少内存与系统调用，RDB、AOF 和复制则分别定义不同的恢复与副本承诺。
+
+排障时也沿同一条链拆分：先确认主线程是否被命令或维护任务占满，再区分 fork/COW、输出缓冲和持久化压力，最后检查复制 backlog 与副本 offset。任何性能优势都有边界，不能把平均吞吐当作尾延迟保证。
 
 ## 高频题
 

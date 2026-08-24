@@ -4,10 +4,10 @@ description: 本地缓存、Redis cacheNode、SingleFlight、空值占位和灾�
 category: Backend
 tags: [Source Reading, go-zero, Go, Cache]
 order: 25
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 25
@@ -16,6 +16,12 @@ sidebar:
 go-zero 的缓存实现把几个常见问题放在同一条路径上处理：过期、容量、并发回源、缓存空值、缓存损坏和数据库故障隔离。
 
 <!-- more -->
+
+## 先给答案：go-zero 的缓存实现把几个常见问题放在同一条路径上处理：过期、容量、并发回源、缓存空值、缓存损坏和数…
+
+go-zero 的缓存实现把几个常见问题放在同一条路径上处理：过期、容量、并发回源、缓存空值、缓存损坏和数据库故障隔离。 正文沿“回源流程 -> 本地缓存 -> Redis cacheNode”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“不缓存 not-found、缓存坏值、DB 已故障仍回源”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 回源流程
 

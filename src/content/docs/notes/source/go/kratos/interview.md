@@ -4,14 +4,22 @@ description: Kratos 源码级面试题、设计取舍和常见排障场景。
 category: Backend
 tags: [Source Reading, Kratos, Go, Interview]
 order: 38
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 38
 ---
+
+<!-- more -->
+
+## 先给答案：Kratos 源码级面试题、设计取舍和常见排障场景
+
+Kratos 源码级面试题、设计取舍和常见排障场景。 正文沿“核心问题 -> 排障清单 -> 设计评价”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“注册中心没有实例、HTTP client 无节点、gRPC 请求不带 metadata”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 核心问题
 

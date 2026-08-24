@@ -4,10 +4,10 @@ description: Tokio 从 Future 到 Runtime、Task、Scheduler、IO/Time driver �
 category: Backend
 tags: [Source Reading, Tokio, Rust, Architecture]
 order: 10
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 10
@@ -16,6 +16,12 @@ sidebar:
 Rust 标准库定义了 `Future`、`Poll`、`Context` 和 `Waker`，却不提供执行器、事件驱动和异步 IO。Tokio 的核心价值是把这些协议组合成生产级运行时，而不是重新定义 async 语法。
 
 <!-- more -->
+
+## 先给答案：Rust 标准库定义了 Future、Poll、Context 和 Waker，却不提供执行器、事件驱动和…
+
+Rust 标准库定义了 Future、Poll、Context 和 Waker，却不提供执行器、事件驱动和异步 IO。Tokio 的核心价值是把这些协议组合成生产级运行时，而不是重新定义 async 语法。 正文沿“模块地图 -> 核心边界 -> 一次异步等待”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“runtime、task、scheduler”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 模块地图
 

@@ -4,10 +4,10 @@ description: ProxyConnection 如何拦截关闭、回滚、状态变更和连接
 category: Backend
 tags: [Source Reading, HikariCP, JDBC]
 order: 45
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 45
@@ -17,16 +17,11 @@ sidebar:
 
 <!-- more -->
 
-```text
-application changes state
-  -> ProxyConnection dirtyBits
-  -> close()
-       -> close open statements
-       -> rollback if needed
-       -> resetConnectionState
-       -> cancel leak task
-       -> pool.recycle
-```
+## 先给答案：代理连接把 JDBC 的隐式状态变化显式化：记录 dirty bits，关闭时回滚未提交事务、关闭打开的 …
+
+代理连接把 JDBC 的隐式状态变化显式化：记录 dirty bits，关闭时回滚未提交事务、关闭打开的 Statement、重置连接状态，并取消泄漏任务。 正文沿“代理层 -> 状态重置 -> 泄漏检测”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“忘记关闭 Statement、事务未提交、泄漏误报”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 代理层
 

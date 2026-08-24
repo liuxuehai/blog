@@ -4,10 +4,10 @@ description: ImmutableList、ImmutableSet、ImmutableMap 的构造路径、紧�
 category: Backend
 tags: [Source Reading, Guava, Collections, Immutability]
 order: 62
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 62
@@ -17,10 +17,11 @@ Guava 的不可变集合不是“加了 final 的 JDK 集合”，而是从构�
 
 <!-- more -->
 
-```text
-输入 Iterable / Map -> copyOf / Builder -> null 检查 + 扩容
-                    -> 去重 / 建表 / 碰撞检测 -> 不可变数组与只读视图
-```
+## 先给答案：Guava 的不可变集合不是“加了 final 的 JDK 集合”，而是从构造阶段就切断外部修改，并根据集…
+
+Guava 的不可变集合不是“加了 final 的 JDK 集合”，而是从构造阶段就切断外部修改，并根据集合类型选择数组、开放寻址表和专用空对象。 正文沿“实现拆解 -> 关键取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“元素自身可变、ImmutableSet 重复元素、大集合误用 of”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 实现拆解
 

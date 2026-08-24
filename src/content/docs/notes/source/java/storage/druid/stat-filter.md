@@ -4,10 +4,10 @@ description: StatFilter 如何记录 SQL 参数、耗时、慢查询、错误和
 category: Backend
 tags: [Source Reading, Druid, Observability]
 order: 37
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 37
@@ -17,14 +17,11 @@ StatFilter 把 JDBC 生命周期转换成可聚合的指标：连接建立、SQL
 
 <!-- more -->
 
-```text
-before execute
-  -> startNano + normalized SQL
-  -> raw JDBC execution
-  -> elapsed + error classification
-  -> SQLStat aggregate
-  -> ResultSet rows / close
-```
+## 先给答案：StatFilter 把 JDBC 生命周期转换成可聚合的指标：连接建立、SQL 执行、错误、慢查询、结果…
+
+StatFilter 把 JDBC 生命周期转换成可聚合的指标：连接建立、SQL 执行、错误、慢查询、结果集遍历和资源关闭都在过滤器事件中完成。 正文沿“关键坐标 -> 统计对象 -> 为什么先 merge SQL 再聚合”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“SQL 爆炸、慢 SQL 误判、异常漏计”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 关键坐标
 

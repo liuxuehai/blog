@@ -4,15 +4,21 @@ description: Seata Netty 请求响应、Future、处理器分发与 GlobalSessio
 category: Backend
 tags: [Source Reading, Seata, Netty, Session]
 order: 55
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 55 }
 ---
 
-Seata 的 RPC 层把同步事务请求转换成带 message id 的 Netty 消息，客户端用 `futures` 等待响应，服务端按 request code 找处理器。会话层则把全局事务和分支事务编码成可存储对象，支持数据库、文件、Redis 或 Raft 等 store。
+<!-- more -->
+
+## 先给答案：Seata Netty 请求响应、Future、处理器分发与 GlobalSession/BranchSe…
+
+Seata Netty 请求响应、Future、处理器分发与 GlobalSession/BranchSession 编码。 正文沿“请求响应图 -> 会话模型 -> 为什么这么设计”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“RPC timeout 只说明当前调用没有收到响应，不代表 TC 没有执行请求；事务接口必须允许后续 status/report 查询。、批量发送会增加调度复杂度，message id 与子消息映射不能丢。、session size 限制会把超大的 applicationData/lockKey 变成事务错误，应用侧不应把大对象塞进元数据。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 请求响应图
 

@@ -4,14 +4,22 @@ description: 围绕 ripgrep crate 分层、ignore 遍历、预过滤、并行搜
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Interview]
 order: 86
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 86
 ---
+
+<!-- more -->
+
+## 先给答案：围绕 ripgrep crate 分层、ignore 遍历、预过滤、并行搜索和流式输出的源码级问答
+
+围绕 ripgrep crate 分层、ignore 遍历、预过滤、并行搜索和流式输出的源码级问答。 正文沿“1. ripgrep 为什么快 -> 2. 为什么需要多个 crate -> 3. ignore 规则为什么必须在遍历阶段处理”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“ripgrep 只是 regex CLI、多线程越多越快、ignore 只是隐藏 .git”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. ripgrep 为什么快
 

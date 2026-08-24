@@ -4,10 +4,10 @@ description: RawArgs、Parser、ParseState 与 pending argument 如何解析长�
 category: Backend
 tags: [Source Reading, Clap, Rust, Parser]
 order: 62
-updatedDate: 2026-08-18
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 62
@@ -16,6 +16,12 @@ sidebar:
 Clap 的 parser 不是先把命令行强制转成 UTF-8 token，再跑传统语法分析；它在 `OsStr` 上建立游标视图，逐项区分长选项、短选项簇、位置值、`--`、子命令与待消费值。
 
 <!-- more -->
+
+## 先给答案：Clap 解析器根据上下文决定 token 的语义
+
+解析器维护当前 command、是否期待 value、是否允许 positional、是否遇到 `--` 等状态。一个以短横线开头的 token 可能是 flag、option、负数值或未知参数，只有结合当前 `Arg` 配置才能做出决定。
+
+解析错误不是简单的字符串校验失败，而是状态机没有找到合法转移。帮助信息和错误建议也应复用同一模型，否则解析能接受的命令与文档展示的命令会漂移。
 
 ## 词法层：只切分，不解释业务
 

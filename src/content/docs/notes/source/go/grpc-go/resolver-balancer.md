@@ -4,10 +4,10 @@ description: grpc-go 名字解析、service config、SubConn、连接状态聚�
 category: Backend
 tags: [Source Reading, gRPC, Go, Load Balancing]
 order: 46
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 46
@@ -16,6 +16,12 @@ sidebar:
 resolver 把 target 变成地址、endpoint 和 service config；balancer 把这些控制面信息变成 SubConn 和 Picker；每次 RPC 只通过 Picker 选择可用 transport。三者分开后，地址来源和负载算法可以独立替换。
 
 <!-- more -->
+
+## 先给答案：resolver 把 target 变成地址、endpoint 和 service config；bala…
+
+resolver 把 target 变成地址、endpoint 和 service config；balancer 把这些控制面信息变成 SubConn 和 Picker；每次 RPC 只通过 Picker 选择可用 transport。三者分开后，地址来源和负载算法可以独立替换。 正文沿“控制面到数据面 -> Balancer 与 Picker -> pickfirst 与 roundrobin”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“resolver 发布空列表、Picker 内做网络调用、忽略 Done 回调”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 控制面到数据面
 

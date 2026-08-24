@@ -4,10 +4,10 @@ description: Tokio spawn_blocking 线程池、异步任务 abort、JoinSet 结�
 category: Backend
 tags: [Source Reading, Tokio, Rust, Blocking, Cancellation]
 order: 80
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 80
@@ -16,6 +16,12 @@ sidebar:
 Tokio 必须隔离两类完全不同的工作：能频繁返回 Pending 的 async task，以及会长时间占住线程的 blocking closure。取消语义也因此分裂：Future 可以在 poll 边界被 drop，已经开始执行的普通闭包却无法被运行时安全抢停。
 
 <!-- more -->
+
+## 先给答案：Tokio 必须隔离两类完全不同的工作：能频繁返回 Pending 的 async task，以及会长时间…
+
+Tokio 必须隔离两类完全不同的工作：能频繁返回 Pending 的 async task，以及会长时间占住线程的 blocking closure。取消语义也因此分裂：Future 可以在 poll 边界被 drop，已经开始执行的普通闭包却无法被运行时安全抢停。 正文沿“spawnblocking 路径 -> async abort 是协作式清理 -> blocking task 为什么通常不能 abort”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“用 spawnblocking 跑无限循环、abort 后立即假设资源已释放、大量 CPU 任务直接 spawnblocking”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## spawn_blocking 路径
 

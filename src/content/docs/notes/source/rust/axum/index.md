@@ -4,10 +4,10 @@ description: Axum 源码解析总览：Tower Service、Handler、Extractor、路
 category: Backend
 tags: [Source Reading, Axum, Rust, Tower]
 order: 2
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 2
@@ -16,6 +16,16 @@ sidebar:
 Axum 不另造一套网络运行时和中间件协议，而是把 Tokio、Hyper 与 Tower 组合为类型驱动的 Web 框架：`Router` 是 `Service`，异步函数经 `Handler` 适配为 `Service`，参数经 `FromRequestParts` / `FromRequest` 提取，返回值经 `IntoResponse` 收敛为 HTTP 响应。
 
 <!-- more -->
+
+## 本册问题地图
+
+Axum 的主线是把类型安全的 Handler 适配成 Tower Service：
+
+1. **Extractor 为什么按顺序消费请求？** 路由参数、状态、headers 和 body 都从请求中提取，body 通常只能被消费一次，因此 extractor 顺序会影响后续 handler 能否继续读取。
+2. **Handler 如何变成 Service？** Axum 用 trait 和泛型把参数元组、返回值和错误转换成统一响应，运行时仍由 Tower 负责 poll 和 middleware 调用。
+3. **状态共享放在哪里？** Router 的 state 被克隆或引用到请求服务中，状态类型必须满足并发边界；把非线程安全对象直接塞进共享状态会在编译期暴露问题。
+4. **中间件的错误边界是什么？** 中间件可以在进入前拒绝、在退出后改写响应，但错误类型和响应转换必须统一，否则链条无法组合。
+5. **类型安全的代价是什么？** 编译期约束减少运行时分支，却会让泛型错误复杂；读源码要把 trait 适配层和实际请求时序分开。
 
 ## 版本快照
 

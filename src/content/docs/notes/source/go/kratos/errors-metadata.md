@@ -4,10 +4,10 @@ description: Kratos Error 状态模型、HTTP/gRPC 映射、Metadata 传播和�
 category: Backend
 tags: [Source Reading, Kratos, Go, Errors, Metadata]
 order: 37
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 37
@@ -16,6 +16,12 @@ sidebar:
 跨协议调用最容易失去语义的是错误和 metadata。Kratos 用带 code/reason/message/metadata 的 Error 作为稳定模型，再把它映射到 HTTP status 或 gRPC status details。
 
 <!-- more -->
+
+## 先给答案：跨协议调用最容易失去语义的是错误和 metadata
+
+跨协议调用最容易失去语义的是错误和 metadata。Kratos 用带 code/reason/message/metadata 的 Error 作为稳定模型，再把它映射到 HTTP status 或 gRPC status details。 正文沿“错误路径 -> Metadata -> 为什么需要独立模型”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“原地修改 metadata、普通 error、gRPC details 缺失”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 错误路径
 

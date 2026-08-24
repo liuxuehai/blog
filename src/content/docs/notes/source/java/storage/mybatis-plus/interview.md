@@ -4,7 +4,8 @@ description: MyBatis-Plus 高频面试题、高难追问与源码级回答。
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Interview]
 order: 69
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 69
 ---
@@ -13,13 +14,11 @@ MyBatis-Plus 面试要回答清楚：哪些工作在启动期完成，哪些工�
 
 <!-- more -->
 
-```text
-Mapper call
-  └─► TableInfo + injected MappedStatement
-       └─► MyBatis Executor
-            └─► MybatisPlusInterceptor
-                 └─► InnerInterceptor chain
-```
+## 先给答案：MyBatis-Plus 面试要回答清楚：哪些工作在启动期完成，哪些工作在 SQL 执行前完成，以及它如何…
+
+MyBatis-Plus 面试要回答清楚：哪些工作在启动期完成，哪些工作在 SQL 执行前完成，以及它如何保持与 MyBatis 的兼容。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“线上出现全表更新怎么排查、升级 MyBatis 后插件异常怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

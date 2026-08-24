@@ -4,10 +4,10 @@ description: Serialize 主动遍历、Serializer 关联类型、复合容器状�
 category: Backend
 tags: [Source Reading, Serde, Serializer, Traits]
 order: 52
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 52
@@ -16,6 +16,12 @@ sidebar:
 序列化时 Rust 值已经存在，因此控制权在 `Serialize` 实现：它按自己的语义结构调用格式提供的 Serializer 方法。
 
 <!-- more -->
+
+## 先给答案：序列化时 Rust 值已经存在，因此控制权在 Serialize 实现：它按自己的语义结构调用格式提供的 …
+
+序列化时 Rust 值已经存在，因此控制权在 Serialize 实现：它按自己的语义结构调用格式提供的 Serializer 方法。 正文沿“调用方向 -> 为什么复合类型返回状态对象 -> 关联类型而非 dyn SerializeSeq”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“错报 seq 长度、collectstr 滥用、human-readable 分支变化 schema”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用方向
 

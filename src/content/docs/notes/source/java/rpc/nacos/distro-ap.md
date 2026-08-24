@@ -4,10 +4,10 @@ description: Nacos 临时实例如何通过分片、延迟任务、同步、校�
 category: Backend
 tags: [Source Reading, Nacos, Distro, AP]
 order: 32
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 32 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 32 }
 Distro 是 Nacos 为临时实例设计的 AP 同步协议。它不复制所有数据到所有节点，而是按责任节点分片，再通过延迟同步和周期校验修复丢失或过期数据。
 
 <!-- more -->
+
+## 先给答案：Distro 是 Nacos 为临时实例设计的 AP 同步协议
+
+Distro 是 Nacos 为临时实例设计的 AP 同步协议。它不复制所有数据到所有节点，而是按责任节点分片，再通过延迟同步和周期校验修复丢失或过期数据。 正文沿“数据流 -> 实现拆解 -> 为什么使用责任分片而不是全量广播”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“节点重启、同一资源连续更新、成员变化”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据流
 

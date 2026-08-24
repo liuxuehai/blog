@@ -4,10 +4,10 @@ description: Spring Security 过滤器链、认证、授权和 SecurityContext �
 category: Backend
 tags: [Source Reading, Spring Security, Interview]
 order: 49
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 49
@@ -16,6 +16,12 @@ sidebar:
 面试重点是说明一次请求如何选链、如何认证、如何授权，以及身份何时清理。
 
 <!-- more -->
+
+## 先给答案：先选链，再认证、授权，最后清理身份
+
+`FilterChainProxy` 对请求选择第一条匹配的 SecurityFilterChain，安全过滤器从持久化介质恢复或建立 SecurityContext，认证过滤器把凭证交给 AuthenticationManager，授权过滤器再基于最终 Authentication 决定是否放行。
+
+高风险边界是链顺序、异常转换和上下文生命周期：更宽泛 matcher 放在前面会遮蔽后续规则，认证成功不代表拥有目标权限，异步线程也不会天然继承身份；无论成功失败，请求结束都必须避免身份泄漏到下一次执行。
 
 ## 高频题
 

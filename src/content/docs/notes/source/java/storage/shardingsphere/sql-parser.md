@@ -4,10 +4,10 @@ description: ANTLR 词法与语法、解析树缓存、SQLStatementContext 以�
 category: Backend
 tags: [Source Reading, ShardingSphere, ANTLR, SQL]
 order: 22
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 22
@@ -16,6 +16,12 @@ sidebar:
 解析阶段把数据库方言 SQL 转成统一的 `SQLStatement` 和上下文。ShardingSphere 还把 DistSQL 纳入同一入口：普通 SQL 解析失败后，再尝试治理语句解析，而不是把两套调用协议暴露给 JDBC 层。
 
 <!-- more -->
+
+## 先给答案：解析阶段把数据库方言 SQL 转成统一的 SQLStatement 和上下文
+
+解析阶段把数据库方言 SQL 转成统一的 SQLStatement 和上下文。ShardingSphere 还把 DistSQL 纳入同一入口：普通 SQL 解析失败后，再尝试治理语句解析，而不是把两套调用协议暴露给 JDBC 层。 正文沿“设计概览 -> 实现拆解 -> 为什么要做解析树缓存”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“SQL 动态文本很多、方言不支持、DistSQL 与普通 SQL 混淆”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 设计概览
 

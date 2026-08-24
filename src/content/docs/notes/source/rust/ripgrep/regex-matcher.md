@@ -4,10 +4,10 @@ description: Matcher trait、literal prefilter、Rust regex 与可选 PCRE2 back
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Regex]
 order: 83
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 83
@@ -16,6 +16,12 @@ sidebar:
 ripgrep 不把每一行都直接交给完整正则引擎。它先尝试从模式中提取 literal 或低成本特征，只有候选数据通过预过滤后才进入 matcher，从而把昂贵的 regex 工作压缩到必要范围。
 
 <!-- more -->
+
+## 先给答案：ripgrep 不把每一行都直接交给完整正则引擎
+
+ripgrep 不把每一行都直接交给完整正则引擎。它先尝试从模式中提取 literal 或低成本特征，只有候选数据通过预过滤后才进入 matcher，从而把昂贵的 regex 工作压缩到必要范围。 正文沿“Matcher 抽象 -> 两级匹配 -> backend 选择”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“prefilter 误当完整 regex、PCRE2 与 regex 结果不同、Unicode 模式变慢”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Matcher 抽象
 

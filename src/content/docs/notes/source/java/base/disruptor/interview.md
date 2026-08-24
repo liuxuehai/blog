@@ -8,10 +8,10 @@ tags:
   - Interview
   - Concurrency
 order: 19
-updatedDate: 2026-08-14
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-14
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -20,6 +20,12 @@ sidebar:
 Disruptor 是并发面试里性价比最高的项目：代码量小到可以真读完，考点密度却极高——缓存行、内存屏障、CAS 与 FAA、无锁数据结构、批量摊薄，一个项目全覆盖。面试官问它，本质是在验证「你是否真的进去读过」。
 
 <!-- more -->
+
+## 先给答案：关键不是无锁，而是减少协调
+
+Disruptor 用单调 Sequence 划分生产者、消费者各自拥有的进度，再以 RingBuffer 复用存储；缓存消费者序号、批量推进游标和批量提交消费进度，把原本每条消息一次的跨线程协调摊薄到一批一次。
+
+性能成立依赖明确边界：序号字段要避免伪共享，生产者不能越过最慢消费者，消费者必须选择与延迟和 CPU 预算匹配的 WaitStrategy。CAS 只是抢占序号的手段，容量、依赖图或等待策略选错时，无锁同样会产生空转和背压。
 
 ## 高频题
 

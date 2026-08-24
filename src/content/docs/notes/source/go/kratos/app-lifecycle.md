@@ -4,10 +4,10 @@ description: Kratos App 的启动、服务器并发、注册发现、信号处�
 category: Backend
 tags: [Source Reading, Kratos, Go, Lifecycle]
 order: 31
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 31
@@ -16,6 +16,12 @@ sidebar:
 `App` 是 Kratos 的生命周期编排器。它不创建具体服务器，而是把 hooks、server、registrar 和 OS signal 排成可观察的启动与退出顺序。
 
 <!-- more -->
+
+## 先给答案：Kratos 用统一生命周期把“启动顺序”和“退出顺序”显式化
+
+应用启动时依次准备依赖组件，再启动 HTTP/gRPC server；收到退出信号后先停止接收新请求，再等待在途请求、关闭连接、停止后台任务并注销注册信息。生命周期接口的价值是把这些动作从 main 函数里的手工顺序变成可组合流程。
+
+如果启动顺序错误，server 可能先接收请求但配置或注册中心尚未就绪；如果退出顺序错误，实例会先从进程消失再从注册中心删除，调用方会得到一段时间的连接失败。优雅退出的本质是控制状态转换，而不是简单延迟几秒。
 
 ## Run 顺序
 

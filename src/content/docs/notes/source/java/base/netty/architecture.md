@@ -4,10 +4,10 @@ description: Netty 4.2 的 Channel、EventLoop、Pipeline 和 ByteBuf 分层，�
 category: Backend
 tags: [Source Reading, Netty, Architecture]
 order: 21
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 21
@@ -16,6 +16,12 @@ sidebar:
 Netty 的核心不是“把 Selector 包了一层”，而是把线程归属、事件传播、内存所有权和异步结果统一到 Channel 这条对象链上。
 
 <!-- more -->
+
+## 先给答案：Channel 串起线程、事件与内存所有权
+
+Netty 把一个 Channel 固定到一个 EventLoop，让 I/O 事件和普通任务在同一线程有序推进；Pipeline 再按入站向后、出站向前传播事件，`Unsafe` 把统一操作落到具体传输实现，ByteBuf 则显式表达数据生命周期。
+
+这套架构的免锁优势来自线程归属，而不是任意并行。阻塞 EventLoop 会拖住同组连接，Handler 顺序会改变协议语义，引用计数释放过早或遗漏都会破坏 ByteBuf 所有权；跨线程操作必须回到对应 EventLoop 排队。
 
 ## 分层
 

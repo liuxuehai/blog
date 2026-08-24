@@ -4,10 +4,10 @@ description: Hyper HTTP/1/2 状态机、Body 背压、单连接 API 与运行时
 category: Backend
 tags: [Source Reading, Hyper, Rust, Interview]
 order: 39
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 39
@@ -16,6 +16,12 @@ sidebar:
 Hyper 面试应把协议、连接、Body 和运行时分开回答。把 Hyper 说成“Rust Web 框架”通常意味着没有读到它的边界。
 
 <!-- more -->
+
+## 先给答案：Hyper 面试应把协议、连接、Body 和运行时分开回答
+
+Hyper 面试应把协议、连接、Body 和运行时分开回答。把 Hyper 说成“Rust Web 框架”通常意味着没有读到它的边界。 正文沿“1. Hyper 的定位是什么 -> 2. HTTP/1 状态机由谁推进 -> 3. 为什么不能一次 read 就当成一个请求”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“HTTP/1 CPU 空转怎么排查”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. Hyper 的定位是什么
 

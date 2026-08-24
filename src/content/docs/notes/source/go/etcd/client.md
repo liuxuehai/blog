@@ -4,10 +4,10 @@ description: etcd clientv3 的 KV、Watch、Lease、endpoint 管理和 ReadIndex
 category: Backend
 tags: [Source Reading, etcd, Go, Client]
 order: 37
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 37
@@ -16,6 +16,12 @@ sidebar:
 `client/v3` 把 KV、Watch、Lease、Cluster 和 Maintenance 组合成一个 gRPC 客户端，并通过 endpoint 管理、resolver 和重试处理成员切换。它提供的是访问一致性存储的客户端语义，不只是连接池。
 
 <!-- more -->
+
+## 先给答案：client/v3 把 KV、Watch、Lease、Cluster 和 Maintenance 组合成一…
+
+client/v3 把 KV、Watch、Lease、Cluster 和 Maintenance 组合成一个 gRPC 客户端，并通过 endpoint 管理、resolver 和重试处理成员切换。它提供的是访问一致性存储的客户端语义，不只是连接池。 正文沿“客户端组成 -> 一致性读取 -> endpoint 与长连接”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“serializable 读当强一致、Watch 断线只重连、固定连接一个 endpoint”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 客户端组成
 

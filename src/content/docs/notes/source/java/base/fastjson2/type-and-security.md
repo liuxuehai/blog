@@ -4,10 +4,10 @@ description: Fastjson2 Type、泛型、AutoType 与输入信任边界的源码�
 category: Backend
 tags: [Source Reading, Fastjson2, Type System, Security]
 order: 86
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 86
@@ -16,6 +16,12 @@ sidebar:
 Fastjson2 的类型处理同时面对 Java 泛型擦除、JSONB 类型信息和多态对象创建。类型元数据越强，反序列化越灵活；输入边界也因此越需要显式收紧。
 
 <!-- more -->
+
+## 先给答案：Fastjson2 的类型处理同时面对 Java 泛型擦除、JSONB 类型信息和多态对象创建
+
+Fastjson2 的类型处理同时面对 Java 泛型擦除、JSONB 类型信息和多态对象创建。类型元数据越强，反序列化越灵活；输入边界也因此越需要显式收紧。 正文沿“类型信息链 -> 多态与 AutoType -> 类型元数据与性能”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“反序列化目标类型和 payload 类型信息可能冲突，必须定义优先级和拒绝策略。、仅关闭某一个 AutoType 开关不等于完成安全审计，还要检查自定义 reader、Module 和类型过滤器。、JSONB 适合受控系统内部协议，不应因性能而忽略版本演进和供应链边界。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 类型信息链
 

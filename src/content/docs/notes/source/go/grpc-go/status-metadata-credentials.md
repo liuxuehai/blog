@@ -4,10 +4,10 @@ description: grpc-go 状态码、metadata 上下文传播、TLS transport creden
 category: Backend
 tags: [Source Reading, gRPC, Go, Security]
 order: 47
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 47
@@ -16,6 +16,12 @@ sidebar:
 RPC 的跨进程语义不只包含 protobuf 消息。grpc-go 还需要稳定传递结构化状态、请求头/响应头/trailer、deadline、peer 身份和认证材料，并把这些信息映射到 HTTP/2 headers 与 trailers。
 
 <!-- more -->
+
+## 先给答案：RPC 的跨进程语义不只包含 protobuf 消息
+
+RPC 的跨进程语义不只包含 protobuf 消息。grpc-go 还需要稳定传递结构化状态、请求头/响应头/trailer、deadline、peer 身份和认证材料，并把这些信息映射到 HTTP/2 headers 与 trailers。 正文沿“Status -> Metadata -> Credentials”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“用 Unknown 表示所有错误、metadata 放大对象、token 走明文连接”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Status
 

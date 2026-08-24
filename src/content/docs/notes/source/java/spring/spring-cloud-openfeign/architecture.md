@@ -4,10 +4,10 @@ description: OpenFeign 从自动配置、接口注册到代理调用的分层与
 category: Backend
 tags: [Source Reading, Spring Cloud OpenFeign, Architecture]
 order: 61
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 61
@@ -16,6 +16,12 @@ sidebar:
 OpenFeign 的核心不是“生成一个代理”这么简单，而是把客户端配置、接口契约和运行时请求拆到可替换的 Spring 扩展点中。
 
 <!-- more -->
+
+## 先给答案：注册阶段组装配置，调用阶段执行契约
+
+OpenFeign 由 Registrar 把接口注册为 FactoryBean，FactoryBean 再从以 `contextId` 隔离的子上下文取得 Contract、Encoder、Decoder、Client 等组件，最后由 Targeter 创建代理。调用时，Contract 产出的元数据被填入请求模板，再交给直连或负载均衡 Client。
+
+这些扩展点也划定故障边界：固定 URL 与服务名走不同目标解析，子上下文配置可能覆盖全局默认值，重试会放大非幂等调用，fallback 只能收敛异常而不能证明远端未执行。代理生成只是入口，不代表调用语义透明。
 
 ## 分层
 

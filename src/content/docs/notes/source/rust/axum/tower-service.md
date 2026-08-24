@@ -4,10 +4,10 @@ description: Router、MethodRouter、Route 与 HandlerService 如何收敛为 To
 category: Backend
 tags: [Source Reading, Axum, Tower, Service]
 order: 21
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 21
@@ -16,6 +16,12 @@ sidebar:
 Tower `Service` 是 Axum 的通用接缝。路由器、单条路由、异步处理函数和中间件最终都要表现成“接收 Request、返回 Future”的对象。
 
 <!-- more -->
+
+## 先给答案：Tower Service 是 Axum 的通用接缝
+
+Tower Service 是 Axum 的通用接缝。路由器、单条路由、异步处理函数和中间件最终都要表现成“接收 Request、返回 Future”的对象。 正文沿“适配链 -> 四层对象 -> pollready 为什么看起来总是 Ready”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“在注册路由前调用 layer、内层 Service 返回任意错误、自定义 Service 不可 Clone”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 适配链
 

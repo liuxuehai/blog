@@ -4,13 +4,23 @@ description: Arthas premain、agentmain、Attach 和类加载器隔离。
 category: Backend
 tags: [Source Reading, Arthas, Instrumentation]
 order: 12
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 12 }
 ---
+
+<!-- more -->
+
+## 先给答案：主要失效边界集中在“权限不足、多次启动、JDK 模块限制”这些场景
+
+主要失效边界集中在“权限不足、多次启动、JDK 模块限制”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。 理解Instrumentation 与 Agent 挂载时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“权限不足、多次启动、JDK 模块限制”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“权限不足、多次启动、JDK 模块限制”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 Arthas 同时支持启动期 `premain` 和运行期 `agentmain`；运行期诊断依赖 Attach API 将 agent 注入目标 JVM，再由 `Instrumentation` 改写已加载类。
 

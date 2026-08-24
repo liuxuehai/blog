@@ -4,10 +4,10 @@ description: query! 如何读取 SQL、describe 数据库并生成参数检查�
 category: Backend
 tags: [Source Reading, SQLx, Rust, Proc Macro]
 order: 71
-updatedDate: 2026-08-18
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 71
@@ -16,6 +16,12 @@ sidebar:
 SQLx 宏的关键不是解析 SQL 后自己实现一个数据库类型系统，而是把 SQL 交给对应 driver 的 describe 能力，再把返回的 `Describe<DB>` 转成 Rust 类型约束和 row 解码代码。
 
 <!-- more -->
+
+## 先给答案：query 宏把数据库 schema 检查前移到编译期，但依赖可复现元数据
+
+宏解析 SQL 后向数据库查询列和参数信息，生成带具体类型的 Rust 代码；离线模式则从缓存文件读取同样的元数据。编译期校验能提前发现列名和类型错误，但 schema 变化、数据库版本差异或过期缓存会让“编译通过”失去代表性。
+
+因此 CI 需要固定数据库版本或可靠的离线数据，并把迁移顺序纳入构建流程。运行时仍可能出现权限、锁等待、网络和业务数据错误，编译期检查不是执行成功保证。
 
 ## 宏流水线
 

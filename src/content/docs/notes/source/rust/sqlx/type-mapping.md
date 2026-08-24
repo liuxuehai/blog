@@ -4,10 +4,10 @@ description: SQLx 如何通过 Type、Encode、Decode 和 FromRow 连接数据�
 category: Backend
 tags: [Source Reading, SQLx, Rust, Type System]
 order: 74
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 74
@@ -16,6 +16,12 @@ sidebar:
 SQLx 的类型系统分为“数据库类型信息”和“Rust 值如何编码/解码”两层：`Type<DB>` 说明兼容关系，`Encode` 写入参数，`Decode` 从 row 读取，最终由 `FromRow` 组装业务结构体。
 
 <!-- more -->
+
+## 先给答案：SQLx 的类型系统分为“数据库类型信息”和“Rust 值如何编码/解码”两层：Type<DB 说明兼容关…
+
+SQLx 的类型系统分为“数据库类型信息”和“Rust 值如何编码/解码”两层：Type<DB 说明兼容关系，Encode 写入参数，Decode 从 row 读取，最终由 FromRow 组装业务结构体。 正文沿“类型链 -> 参数与结果是两条方向 -> 借用与生命周期”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“String 接 nullable 列、借用 row 数据到异步任务外、自定义 type 只实现 Encode”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 类型链
 

@@ -52,8 +52,7 @@ Nacos 要分成“配置中心”和“服务发现”两条状态机来读，�
 | `api` / `client` | SDK、配置缓存、Naming 订阅 | `NacosConfigService`、`NacosNamingService` |
 | `core` | 集群成员、RPC、AP/CP 基础设施 | `ServerMemberManager`、`DistroProtocol` |
 | `consistency` | 一致性协议契约 | `ConsistencyProtocol`、`CPProtocol` |
-| 
-aming` | 实例、服务、心跳、健康检查 | `ServiceManager`、`HealthCheckReactor` |
+| `naming` | 实例、服务、心跳、健康检查 | `ServiceManager`、`HealthCheckReactor` |
 | `config` | 配置存储、监听与长轮询 | `LongPollingService` |
 | `bootstrap` / `server` | 应用聚合和启动 | Spring Boot 启动入口 |
 

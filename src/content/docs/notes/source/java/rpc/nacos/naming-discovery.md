@@ -4,10 +4,10 @@ description: Nacos Naming 从客户端注册、服务端实例操作、订阅请
 category: Backend
 tags: [Source Reading, Nacos, Naming, Discovery]
 order: 35
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 35 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 35 }
 Naming 的核心状态是服务下的实例集合。客户端 API 负责把实例和订阅意图送入远程代理，服务端负责写入服务模型、同步临时状态，并把变更推回订阅者。
 
 <!-- more -->
+
+## 先给答案：Naming 的核心状态是服务下的实例集合
+
+Naming 的核心状态是服务下的实例集合。客户端 API 负责把实例和订阅意图送入远程代理，服务端负责写入服务模型、同步临时状态，并把变更推回订阅者。 正文沿“注册与订阅 -> 实现拆解 -> 为什么注册和订阅要分成两个状态机”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“客户端重启、订阅回调慢、HTTP/gRPC 能力差异”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 注册与订阅
 

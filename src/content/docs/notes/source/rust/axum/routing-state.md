@@ -4,10 +4,10 @@ description: Router 的路径匹配、MethodRouter 分派、nest/merge、fallbac
 category: Backend
 tags: [Source Reading, Axum, Routing, State]
 order: 24
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 24
@@ -16,6 +16,12 @@ sidebar:
 Axum 路由由两级分派组成：先用 `matchit` 匹配路径，再由 `MethodRouter` 匹配 HTTP method。`Router<S>` 的 `S` 表示“仍缺少、需要在运行前提供的状态”。
 
 <!-- more -->
+
+## 先给答案：Axum 路由由两级分派组成：先用 matchit 匹配路径，再由 MethodRouter 匹配 HTT…
+
+Axum 路由由两级分派组成：先用 matchit 匹配路径，再由 MethodRouter 匹配 HTTP method。Router<S 的 S 表示“仍缺少、需要在运行前提供的状态”。 正文沿“两级路由 -> route、nest、merge -> “缺失状态”模型”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“重复注册同 path+method、nest 后 URI 认知错误、状态被多层 Arc<Mutex< 包裹”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 两级路由
 

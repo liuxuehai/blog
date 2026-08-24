@@ -4,7 +4,8 @@ description: TableInfoHelper 如何解析 TableName、TableId、TableField、逻
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Metadata]
 order: 62
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 62
 ---
@@ -13,14 +14,11 @@ MyBatis-Plus 将实体注解提前编译成 `TableInfo`，后续 SQL 注入和 W
 
 <!-- more -->
 
-```text
-Entity class
-  ├─ @TableName ─► table name / schema / autoResultMap
-  ├─ @TableId   ─► key column / key generator
-  └─ @TableField ─► column / fill / select / strategy
-                         ▼
-                     TableInfo
-```
+## 先给答案：MyBatis-Plus 将实体注解提前编译成 TableInfo，后续 SQL 注入和 Wrapper …
+
+MyBatis-Plus 将实体注解提前编译成 TableInfo，后续 SQL 注入和 Wrapper 都从这份元数据读取表名、列名、主键和策略。 正文沿“初始化流程 -> Lambda 列名 -> 为什么要缓存 TableInfo”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“字段名与列名不一致、没有主键、继承实体”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 初始化流程
 

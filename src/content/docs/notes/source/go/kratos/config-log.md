@@ -4,10 +4,10 @@ description: Kratos 配置加载合并、动态 watch、slog handler 和上下�
 category: Backend
 tags: [Source Reading, Kratos, Go, Config, Logging]
 order: 36
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 36
@@ -16,6 +16,12 @@ sidebar:
 Kratos 的 config 和 log 都采用“核心接口 + 可替换适配器”的方式。配置把 source、reader、value 和 observer 分开；日志基于标准库 slog，通过 decorator 注入 context 属性和过滤器。
 
 <!-- more -->
+
+## 先给答案：Kratos 的 config 和 log 都采用“核心接口 + 可替换适配器”的方式
+
+Kratos 的 config 和 log 都采用“核心接口 + 可替换适配器”的方式。配置把 source、reader、value 和 observer 分开；日志基于标准库 slog，通过 decorator 注入 context 属性和过滤器。 正文沿“Config 数据流 -> Log 组装 -> 设计取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“watcher 短暂失败、配置类型变化、文件 rename”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## Config 数据流
 

@@ -4,10 +4,10 @@ description: RocketMQ 的传统 HA 复制、DLedger 日志追加与角色切换�
 category: Backend
 tags: [Source Reading, RocketMQ, Replication, DLedger]
 order: 16
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 16
@@ -16,6 +16,12 @@ sidebar:
 RocketMQ 同时保留传统主从复制和 DLedger 路径：前者以主节点推进物理 offset、从节点追赶为核心，后者把写入放入带角色和提交语义的复制日志。
 
 <!-- more -->
+
+## 先给答案：复制必须区分本地追加、副本追赶和对外提交
+
+传统 HA 以 Master 的物理 offset 为源，让 Slave 持续拉取并追加；同步复制会把生产结果绑定到副本追赶条件。DLedger 则把 append 放进带 term、角色和 quorum 提交语义的复制日志，并把选主结果反馈给 Broker 生命周期。
+
+无论哪条路径，本地写成功都不自动等于集群提交，更不等于客户端已经收到成功。网络分区和角色切换时必须拒绝身份不确定的写入、隔离旧主并校正落后日志；客户端重试仍要求业务键幂等。
 
 ## 两条复制路径
 

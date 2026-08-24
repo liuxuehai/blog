@@ -4,10 +4,10 @@ description: Dubbo 从配置、注册发现到 Cluster、Protocol、Remoting 的
 category: Backend
 tags: [Source Reading, Dubbo, Architecture]
 order: 21
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 21 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 21 }
 Dubbo 的核心不是单一协议，而是一条以 `Invoker` 为中心的调用抽象。服务提供者和消费者最终都被转换为 Invoker，再由 Cluster、Filter、Protocol 和 Remoting 组合出不同运行模式。
 
 <!-- more -->
+
+## 先给答案：Dubbo 的核心不是单一协议，而是一条以 Invoker 为中心的调用抽象
+
+Dubbo 的核心不是单一协议，而是一条以 Invoker 为中心的调用抽象。服务提供者和消费者最终都被转换为 Invoker，再由 Cluster、Filter、Protocol 和 Remoting 组合出不同运行模式。 正文沿“分层 -> 核心抽象 -> 主流程一：服务启动”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“注册中心暂时无地址、重试非幂等操作、协议与序列化不兼容”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

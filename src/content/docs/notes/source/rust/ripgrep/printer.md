@@ -4,10 +4,10 @@ description: ripgrep 如何把搜索事件渲染为文本、JSON、统计和带�
 category: Backend
 tags: [Source Reading, ripgrep, Rust, Printer, CLI]
 order: 85
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 85
@@ -16,6 +16,12 @@ sidebar:
 ripgrep 的 printer 是协议适配层：Searcher 只报告匹配事实，printer 再根据 stdout/stderr、颜色、路径显示、行号、context、JSON 或统计模式决定字节布局。
 
 <!-- more -->
+
+## 先给答案：ripgrep 的 printer 是协议适配层：Searcher 只报告匹配事实，printer 再根据…
+
+ripgrep 的 printer 是协议适配层：Searcher 只报告匹配事实，printer 再根据 stdout/stderr、颜色、路径显示、行号、context、JSON 或统计模式决定字节布局。 正文沿“输出链 -> 三种输出责任 -> 并行输出”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“stdout 被 pipe、JSON 中原始 bytes、多线程输出交错”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 输出链
 

@@ -4,10 +4,10 @@ description: Caffeine 的配置建造、缓存实现、事件缓冲和维护流�
 category: Backend
 tags: [Source Reading, Caffeine, Architecture]
 order: 51
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 51
@@ -17,22 +17,11 @@ Caffeine 把访问、记录、维护和加载拆开：主读路径快速返回�
 
 <!-- more -->
 
-```text
-Caffeine builder -> Cache / LoadingCache / AsyncCache
-                         |
-                  BoundedLocalCache
-          +------+--------+--------+
-          |      |        |        |
-       CHM<Node> buffer  Sketch  TimerWheel
-```
+## 先给答案：Caffeine 把访问、记录、维护和加载拆开：主读路径快速返回，后续再批量整理队列、过期和驱逐状态
 
-| 层 | 坐标 |
-| --- | --- |
-| 配置 | `Caffeine.java:141`、`1102-1217` |
-| 存储 | `BoundedLocalCache.java:113` |
-| 维护 | `BoundedLocalCache.java:1588`、`1767`、`1829`、`1903` |
-| 策略 | `FrequencySketch.java:30` |
-| 过期 | `TimerWheel.java:40` |
+Caffeine 把访问、记录、维护和加载拆开：主读路径快速返回，后续再批量整理队列、过期和驱逐状态。 正文沿“启动流程 -> 请求流程 -> 关键取舍”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“只配 TTL、loader 阻塞、listener 阻塞”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 启动流程
 

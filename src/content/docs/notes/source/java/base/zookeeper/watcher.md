@@ -4,15 +4,21 @@ description: WatchManager、DataTree 触发路径和客户端事件线程。
 category: Backend
 tags: [Source Reading, ZooKeeper, Watcher]
 order: 44
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 44 }
 ---
 
-Watcher 是一次性边沿通知，不是服务端持续推送的订阅流。客户端收到事件后重新注册，才能继续观察变化。
+<!-- more -->
+
+## 先给答案：WatchManager、DataTree 触发路径和客户端事件线程
+
+WatchManager、DataTree 触发路径和客户端事件线程。 正文沿“调用链 -> 为什么不是持续订阅”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“先读后注册、回调阻塞、事件合并”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用链
 

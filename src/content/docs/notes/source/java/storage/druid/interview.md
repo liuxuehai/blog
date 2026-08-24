@@ -4,10 +4,10 @@ description: Druid 连接池、过滤器链、SQL AST、Wall 防火墙和统计�
 category: Backend
 tags: [Source Reading, Druid, Interview]
 order: 39
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 39
@@ -17,11 +17,11 @@ sidebar:
 
 <!-- more -->
 
-```text
-borrow -> proxy -> filter chain -> raw JDBC -> result set
-   |          |          |              |
- pool     lifecycle   Wall/Stat       database
-```
+## 先给答案：这篇把 Druid 的源码阅读压缩成可复述的问题：先说状态和调用链，再说为什么这样设计，最后补边界
+
+这篇把 Druid 的源码阅读压缩成可复述的问题：先说状态和调用链，再说为什么这样设计，最后补边界。 正文沿“连接池 -> 代理与链 -> Parser 与安全”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“1. 为什么不用正则解析 SQL”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 连接池
 

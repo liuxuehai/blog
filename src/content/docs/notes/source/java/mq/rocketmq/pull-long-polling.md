@@ -4,10 +4,10 @@ description: Broker 如何挂起无消息请求，并在消息到达时重新检
 category: Backend
 tags: [Source Reading, RocketMQ, Pull, Long Polling]
 order: 14
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 14
@@ -16,6 +16,12 @@ sidebar:
 RocketMQ 在无消息时暂存 Pull 请求，等消息到达或请求超时后再响应，降低空轮询开销。
 
 <!-- more -->
+
+## 先给答案：长轮询保存等待关系，通知到达后仍必须重新验证条件
+
+Broker 查询不到消息时不会立即返回空结果，而是按 Topic/Queue 暂存 Pull 请求；新消息通知或超时触发后，请求重新进入查询路径，再检查 offset、过滤条件和消息可见性。通知只表示相关状态可能变化，不是消息已经满足消费条件。
+
+这降低了固定短轮询的空请求和延迟抖动，但把连接生命周期、等待桶清理和索引推进纳入正确性边界。CommitLog 已写而 ConsumeQueue 尚未追平时可能发生假唤醒，客户端消费变慢时还需要 `ProcessQueue` 背压，不能靠无限挂起请求解决。
 
 ## 时序
 

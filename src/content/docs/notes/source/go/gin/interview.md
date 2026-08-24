@@ -7,10 +7,10 @@ tags:
   - Gin
   - Interview
 order: 19
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 19
@@ -19,6 +19,12 @@ sidebar:
 Gin 面试的重点不是背“轻量、高性能”，而是能从请求入口讲到路由匹配、Context 生命周期和错误控制。
 
 <!-- more -->
+
+## 先给答案：性能来自清晰的请求所有权
+
+Gin 把一次请求收束为“方法树匹配 -> Context 上的 handler 链推进 -> 响应写回”：Radix tree 降低路由查找成本，池化 Context 承载本次请求的参数和状态，中间件则共享同一个 index 形成前后置调用。
+
+它的边界也由这条所有权链决定：Context 归当前请求，异步使用必须复制；`Abort` 只阻止后续 handler，不会自动回滚已写响应；中间件顺序、重复写头和跨请求持有 Context 都会把控制流问题变成线上故障。
 
 ## 高频题
 

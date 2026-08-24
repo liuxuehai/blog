@@ -4,10 +4,10 @@ description: goctl 从 Proto 解析到工程上下文、分阶段生成和可扩
 category: Backend
 tags: [Source Reading, go-zero, Go, Code Generation]
 order: 27
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 27
@@ -16,6 +16,12 @@ sidebar:
 `goctl` 的生成过程不是模板字符串拼接，而是输入契约解析、项目上下文准备、目录规划和多个生成阶段组成的流水线。
 
 <!-- more -->
+
+## 先给答案：goctl 的生成过程不是模板字符串拼接，而是输入契约解析、项目上下文准备、目录规划和多个生成阶段组成的流…
+
+goctl 的生成过程不是模板字符串拼接，而是输入契约解析、项目上下文准备、目录规划和多个生成阶段组成的流水线。 正文沿“生成流水线 -> 实现拆解 -> 为什么先建立 ProjectContext”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“import path 不完整、输出目录相对路径、生成阶段失败后重跑”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 生成流水线
 

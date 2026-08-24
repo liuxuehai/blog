@@ -4,10 +4,10 @@ description: Spring Cloud Gateway 的路由、响应式过滤器链、代理、�
 category: Backend
 tags: [Source Reading, Spring Cloud Gateway, Interview]
 order: 59
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 59
@@ -16,6 +16,12 @@ sidebar:
 Gateway 面试的重点是能沿着 exchange 属性和 filter order 讲清一次请求，而不是只背“路由、断言、过滤器”三个名词。
 
 <!-- more -->
+
+## 先给答案：用 exchange 属性和 filter order 还原请求
+
+一次 Gateway 请求先匹配首条 Route，把路由和目标 URL 等状态放入 `ServerWebExchange`，再将 GlobalFilter 与 GatewayFilter 合并排序，沿响应式链执行到 Netty 代理，返回阶段按调用栈反向完成后置逻辑。
+
+排障要检查路由是否命中、属性在哪一步被改写、过滤器相对顺序以及是否阻塞了 EventLoop。限流、重试、熔断和 fallback 都会改变请求次数或路径，必须结合幂等性、请求体缓存和防循环规则判断。
 
 ## 高频题
 

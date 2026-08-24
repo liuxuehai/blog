@@ -4,10 +4,10 @@ description: Spring Data Redis 高频题、高难追问与源码级回答。
 category: Backend
 tags: [Source Reading, Spring Data Redis, Interview]
 order: 79
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 79
@@ -16,6 +16,12 @@ sidebar:
 面试重点不是背 `RedisTemplate` API，而是能解释连接所有权、序列化边界和消费语义。
 
 <!-- more -->
+
+## 先给答案：先确认连接归属，再确认序列化与消费语义
+
+`RedisTemplate` 的核心价值是把连接获取释放、命令回调和对象到字节的转换放在统一边界内；事务开启后，相关命令必须落到绑定的同一连接，提交或回滚时再由事务同步完成收尾。
+
+排查数据问题要先看 serializer 是否一致，排查事务要看连接是否真正参与同步，排查消息则要区分 Pub/Sub 的在线即收与 Stream 的 pending/ack 状态。Lettuce 与 Jedis 被统一的是接口，不是线程模型和底层连接能力。
 
 ## 高频题
 

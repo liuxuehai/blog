@@ -4,10 +4,10 @@ description: Redis 启动、请求处理和后台维护如何共享一个事件�
 category: Database
 tags: [Source Reading, Redis, Architecture]
 order: 11
-updatedDate: 2026-08-15
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-15
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 11
@@ -16,6 +16,12 @@ sidebar:
 Redis 的架构核心是单线程拥有主状态，后台子进程承担持久化，主循环在文件事件、时间事件和 beforeSleep 之间切换。
 
 <!-- more -->
+
+## 先给答案：Redis 用主线程所有权换取确定性，再把重活移到边界外
+
+Redis 的核心状态由事件循环中的主线程顺序修改，因此命令执行、过期、复制推进和回复刷新可以共享数据结构而不引入通用锁协议。网络事件、时间事件与 `beforeSleep` 不是三套独立系统，而是同一主循环里的不同调度点。
+
+持久化子进程、BIO 和可选 IO 线程只承担可隔离的工作，不改变主线程对键空间和客户端状态的所有权。这个设计的主要失效边界也很明确：重命令会阻塞所有请求，fork 会带来页表暂停和 COW 内存，慢客户端会把压力留在输出缓冲。
 
 ## 分层
 

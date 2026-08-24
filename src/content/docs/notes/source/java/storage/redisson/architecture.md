@@ -4,10 +4,10 @@ description: Redisson 对象门面、命令执行器、连接管理、Pub/Sub �
 category: Backend
 tags: [Source Reading, Redisson, Architecture]
 order: 41
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 41
@@ -16,6 +16,12 @@ sidebar:
 Redisson 的主线可以概括成“对象方法生成 Redis 命令，命令执行器选择节点并解码结果，必要时再由 Pub/Sub 或定时任务驱动下一步”。
 
 <!-- more -->
+
+## 先给答案：Redisson 的主线可以概括成“对象方法生成 Redis 命令，命令执行器选择节点并解码结果，必要时再…
+
+Redisson 的主线可以概括成“对象方法生成 Redis 命令，命令执行器选择节点并解码结果，必要时再由 Pub/Sub 或定时任务驱动下一步”。 正文沿“分层 -> 创建与调用主流程 -> 为什么对象是轻量门面”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“创建大量对象、客户端关闭、多节点集群”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

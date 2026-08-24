@@ -4,10 +4,10 @@ description: Axum Tower Service、Handler、Extractor、路由状态与中间件
 category: Backend
 tags: [Source Reading, Axum, Rust, Interview]
 order: 29
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 29
@@ -16,6 +16,12 @@ sidebar:
 Axum 面试的区分度来自能否说清 trait 适配链，而不是能否背出 `Router::route` 的写法。
 
 <!-- more -->
+
+## 先给答案：Axum 面试的区分度来自能否说清 trait 适配链，而不是能否背出 Router::route 的写法
+
+Axum 面试的区分度来自能否说清 trait 适配链，而不是能否背出 Router::route 的写法。 正文沿“1. Axum 为什么建立在 Tower 上 -> 2. Handler 如何调用普通 async fn -> 3. FromRequestParts 和 FromRequest 的区别”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“为什么 Router 的错误常是 Infallible、“Handler trait not implemented” 怎么排查、线上请求偶发长尾怎么分层”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 1. Axum 为什么建立在 Tower 上
 

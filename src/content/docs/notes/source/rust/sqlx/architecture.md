@@ -4,10 +4,10 @@ description: SQLx facade、core、宏 crate 与数据库驱动之间的职责边
 category: Backend
 tags: [Source Reading, SQLx, Rust, Architecture]
 order: 70
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 70
@@ -16,6 +16,12 @@ sidebar:
 SQLx 将“编译期知道 SQL 结构”和“运行时执行异步 IO”拆成两条互相衔接的链：宏 crate 负责生成类型约束，`sqlx-core` 负责跨数据库抽象，具体 driver 负责协议事实。
 
 <!-- more -->
+
+## 先给答案：SQLx 将“编译期知道 SQL 结构”和“运行时执行异步 IO”拆成两条互相衔接的链：宏 crate 负…
+
+SQLx 将“编译期知道 SQL 结构”和“运行时执行异步 IO”拆成两条互相衔接的链：宏 crate 负责生成类型约束，sqlx-core 负责跨数据库抽象，具体 driver 负责协议事实。 正文沿“分层 -> 两条时间线 -> 为什么不是统一动态 Value”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“宏编译期数据库不可达、feature 漏开、把 core 当完整数据库库”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 分层
 

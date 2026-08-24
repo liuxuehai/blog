@@ -4,10 +4,10 @@ description: Fastjson2 JSONWriter 的编码后端、格式特性和对象写出�
 category: Backend
 tags: [Source Reading, Fastjson2, JSONWriter, Serialization]
 order: 83
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 83
@@ -16,6 +16,12 @@ sidebar:
 `JSONWriter` 是输出格式和编码策略的抽象，`ObjectWriter` 才知道 Java 对象如何展开。Fastjson2 通过这两个层次同时支持 JSON、JSONB、UTF-8 和 UTF-16 输出。
 
 <!-- more -->
+
+## 先给答案：JSONWriter 是输出格式和编码策略的抽象，ObjectWriter 才知道 Java 对象如何展开
+
+JSONWriter 是输出格式和编码策略的抽象，ObjectWriter 才知道 Java 对象如何展开。Fastjson2 通过这两个层次同时支持 JSON、JSONB、UTF-8 和 UTF-16 输出。 正文沿“写出路径 -> 直接写出与通用路径 -> JSONB 与 JSON”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“序列化特性可能在 writer、object writer、field writer 和注解多个层级合并。、循环引用、过滤器、视图和类型信息会使简单字段遍历退化到更复杂路径。、输出 writer 的复用边界取决于实现；不要把带请求状态的自定义 writer 放进全局 provider。”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 写出路径
 

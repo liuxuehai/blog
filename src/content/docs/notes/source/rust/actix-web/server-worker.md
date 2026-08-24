@@ -4,10 +4,10 @@ description: Actix Web 应用工厂、worker 数、listener、阻塞池、连接
 category: Backend
 tags: [Source Reading, Actix Web, Server, Worker]
 order: 41
-updatedDate: 2026-08-17
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 41
@@ -16,6 +16,12 @@ sidebar:
 `HttpServer` 把 socket listener 和应用服务工厂交给 `actix-server`。最容易踩坑的点是：传入 `HttpServer::new` 的闭包不是单例构造器，而是 per-worker 服务工厂。
 
 <!-- more -->
+
+## 先给答案：Worker 模型把连接处理分散到多个独立执行上下文
+
+主线程负责监听和分发，worker 持有自己的事件循环与服务实例，连接在 worker 内推进。这样减少共享锁并让局部状态更容易管理，但跨 worker 的共享必须通过 `Arc`、同步原语或消息传递完成。
+
+worker 数量不是越多越快：CPU 密集任务会阻塞所属 worker，连接分布不均会造成局部拥塞，过多 worker 又会增加上下文和缓存开销。性能排查要同时看 worker 利用率、请求分布和阻塞任务。
 
 ## 启动路径
 

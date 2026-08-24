@@ -4,10 +4,10 @@ description: SQL Token、实际表名替换、参数重排、UNION ALL 聚合与
 category: Backend
 tags: [Source Reading, ShardingSphere, SQL Rewrite, JDBC]
 order: 24
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 24
@@ -16,6 +16,12 @@ sidebar:
 改写阶段把“逻辑 SQL + 路由结果”变成可直接发送给真实数据库的 SQL 和参数。它同时处理文本 Token 替换、参数顺序、生成键和跨分片查询的聚合改写。
 
 <!-- more -->
+
+## 先给答案：改写阶段把“逻辑 SQL + 路由结果”变成可直接发送给真实数据库的 SQL 和参数
+
+改写阶段把“逻辑 SQL + 路由结果”变成可直接发送给真实数据库的 SQL 和参数。它同时处理文本 Token 替换、参数顺序、生成键和跨分片查询的聚合改写。 正文沿“调用链 -> 实现拆解 -> 为什么不直接替换字符串”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“绑定参数顺序变化、跨分片聚合、Hint 跳过改写”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用链
 

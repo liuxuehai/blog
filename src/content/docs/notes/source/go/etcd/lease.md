@@ -4,10 +4,10 @@ description: etcd lessor 的 TTL、主节点、过期队列、级联删除和 ch
 category: Backend
 tags: [Source Reading, etcd, Go, Lease]
 order: 36
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 36
@@ -16,6 +16,12 @@ sidebar:
 Lease 为 key 提供自动过期语义，常用于服务注册、临时锁和 leader 选举。etcd 的 lessor 负责本地 TTL 管理，但真正的 lease grant、revoke 和绑定键删除仍通过一致性状态机完成。
 
 <!-- more -->
+
+## 先给答案：Lease 为 key 提供自动过期语义，常用于服务注册、临时锁和 leader 选举
+
+Lease 为 key 提供自动过期语义，常用于服务注册、临时锁和 leader 选举。etcd 的 lessor 负责本地 TTL 管理，但真正的 lease grant、revoke 和绑定键删除仍通过一致性状态机完成。 正文沿“生命周期 -> primary lessor -> Revoke 的事务边界”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“Revoke 会先收集并排序 lease 绑定的 keys，再通过 range deleter 删除，最后在同一个 backend transaction 中删除 lease 元数据：server/lease/lessor.go:326-365”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 生命周期
 

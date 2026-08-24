@@ -4,10 +4,10 @@ description: grpc-go HTTP/2 client/server transport、帧读写、loopyWriter、
 category: Backend
 tags: [Source Reading, gRPC, Go, HTTP2]
 order: 43
-updatedDate: 2026-08-17
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-17
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 43
@@ -16,6 +16,12 @@ sidebar:
 transport 层把一条 HTTP/2 连接复用为多个并发 RPC stream。读侧解析帧并更新 stream 状态，写侧通过 control buffer 和单独的 `loopyWriter` 串行写帧，从而避免多个业务 goroutine 直接竞争 socket。
 
 <!-- more -->
+
+## 先给答案：transport 层把一条 HTTP/2 连接复用为多个并发 RPC stream
+
+transport 层把一条 HTTP/2 连接复用为多个并发 RPC stream。读侧解析帧并更新 stream 状态，写侧通过 control buffer 和单独的 loopyWriter 串行写帧，从而避免多个业务 goroutine 直接竞争 socket。 正文沿“连接内并发模型 -> Stream 与帧 -> 两级流控与 BDP”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“消费端长期不 RecvMsg、大消息并发、自定义窗口过小”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 连接内并发模型
 

@@ -4,10 +4,10 @@ description: Directory、RouterChain、LoadBalance 与 FailoverClusterInvoker �
 category: Backend
 tags: [Source Reading, Dubbo, Cluster, Load Balance]
 order: 24
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 24 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 24 }
 Dubbo 的集群层把“多个服务地址”变成“一个可调用对象”。它先得到动态地址视图，再执行路由和负载均衡，最后由 Cluster 策略决定失败、重试、广播还是静默降级。
 
 <!-- more -->
+
+## 先给答案：Dubbo 的集群层把“多个服务地址”变成“一个可调用对象”
+
+Dubbo 的集群层把“多个服务地址”变成“一个可调用对象”。它先得到动态地址视图，再执行路由和负载均衡，最后由 Cluster 策略决定失败、重试、广播还是静默降级。 正文沿“调用选择图 -> Directory 与路由 -> 负载均衡与选择”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“所有节点不可用、重试导致重复扣款、路由过滤过度”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 调用选择图
 

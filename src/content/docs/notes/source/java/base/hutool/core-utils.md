@@ -4,10 +4,10 @@ description: Hutool core 中字符串、对象、集合、日期和资源工具�
 category: Backend
 tags: [Source Reading, Hutool, Core]
 order: 92
-updatedDate: 2026-08-16
+updatedDate: 2026-08-22
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-22
 draft: false
 sidebar:
   order: 92
@@ -16,6 +16,12 @@ sidebar:
 `hutool-core` 的源码看似是大量工具类，实际可以按“输入归一化、轻量计算、状态对象”分三类阅读。`StrUtil`、`ObjectUtil`、`CollUtil` 和 `DateUtil` 是高频入口，但它们共享的是边界处理习惯，不是一个庞大的继承体系。
 
 <!-- more -->
+
+## 先给答案：工具类真正的设计难点是把默认行为说清楚
+
+一个字符串、日期或集合工具看似只是缩短调用，但它必须回答空值怎么处理、格式失败如何处理、是否修改输入、是否线程安全、异常是否包装以及资源由谁关闭。Hutool 通过统一命名和重载降低使用门槛，同时把部分默认策略集中到工具实现中。
+
+阅读工具源码时，不能只看“正常输入返回什么”，还要追踪 null、空字符串、非法格式、边界数值和异常转换。工具越方便，调用方越容易忽略这些默认策略；文档必须把隐含行为显式写出来。
 
 ## 字符串与对象
 

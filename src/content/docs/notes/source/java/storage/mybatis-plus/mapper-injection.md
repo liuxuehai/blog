@@ -4,7 +4,8 @@ description: ISqlInjector、AbstractMethod 如何为 BaseMapper 派生接口生�
 category: Backend
 tags: [Source Reading, MyBatis-Plus, Mapper]
 order: 63
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 63
 ---
@@ -12,6 +13,14 @@ sidebar:
 MyBatis-Plus 的 CRUD 不是运行时拼接一段 SQL 字符串，而是在 Mapper 解析阶段生成并注册 `MappedStatement`。
 
 <!-- more -->
+
+## 先给答案：MyBatis-Plus 的 CRUD 不是运行时拼接一段 SQL 字符串，而是在 Mapper 解析阶段…
+
+MyBatis-Plus 的 CRUD 不是运行时拼接一段 SQL 字符串，而是在 Mapper 解析阶段生成并注册 MappedStatement。 理解Mapper 与 SQL 注入时，要先确认入口与状态归属，再跟踪控制流或数据流的推进顺序，最后落到对外可观察的结果。
+
+主要失效边界集中在“自定义 XML 同名、自定义 injector 漏方法、SQL 片段参数不一致”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
+
+主要失效边界集中在“自定义 XML 同名、自定义 injector 漏方法、SQL 片段参数不一致”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ```text
 Mapper interface

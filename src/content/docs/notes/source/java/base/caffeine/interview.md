@@ -4,10 +4,10 @@ description: Caffeine 高频面试题、高难追问、场景题与源码级加�
 category: Backend
 tags: [Source Reading, Caffeine, Interview]
 order: 59
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 59
@@ -16,6 +16,12 @@ sidebar:
 Caffeine 面试的关键不是背“高性能缓存”，而是解释它如何同时处理命中率、并发竞争、维护成本和加载一致性。
 
 <!-- more -->
+
+## 先给答案：Caffeine 面试的关键不是背“高性能缓存”，而是解释它如何同时处理命中率、并发竞争、维护成本和加载一…
+
+Caffeine 面试的关键不是背“高性能缓存”，而是解释它如何同时处理命中率、并发竞争、维护成本和加载一致性。 正文沿“高频题 -> 高难追问 -> 场景题”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“后端 QPS 升高时，检查命中率、eviction、TTL 同时到期、future pending、刷新失败、容量和 loader 线程池”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 高频题
 

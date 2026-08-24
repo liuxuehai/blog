@@ -4,7 +4,8 @@ description: Connection 从构造、认证、命令读写到关闭的状态变�
 category: Backend
 tags: [Source Reading, Jedis, Connection]
 order: 53
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
+lastReviewed: 2026-08-24
 sidebar:
   order: 53
 ---
@@ -13,12 +14,11 @@ Jedis 的连接是有状态资源：Socket、Redis protocol、认证、数据库
 
 <!-- more -->
 
-```text
-NEW ──connect──► CONNECTED ──HELLO/AUTH/SELECT──► READY
- │                                      │
- └──────────── close/error ◄────────────┘
-READY ──send/read──► READY
-```
+## 先给答案：Jedis 的连接是有状态资源：Socket、Redis protocol、认证、数据库选择和 clien…
+
+Jedis 的连接是有状态资源：Socket、Redis protocol、认证、数据库选择和 client name 都绑定在连接上。连接复用的前提是归还前状态已经可控。 正文沿“创建与初始化 -> 命令期间 -> 为什么关闭要幂等”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“连接被阻塞命令占用、借出后未 close、连接异常后继续复用”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 创建与初始化
 

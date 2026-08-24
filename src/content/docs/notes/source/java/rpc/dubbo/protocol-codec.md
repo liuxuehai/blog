@@ -4,10 +4,10 @@ description: DubboProtocol、Exchange、HeaderExchangeHandler 和 DubboCodec 如
 category: Backend
 tags: [Source Reading, Dubbo, Protocol, Codec]
 order: 25
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar: { order: 25 }
 ---
@@ -15,6 +15,12 @@ sidebar: { order: 25 }
 Dubbo 协议层把 RPC 语义放在 Exchange 之上，把字节格式放在 Codec 之下。这样协议实现可以复用请求响应、Future、超时和连接管理，而编码器只处理线格式和对象转换。
 
 <!-- more -->
+
+## 先给答案：Dubbo 协议层把 RPC 语义放在 Exchange 之上，把字节格式放在 Codec 之下
+
+Dubbo 协议层把 RPC 语义放在 Exchange 之上，把字节格式放在 Codec 之下。这样协议实现可以复用请求响应、Future、超时和连接管理，而编码器只处理线格式和对象转换。 正文沿“协议栈 -> 服务端与客户端 -> 请求响应分派”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“半包/粘包、大消息反序列化、延迟连接首次慢”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 协议栈
 

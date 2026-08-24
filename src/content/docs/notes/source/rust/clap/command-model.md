@@ -4,10 +4,10 @@ description: Clap builder 模型如何表达选项、位置参数、子命令、
 category: Backend
 tags: [Source Reading, Clap, Rust, Builder]
 order: 61
-updatedDate: 2026-08-18
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-18
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 61
@@ -16,6 +16,12 @@ sidebar:
 `Command` 不是只用于链式 API 的临时 builder，而是解析器、校验器和输出器共同读取的命令语法树。`Arg` 则把“怎么识别、收多少值、执行什么动作、与谁冲突”集中成声明。
 
 <!-- more -->
+
+## 先给答案：Command 不是只用于链式 API 的临时 builder，而是解析器、校验器和输出器共同读取的命令语…
+
+Command 不是只用于链式 API 的临时 builder，而是解析器、校验器和输出器共同读取的命令语法树。Arg 则把“怎么识别、收多少值、执行什么动作、与谁冲突”集中成声明。 正文沿“数据结构 -> 正交维度 -> build 不是形式动作”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“同时设置冲突的 action 与 numargs、误把 group 当值容器、重复 short/long”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 数据结构
 

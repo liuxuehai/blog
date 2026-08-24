@@ -4,10 +4,10 @@ description: HouseKeeper、maxLifetime、idleTimeout、keepalive 和 soft evicti
 category: Backend
 tags: [Source Reading, HikariCP, Reliability]
 order: 46
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 46
@@ -17,14 +17,11 @@ HikariCP 不把所有连接检查都塞进借出线程，而是把时间驱动�
 
 <!-- more -->
 
-```text
-HikariPool
-  |
-  +--> HouseKeeper: idleTimeout / pool refill / clock anomaly
-  +--> MaxLifetimeTask: soft evict after lifetime
-  +--> KeepaliveTask: test idle connection
-  +--> connection close executor
-```
+## 先给答案：HikariCP 不把所有连接检查都塞进借出线程，而是把时间驱动的维护拆给 HouseKeeper 和每条…
+
+HikariCP 不把所有连接检查都塞进借出线程，而是把时间驱动的维护拆给 HouseKeeper 和每条连接的定时任务；借出路径只处理已经暴露的失效条目。 正文沿“HouseKeeper -> 生命周期和保活 -> Soft eviction”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“maxLifetime 太短、keepalive 太密、时钟跳变”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## HouseKeeper
 

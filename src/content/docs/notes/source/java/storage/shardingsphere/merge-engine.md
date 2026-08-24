@@ -4,10 +4,10 @@ description: Transparent、Stream、Memory 与 Decorator 结果模型，以及�
 category: Backend
 tags: [Source Reading, ShardingSphere, Merge, ResultSet]
 order: 25
-updatedDate: 2026-08-16
+updatedDate: 2026-08-24
 difficulty: advanced
 status: stable
-lastReviewed: 2026-08-16
+lastReviewed: 2026-08-24
 draft: false
 sidebar:
   order: 25
@@ -16,6 +16,12 @@ sidebar:
 物理执行返回的是多个 `QueryResult`，但 JDBC 使用者期待一个 `ResultSet`。归并引擎通过 SPI 选择具体 `ResultMerger`，没有特殊规则时退化为透明结果，并可在最后叠加结果装饰器。
 
 <!-- more -->
+
+## 先给答案：物理执行返回的是多个 QueryResult，但 JDBC 使用者期待一个 ResultSet
+
+物理执行返回的是多个 QueryResult，但 JDBC 使用者期待一个 ResultSet。归并引擎通过 SPI 选择具体 ResultMerger，没有特殊规则时退化为透明结果，并可在最后叠加结果装饰器。 正文沿“结果模型 -> 实现拆解 -> 为什么要让归并结果实现接口”展开：先确认入口和状态归属，再跟踪控制流或数据流的推进，最后落到对外可观察的结果。
+
+主要失效边界集中在“ORDER BY 跨分片、聚合函数、大结果集”这些场景。它们破坏的是容量、顺序、并发或生命周期前提；排查时应先确认状态是否仍由正确对象持有，再核对推进条件和清理路径。
 
 ## 结果模型
 
