@@ -21,6 +21,7 @@ sidebar:
 - [Agent 引擎](/notes/ai/bot/agent-engine/)：tool_loop、状态机、反射机制、Execution Framework
 - [Policy 治理](/notes/ai/bot/policy-governor/)：Governor 闸门、Tier × Mode 矩阵、Lease、确定性决策
 - [多 Agent 编排](/notes/ai/bot/multi-agent/)：Coordinator-Worker、Swarm、SOP 运行时
+- [Agent 平台项目面试准备](/notes/ai/bot/interview-prep-agent-platform/)：基于仓库证据梳理 Runtime、Policy、多 Agent、Memory 与 RAG 边界
 - [面试专题](/notes/ai/bot/interview/)：设计决策 Q&A、系统设计练习、STAR 故事
 
 ## 核心特点
