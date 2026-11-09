@@ -28,6 +28,14 @@ toc: true
 
 ### 第 1 题：三个目标只能优先完成一个，选什么？
 
+**题目原文：**
+
+在产品开发中期，某团队面临以下三个关键目标，但团队资源有限，只能优先集中力量完成一项。请选出你认为最重要的一项，并详细说明你的理由。
+
+- 选项一：加强市场分析，调整营销策略，以确保产品更精准地定位，并吸引目标用户群体。
+- 选项二：完成核心功能的微调与优化，以确保产品功能稳定、流畅。
+- 选项三：开展深度用户调研，收集用户反馈。
+
 我会优先选择**选项二：完成核心功能的微调与优化，确保产品稳定、流畅**。
 
 产品开发中期，核心功能已经是用户价值和业务链路的基础。如果功能不稳定，营销带来的用户会直接遇到故障，用户调研得到的反馈也很难区分是产品方向问题还是体验问题。因此我会先用线上错误率、接口成功率、P95 延迟、核心流程转化率和客服问题分布确认最影响用户的环节，集中力量解决高影响问题。
@@ -37,6 +45,10 @@ toc: true
 如果监控显示核心功能已经稳定，我会把第二优先级交给选项三，因为一线用户反馈能帮助团队确认优化方向；市场分析则与销售和产品一起持续推进，而不是完全暂停。
 
 ### 第 2 题：你适合这份工作吗？为什么？
+
+**题目原文：**
+
+你认为自己适合这份工作吗？为什么？
 
 我认为自己适合这份工作，原因有三点。
 
@@ -50,6 +62,10 @@ toc: true
 
 ### 第 3 题：团队目标和个人利益不一致时怎么做？
 
+**题目原文：**
+
+有时候，团队目标和个人利益会不一致。你是否遇到过这样的事情？请结合实际经历，说一说当时你是怎么做的，为什么会这么做？
+
 我遇到过类似情况。在一次核心系统改造中，个人更希望先重构自己熟悉的模块，因为这样更容易快速产出；但团队当期目标是先解决主链路稳定性和跨系统联调风险。继续按个人偏好推进，会让局部代码变漂亮，却不能减少整体交付风险。
 
 我的做法是先把个人方案放回团队目标中评估：列出影响范围、依赖关系、上线风险和可验证指标，再和负责人确认优先级。最终我把重构拆成两部分，先完成接口契约、异常处理和监控补齐，保证主链路按期上线；结构性重构放到后续迭代，并补充了技术债清单和验收标准。
@@ -58,6 +74,10 @@ toc: true
 
 ### 第 4 题：最具挑战性的任务是什么？
 
+**题目原文：**
+
+请介绍一件你在学习或工作经历中遇到过的最具挑战性的任务，谈谈当时你是怎么应对的。
+
 我认为最具挑战的是从 0 到 1 建设盘古供应链业财中心。它不是单一功能，而是要把入库、出库、开票、生产报工和平台订单等业务活动，转换为应收、应付和财务适配数据，同时还要和 FSSC、金蝶等外部系统协作。
 
 我先和产品及业务人员梳理客户、供应商、平台三类主体，再按业务事实和财务结果划分应收、收款、清分、应付、付款申请、预收预付、核销、退款、金额占用和订单费用等领域。跨域通知使用 RocketMQ 传递业务事件，收付款和财务适配使用 Feign 协作，并明确同步链路、异步链路、幂等策略和异常补偿。团队通过方案评审、Code Review、联调清单和上线检查控制风险。
@@ -65,6 +85,10 @@ toc: true
 最终完成了 10 多个核心模块及 FSSC、金蝶集成，建立了从订单履约到财务核算的闭环。这个任务让我认识到，复杂系统的难点往往不是某一段代码，而是业务边界、数据归属、失败处理和团队协作能否保持一致。
 
 ### 第 5 题：时间紧、任务重时，如何平衡效率和细节？
+
+**题目原文：**
+
+你是否遇到过时间紧、任务重的情况？请结合实际经历讲一讲，你是如何把握效率和细节的关系的？
 
 在汽车金融核心系统和双活改造中，我遇到过时间紧、链路长、参与方多的情况。我会先把任务按业务影响和风险分级：主链路、数据正确性、故障恢复属于必须优先保证的部分；低频优化和非关键重构可以后置。
 
@@ -78,6 +102,10 @@ toc: true
 
 ### 1. 句子复述
 
+**题目原文：**
+
+接下来你会听到一个英文句子，请你认真听，然后完整地复述一遍。句子会播放两遍，你只需要复述一遍。
+
 原句：
 
 > Greece, home of the ancient Olympics, hosted the first modern Olympics in 1896.
@@ -88,9 +116,23 @@ toc: true
 
 ### 2. What are the advantages of online learning?
 
+**题目原文：**
+
+我将用英语问你一个问题。请你点击“展开题目”按钮，根据屏幕上显示的要点，用英语回答我的问题。请认真听题。
+
+**问题：** What are the advantages of online learning?
+
 > Online learning has several advantages. First, it is flexible. People can choose when and where to study, so it is easier to balance learning with work and family responsibilities. Second, online courses give learners access to a wide range of teachers and materials. They can replay lessons, search for additional resources, and learn at their own pace. Third, online learning can reduce travel and accommodation costs. Of course, learners need self-discipline and a reliable internet connection, but with a clear schedule, online learning can be efficient and convenient.
 
 ### 3. 转述合作观点
+
+**题目原文：**
+
+你将听到一名女性员工讲述她对合作的看法。请仔细听，然后根据屏幕上的关键词，用英语转述她的观点。请注意，你要转述，而不是背诵或者翻译。
+
+**听力原文：**
+
+> In my opinion, collaboration is of utmost importance in a team. The magic happens when we come together to share our insights and expertise.
 
 关键词：collaboration / utmost importance / team / share insights and expertise
 
@@ -99,6 +141,10 @@ toc: true
 ## 三、在线编程题准备
 
 ### Java：使用 JUC 锁交替打印奇数和偶数
+
+**题目原文：**
+
+请使用 Java 编写程序，启动两个线程，交替打印奇数和偶数。要求在同一个类中实现，并使用 `java.util.concurrent.locks` 包下的锁。
 
 题目要求在同一个类中使用 `java.util.concurrent.locks` 下的锁，让两个线程交替打印奇数和偶数。核心是用同一把 `ReentrantLock` 保护共享状态，用两个 `Condition` 分别等待奇数线程和偶数线程。
 
@@ -168,6 +214,10 @@ public class AlternatePrinter {
 面试时要说明三个细节：使用 `while` 而不是 `if` 防止虚假唤醒；在 `finally` 中释放锁；捕获中断后恢复中断标记。若题目要求打印到 `N`，奇数线程和偶数线程的循环边界都应以 `N` 为准。
 
 ### SQL：查询连续出现 3 次及以上的 name
+
+**题目原文：**
+
+有一张表 `info`，字段为 `id`、`name`，其中 `id` 自增。请查询 `name` 连续出现 3 次和 3 次以上的名称，并按照 `name` 升序排列。
 
 表结构为 `info(id, name)`，其中 `id` 自增。下面是 MySQL 8+ 的写法，先按 `id` 排序，再用“岛屿分组”识别连续区间，最后只保留长度不少于 3 的区间，并按 `name` 升序返回。
 
